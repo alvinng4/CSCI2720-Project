@@ -34,3 +34,58 @@
 .body h2 {
     color: #283572;
 }
+
+th {
+    justify-items: left;
+}
+
+.locationCardsTitle {
+    background-color: #f0f0f0;
+    padding: 15px;
+    color: #283572;
+    font-size: small;
+    width: 1200px;
+    max-width: 90%;
+    justify-items: center;
+}
+
+.locationCardsTable {
+    padding: 15px;
+    color: #283572;
+    font-size: small;
+    width: 1200px;
+    max-width: 90%;
+    justify-items: center;
+}
+
+
+
+hr {
+    border: none;        
+    height: 1px;        
+    background-color: rgb(223, 221, 233); 
+    width: 100%;        
+}
+
+.locationNameBoxes {
+    background-color: rgb(237, 235, 245); 
+    padding: 6px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 4px;
+}
+
+.favouriteButton{
+    align-self: left;
+    border-color: #0022b9;
+    border-radius: 7px;
+    border-width: 1px;
+    width: 30px;
+    height: 30px;
+    background-color: #fcfcfc;
+    color:#0022b9;
+}
+
+.favouriteButton:hover{
+    background-color: #e9ebf3;
+}
