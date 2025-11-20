@@ -1,0 +1,36 @@
+.navbar {
+    list-style-type: none;
+    padding: 5px;
+    margin-bottom: 10px; 
+    justify-items: center;
+}
+
+.navbar li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #878dbb;
+}
+
+.navbar a:hover {
+    text-decoration: none;
+    color: #576ac2;
+}
+
+.body {
+    box-shadow: 0px 0px 7px 1px #c0e1e6;
+    border-radius: 5px;
+    height: 100%;
+    width: 80%;
+    justify-self: center;
+    justify-items: center;
+    background-color: #f9fbfc;
+    padding: 10px;
+}
+
+.body h2 {
+    color: #283572;
+}
