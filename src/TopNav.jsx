@@ -45,6 +45,7 @@ export function TopNav() {
   return (
     <nav className="w-full">
       <div className="flex items-center w-full px-6 py-3">
+        {/* Logo */}
         <Link 
           to="/"
           className="mr-6 text-primary hover:text-primary/90 transition-colors cursor-pointer"
@@ -52,6 +53,7 @@ export function TopNav() {
           <span className="hidden font-bold text-xl sm:inline-block">Project</span>
         </Link>
 
+        {/* nav items */}
         <NavigationMenu>
           <NavigationMenuList>
             {navigationItems.map((link) => (
@@ -59,10 +61,12 @@ export function TopNav() {
             ))}
           </NavigationMenuList>
         </NavigationMenu>
-
+        
         <div className="ml-auto flex items-center gap-3">
+            {/* dark mode button */}
             <ModeToggle />
 
+            {/* Sign in button */}
             <Button
               asChild
               size="sm"
@@ -74,6 +78,9 @@ export function TopNav() {
             </Button>
         </div>
       </div>
+
+      {/* bottom separator */}
+      <div className="h-px w-full bg-border" />
     </nav>
   )
 }
