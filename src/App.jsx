@@ -22,6 +22,7 @@ function App() {
           <Route path="/map" element={<Map />} />
           <Route path="/favouriteList" element={<FavouriteList />} />
           <Route path="/suggestions" element={<Suggestions />} />
+          <Route path="/auth" element={<Auth />} />
         </Routes>
       </main>
     </div>
@@ -77,6 +78,14 @@ function FavouriteList() {
 }
 
 function Suggestions() {
+  return (
+    <p className="text-muted-foreground">
+      Hello, world!
+    </p>
+  )
+}
+
+function Auth() {
   return (
     <p className="text-muted-foreground">
       Hello, world!

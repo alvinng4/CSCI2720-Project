@@ -7,6 +7,7 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
+import { Button } from "@/components/ui/Button"
 import { ModeToggle } from "@/components/mode-toggle"
 
 export function TopNav() {
@@ -31,7 +32,14 @@ export function TopNav() {
 
   return (
     <nav className="w-full">
-      <div className="flex items-center w-full p-3">
+      <div className="flex items-center w-full px-6 py-3">
+        <Link 
+          to="/"
+          className="mr-6 text-primary hover:text-primary/90 transition-colors cursor-pointer"
+        >
+          <span className="hidden font-bold text-xl sm:inline-block">Project</span>
+        </Link>
+
         <NavigationMenu>
           <NavigationMenuList>
             {navigationItems.map((link) => (
@@ -40,8 +48,19 @@ export function TopNav() {
           </NavigationMenuList>
         </NavigationMenu>
 
-        <div className="ml-auto flex items-center gap-6">
+        <div className="ml-auto flex items-center gap-3">
             <ModeToggle />
+
+            <Button
+              size="sm"
+              className="text-sm font-medium px-4 h-9 rounded-md shadow-sm cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                if (onCtaClick) onCtaClick();
+              }}
+            >
+              Sign In
+            </Button>
         </div>
       </div>
     </nav>
