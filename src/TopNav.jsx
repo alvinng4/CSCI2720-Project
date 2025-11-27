@@ -7,6 +7,7 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
+import { ModeToggle } from "@/components/mode-toggle"
 
 export function TopNav() {
   const navigationItems = [
@@ -29,14 +30,20 @@ export function TopNav() {
   }
 
   return (
-    <nav>
-      <NavigationMenu className="p-3">
-        <NavigationMenuList className="flex-wrap">
-          {navigationItems.map((link) => (
-            <NavigationItem to={link.to} label={link.label}/>
-          ))}
-        </NavigationMenuList>
-      </NavigationMenu>
+    <nav className="w-full">
+      <div className="flex items-center w-full p-3">
+        <NavigationMenu>
+          <NavigationMenuList>
+            {navigationItems.map((link) => (
+              <NavigationItem key={link.to} to={link.to} label={link.label}/>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
+
+        <div className="ml-auto flex items-center gap-6">
+            <ModeToggle />
+        </div>
+      </div>
     </nav>
   )
 }
