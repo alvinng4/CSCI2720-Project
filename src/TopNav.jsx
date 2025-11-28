@@ -66,14 +66,14 @@ export function TopNav() {
             {/* dark mode button */}
             <ModeToggle />
 
-            {/* Sign in button */}
+            {/* Account */}
             <Button
               asChild
               size="sm"
               className="text-sm font-medium px-4 h-9 rounded-md shadow-sm cursor-pointer"
             >
-              <Link to="/auth">
-                Sign In
+              <Link to="/account">
+                Account
               </Link>
             </Button>
         </div>

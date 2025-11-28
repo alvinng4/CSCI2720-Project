@@ -1,15 +1,26 @@
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, Navigate } from "react-router-dom"
 
-import { TopNav } from "./TopNav"
-
-/* Fake data */
-const locationData = [
-  { id: 1, location: "location1", distance: 61, noOfEvents: 3 },
-  { id: 2, location: "location2", distance: 13, noOfEvents: 4 },
-  { id: 3, location: "location3", distance: 71, noOfEvents: 6 },
-]
+import { Auth } from "@/Auth"
+import { EventList } from "@/EventList"
+import { FavouriteList } from "@/FavouriteList"
+import { Home } from "@/Home"
+import { LocationList } from "@/LocationList"
+import { Map } from "@/Map"
+import { Suggestions } from "@/Suggestions"
+import { TopNav } from "@/TopNav"
 
 function App() {
+  var isAuthenticated = false
+
+  if (!isAuthenticated) {
+    return (
+      <Routes>
+        <Route path="/auth" element={<Auth />} />
+        <Route path="*" element={<Navigate to="/auth" replace />} />
+      </Routes>
+    )
+  }
+
   return (
     <div>
       <TopNav />
@@ -22,74 +33,9 @@ function App() {
           <Route path="/map" element={<Map />} />
           <Route path="/favouriteList" element={<FavouriteList />} />
           <Route path="/suggestions" element={<Suggestions />} />
-          <Route path="/auth" element={<Auth />} />
         </Routes>
       </main>
     </div>
-  )
-}
-
-function Home() {
-  return (
-    <p className="text-muted-foreground">
-      Hello, world!
-    </p>
-  )
-}
-
-function LocationList() {
-  return (
-    <p className="text-muted-foreground">
-      Hello, world!
-    </p>
-  )
-}
-
-function LocationRow({ location, isFavourite, onToggleFavourite }) {
-  return (
-    <p className="text-muted-foreground">
-      Hello, world!
-    </p>
-  )
-}
-
-function EventList() {
-  return (
-    <p className="text-muted-foreground">
-      Hello, world!
-    </p>
-  )
-}
-
-function Map() {
-  return (
-    <p className="text-muted-foreground">
-      Hello, world!
-    </p>
-  )
-}
-
-function FavouriteList() {
-  return (
-    <p className="text-muted-foreground">
-      Hello, world!
-    </p>
-  )
-}
-
-function Suggestions() {
-  return (
-    <p className="text-muted-foreground">
-      Hello, world!
-    </p>
-  )
-}
-
-function Auth() {
-  return (
-    <p className="text-muted-foreground">
-      Hello, world!
-    </p>
   )
 }
 
