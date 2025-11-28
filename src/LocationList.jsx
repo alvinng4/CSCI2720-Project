@@ -97,7 +97,7 @@ const columns = [
       if (Number.isNaN(a) || Number.isNaN(b)) {
         return stringA.localeCompare(stringB)
       }
-      return a === b ? 0 : a > b ? 1 : -1
+      return a - b
     },
   },
   {
@@ -111,6 +111,16 @@ const columns = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Distance (km)" />
     ),
+    sortingFn: (rowA, rowB, columnId) => {
+      const stringA = rowA.getValue(columnId)
+      const stringB = rowB.getValue(columnId)
+      const a = Number(stringA)
+      const b = Number(stringB)
+      if (Number.isNaN(a) || Number.isNaN(b)) {
+        return stringA.localeCompare(stringB)
+      }
+      return a - b
+    },
   },
   {
     accessorKey: "isFavourite",
