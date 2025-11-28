@@ -12,6 +12,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
+import { ModeToggle } from "@/components/mode-toggle"
 import { Input } from "@/components/ui/input"
 
 export function Auth() {
@@ -34,6 +35,10 @@ export function Auth() {
         >
           Project
         </button>
+
+        <div className="ml-auto">
+          <ModeToggle />
+        </div>
       </div>
       <div className="flex flex-1 items-center justify-center">
         {mode === "login" ? (
