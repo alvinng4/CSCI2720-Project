@@ -3,7 +3,9 @@ Also remove the events that has those venues.
 """
 
 import json
-from collections import Counter
+import random
+
+random.seed(1234)
 
 
 def clean_venues_and_events():
@@ -41,16 +43,14 @@ def clean_venues_and_events():
     print(f"Removed {events_removed} events with invalid venues")
     print(f"Keeping {len(valid_events)} events with valid venues")
 
-    # Get the top 10 venues with the most events
-    venue_event_counts = Counter(
-        event["venueid"] for event in valid_events if "venueid" in event
-    )
-    top_10_venues = venue_event_counts.most_common(10)
-    top_10_venue_ids = {venue_id for venue_id, _ in top_10_venues}
-    filtered_events = [e for e in valid_events if e.get("venueid") in top_10_venue_ids]
-    print(f"Keeping {len(filtered_events)} events belonging to top 10 venues")
+    # Pick 10 random venues
+    all_valid_venue_ids = [v["_id"] for v in valid_venues]
+    random_venue_ids = set(random.sample(all_valid_venue_ids, 10))
 
-    filtered_venues = [v for v in valid_venues if v.get("_id") in top_10_venue_ids]
+    filtered_events = [
+        e for e in valid_events if e.get("venueid") in random_venue_ids
+    ]
+    filtered_venues = [v for v in valid_venues if v.get("_id") in random_venue_ids]
 
     # Save the cleaned data
     updated_venues_data = {"venues": {"venue": filtered_venues}}

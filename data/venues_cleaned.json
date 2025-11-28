@@ -2,74 +2,74 @@
   "venues": {
     "venue": [
       {
-        "venuec": "沙田大會堂 (會議室)",
-        "venuee": "Sha Tin Town Hall (Conference Room)",
-        "latitude": "22.38136",
-        "longitude": "114.18990",
-        "_id": "36310566"
+        "venuec": "香港文化博物館 (專題展覽館一及二)",
+        "venuee": "Hong Kong Heritage Museum (Thematic Galleries 1 & 2)",
+        "latitude": "22.37737",
+        "longitude": "114.1853",
+        "_id": "22512700"
       },
       {
-        "venuec": "沙田大會堂 (演講室(2))",
-        "venuee": "Sha Tin Town Hall (Lecture Room (2))",
-        "latitude": "22.38136",
-        "longitude": "114.18990",
-        "_id": "36310594"
+        "venuec": "北區大會堂 (活動室(2))",
+        "venuee": "North District Town Hall (Function Room (2))",
+        "latitude": "22.501639",
+        "longitude": "114.128911",
+        "_id": "3110267"
       },
       {
-        "venuec": "沙田大會堂 (音樂室)",
-        "venuee": "Sha Tin Town Hall (Music Studio)",
-        "latitude": "22.38136",
-        "longitude": "114.18990",
-        "_id": "36311771"
+        "venuec": "大埔文娛中心 (黑盒劇場)",
+        "venuee": "Tai Po Civic Centre (Black Box Theatre)",
+        "latitude": "22.45175",
+        "longitude": "114.16815",
+        "_id": "35510044"
       },
       {
-        "venuec": "屯門大會堂 (演奏廳)",
-        "venuee": "Tuen Mun Town Hall (Auditorium)",
-        "latitude": "22.391810",
-        "longitude": "113.976771",
-        "_id": "76810048"
+        "venuec": "大埔文娛中心 (活動室(2))",
+        "venuee": "Tai Po Civic Centre (Function Room (2))",
+        "latitude": "22.45175",
+        "longitude": "114.16815",
+        "_id": "35517396"
       },
       {
-        "venuec": "屯門大會堂 (舞蹈室)",
-        "venuee": "Tuen Mun Town Hall (Dance Studio)",
-        "latitude": "22.391810",
-        "longitude": "113.976771",
-        "_id": "76810294"
+        "venuec": "東九文化中心 (劇院)",
+        "venuee": "East Kowloon Cultural Centre (The Hall)",
+        "latitude": "22.32427",
+        "longitude": "114.21494",
+        "_id": "826817417"
       },
       {
-        "venuec": "元朗劇院 (演講室)",
-        "venuee": "Yuen Long Theatre (Lecture Room)",
+        "venuec": "葵青劇院 (演藝廳)",
+        "venuee": "Kwai Tsing Theatre (Auditorium)",
+        "latitude": "22.35665",
+        "longitude": "114.12623",
+        "_id": "87110023"
+      },
+      {
+        "venuec": "元朗劇院 (演藝廳)",
+        "venuee": "Yuen Long Theatre (Auditorium)",
         "latitude": "22.44152",
         "longitude": "114.02289",
-        "_id": "87310196"
+        "_id": "87310051"
       },
       {
-        "venuec": "元朗劇院 (舞蹈室)",
-        "venuee": "Yuen Long Theatre (Dance Studio)",
-        "latitude": "22.44152",
-        "longitude": "114.02289",
-        "_id": "87310362"
+        "venuec": "牛池灣文娛中心 (劇院)",
+        "venuee": "Ngau Chi Wan Civic Centre (Theatre)",
+        "latitude": "22.334583",
+        "longitude": "114.208766",
+        "_id": "87410030"
       },
       {
-        "venuec": "元朗劇院 (排演室)",
-        "venuee": "Yuen Long Theatre (Rehearsal Room)",
-        "latitude": "22.44152",
-        "longitude": "114.02289",
-        "_id": "87310544"
-      },
-      {
-        "venuec": "香港大會堂 (音樂廳)",
-        "venuee": "Hong Kong City Hall (Concert Hall)",
+        "venuec": "香港大會堂 (展覽館)",
+        "venuee": "Hong Kong City Hall (Exhibition Gallery)",
         "latitude": "22.282279",
         "longitude": "114.161545",
-        "_id": "87510008"
+        "_id": "87510494"
       },
       {
-        "venuec": "高山劇場 (劇院)",
-        "venuee": "Ko Shan Theatre (Theatre)",
+        "venuec": "高山劇場 (新翼演藝廳)",
+        "venuee": "Ko Shan Theatre (New Wing Auditorium)",
         "latitude": "22.31368",
         "longitude": "114.18556",
-        "_id": "87610118"
+        "_id": "87616551"
       }
     ]
   }
