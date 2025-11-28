@@ -38,7 +38,7 @@ export function TopNav() {
           asChild
           className={
             navigationMenuTriggerStyle() +
-            " hover:text-primary" +
+            " hover:text-primary active:text-primary" +
             (isActive
               ? " text-primary"
               : "")
