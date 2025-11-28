@@ -89,6 +89,16 @@ const columns = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="ID" />
     ),
+    sortingFn: (rowA, rowB, columnId) => {
+      const stringA = rowA.getValue(columnId)
+      const stringB = rowB.getValue(columnId)
+      const a = Number(stringA)
+      const b = Number(stringB)
+      if (Number.isNaN(a) || Number.isNaN(b)) {
+        return stringA.localeCompare(stringB)
+      }
+      return a === b ? 0 : a > b ? 1 : -1
+    },
   },
   {
     accessorKey: "name",
