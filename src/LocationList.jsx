@@ -76,7 +76,7 @@ const locationData = [
 export function LocationList() {
   return (
     <PageShell title="Location List">
-      <div className="container mx-auto py-10">
+      <div className="container mx-auto">
         <DataTable columns={columns} data={locationData} />
       </div>
     </PageShell>
