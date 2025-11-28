@@ -10,7 +10,7 @@ import { Suggestions } from "@/Suggestions"
 import { TopNav } from "@/TopNav"
 
 function App() {
-  var isAuthenticated = false
+  var isAuthenticated = true
 
   if (!isAuthenticated) {
     return (
