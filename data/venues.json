@@ -1,0 +1,1112 @@
+{
+	"venues": {
+		"venue": [
+			{
+				"venuec": "大埔公共圖書館",
+				"venuee": "Tai Po Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "100"
+			},
+			{
+				"venuec": "屏山天水圍公共圖書館",
+				"venuee": "Ping Shan Tin Shui Wai Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "101"
+			},
+			{
+				"venuec": "土瓜灣公共圖書館",
+				"venuee": "To Kwa Wan Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "102"
+			},
+			{
+				"venuec": "將軍澳公共圖書館",
+				"venuee": "Tseung Kwan O Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "103"
+			},
+			{
+				"venuec": "尖沙咀公共圖書館",
+				"venuee": "Tsim Sha Tsui Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "104"
+			},
+			{
+				"venuec": "青衣公共圖書館",
+				"venuee": "Tsing Yi Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "105"
+			},
+			{
+				"venuec": "荃灣公共圖書館",
+				"venuee": "Tsuen Wan Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "106"
+			},
+			{
+				"venuec": "慈雲山公共圖書館",
+				"venuee": "Tsz Wan Shan Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "107"
+			},
+			{
+				"venuec": "屯門公共圖書館",
+				"venuee": "Tuen Mun Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "108"
+			},
+			{
+				"venuec": "元州街公共圖書館",
+				"venuee": "Un Chau Street Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "109"
+			},
+			{
+				"venuec": "黃泥涌公共圖書館",
+				"venuee": "Wong Nai Chung Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "110"
+			},
+			{
+				"venuec": "油蔴地公共圖書館",
+				"venuee": "Yau Ma Tei Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "111"
+			},
+			{
+				"venuec": "香港體育館 (表演場)",
+				"venuee": "Hong Kong Coliseum (Arena)",
+				"latitude": "",
+				"longitude": "",
+				"_id": "1117413"
+			},
+			{
+				"venuec": "耀東公共圖書館",
+				"venuee": "Yiu Tung Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "112"
+			},
+			{
+				"venuec": "元朗公共圖書館",
+				"venuee": "Yuen Long Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "113"
+			},
+			{
+				"venuec": "天水圍北公共圖書館",
+				"venuee": "Tin Shui Wai North Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "1720"
+			},
+			{
+				"venuec": "香港文化博物館 (專題展覽館一及二)",
+				"venuee": "Hong Kong Heritage Museum (Thematic Galleries 1 & 2)",
+				"latitude": "22.37737",
+				"longitude": "114.1853",
+				"_id": "22512700"
+			},
+			{
+				"venuec": "北區大會堂 (演奏廳)",
+				"venuee": "North District Town Hall (Auditorium)",
+				"latitude": "22.501639",
+				"longitude": "114.128911",
+				"_id": "3110031"
+			},
+			{
+				"venuec": "北區大會堂 (活動室(2))",
+				"venuee": "North District Town Hall (Function Room (2))",
+				"latitude": "22.501639",
+				"longitude": "114.128911",
+				"_id": "3110267"
+			},
+			{
+				"venuec": "北區大會堂 (活動室(1))",
+				"venuee": "North District Town Hall (Function Room (1))",
+				"latitude": "22.501639",
+				"longitude": "114.128911",
+				"_id": "3110565"
+			},
+			{
+				"venuec": "伊利沙伯體育館 (表演場)",
+				"venuee": "Queen Elizabeth Stadium (Arena)",
+				"latitude": "",
+				"longitude": "",
+				"_id": "3210299"
+			},
+			{
+				"venuec": "大埔文娛中心 (演藝廳)",
+				"venuee": "Tai Po Civic Centre (Auditorium)",
+				"latitude": "22.45175",
+				"longitude": "114.16815",
+				"_id": "35510043"
+			},
+			{
+				"venuec": "大埔文娛中心 (黑盒劇場)",
+				"venuee": "Tai Po Civic Centre (Black Box Theatre)",
+				"latitude": "22.45175",
+				"longitude": "114.16815",
+				"_id": "35510044"
+			},
+			{
+				"venuec": "大埔文娛中心 (活動室(1))",
+				"venuee": "Tai Po Civic Centre (Function Room (1))",
+				"latitude": "22.45175",
+				"longitude": "114.16815",
+				"_id": "35511887"
+			},
+			{
+				"venuec": "大埔文娛中心 (活動室(2))",
+				"venuee": "Tai Po Civic Centre (Function Room (2))",
+				"latitude": "22.45175",
+				"longitude": "114.16815",
+				"_id": "35517396"
+			},
+			{
+				"venuec": "富山公共圖書館",
+				"venuee": "Fu Shan Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "357"
+			},
+			{
+				"venuec": "沙田大會堂",
+				"venuee": "Sha Tin Town Hall",
+				"latitude": "22.38136",
+				"longitude": "114.18990",
+				"_id": "363"
+			},
+			{
+				"venuec": "沙田大會堂 (文娛廳)",
+				"venuee": "Sha Tin Town Hall (Cultural Activities Hall)",
+				"latitude": "22.38136",
+				"longitude": "114.18990",
+				"_id": "36310036"
+			},
+			{
+				"venuec": "沙田大會堂 (展覽廳)",
+				"venuee": "Sha Tin Town Hall (Exhibition Gallery)",
+				"latitude": "22.38136",
+				"longitude": "114.18990",
+				"_id": "36310037"
+			},
+			{
+				"venuec": "沙田大會堂 (舞蹈室)",
+				"venuee": "Sha Tin Town Hall (Dance Studio)",
+				"latitude": "22.38136",
+				"longitude": "114.18990",
+				"_id": "36310304"
+			},
+			{
+				"venuec": "沙田大會堂 (會議室)",
+				"venuee": "Sha Tin Town Hall (Conference Room)",
+				"latitude": "22.38136",
+				"longitude": "114.18990",
+				"_id": "36310566"
+			},
+			{
+				"venuec": "沙田大會堂 (演講室(1))",
+				"venuee": "Sha Tin Town Hall (Lecture Room (1))",
+				"latitude": "22.38136",
+				"longitude": "114.18990",
+				"_id": "36310593"
+			},
+			{
+				"venuec": "沙田大會堂 (演講室(2))",
+				"venuee": "Sha Tin Town Hall (Lecture Room (2))",
+				"latitude": "22.38136",
+				"longitude": "114.18990",
+				"_id": "36310594"
+			},
+			{
+				"venuec": "沙田大會堂 (廣場)",
+				"venuee": "Sha Tin Town Hall (Plaza)",
+				"latitude": "22.38136",
+				"longitude": "114.18990",
+				"_id": "36310920"
+			},
+			{
+				"venuec": "沙田大會堂 (音樂室)",
+				"venuee": "Sha Tin Town Hall (Music Studio)",
+				"latitude": "22.38136",
+				"longitude": "114.18990",
+				"_id": "36311771"
+			},
+			{
+				"venuec": "小西灣公共圖書館",
+				"venuee": "Siu Sai Wan Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "4662"
+			},
+			{
+				"venuec": "香港文化中心",
+				"venuee": "Hong Kong Cultural Centre",
+				"latitude": "22.29386",
+				"longitude": "114.17053",
+				"_id": "501"
+			},
+			{
+				"venuec": "香港文化中心 (音樂廳)",
+				"venuee": "Hong Kong Cultural Centre (Concert Hall)",
+				"latitude": "22.29386",
+				"longitude": "114.17053",
+				"_id": "50110014"
+			},
+			{
+				"venuec": "香港文化中心 (大劇院)",
+				"venuee": "Hong Kong Cultural Centre (Grand Theatre)",
+				"latitude": "22.29386",
+				"longitude": "114.17053",
+				"_id": "50110015"
+			},
+			{
+				"venuec": "香港文化中心 (劇場)",
+				"venuee": "Hong Kong Cultural Centre (Studio Theatre)",
+				"latitude": "22.29386",
+				"longitude": "114.17053",
+				"_id": "50110016"
+			},
+			{
+				"venuec": "香港文化中心 (露天廣場C區)",
+				"venuee": "Hong Kong Cultural Centre (Piazza C)",
+				"latitude": "22.29386",
+				"longitude": "114.17053",
+				"_id": "50111647"
+			},
+			{
+				"venuec": "香港仔公共圖書館",
+				"venuee": "Aberdeen Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "53"
+			},
+			{
+				"venuec": "鴨脷洲公共圖書館",
+				"venuee": "Ap Lei Chau Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "54"
+			},
+			{
+				"venuec": "蝴蝶邨公共圖書館",
+				"venuee": "Butterfly Estate Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "55"
+			},
+			{
+				"venuec": "柴灣公共圖書館",
+				"venuee": "Chai Wan Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "56"
+			},
+			{
+				"venuec": "長洲公共圖書館",
+				"venuee": "Cheung Chau Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "57"
+			},
+			{
+				"venuec": "大會堂公共圖書館",
+				"venuee": "City Hall Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "58"
+			},
+			{
+				"venuec": "電氣道公共圖書館",
+				"venuee": "Electric Road Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "59"
+			},
+			{
+				"venuec": "東涌公共圖書館",
+				"venuee": "Tung Chung Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "599"
+			},
+			{
+				"venuec": "花園街公共圖書館",
+				"venuee": "Fa Yuen Street Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "60"
+			},
+			{
+				"venuec": "粉嶺公共圖書館",
+				"venuee": "Fanling Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "61"
+			},
+			{
+				"venuec": "香港中央圖書館",
+				"venuee": "Hong Kong Central Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "62"
+			},
+			{
+				"venuec": "香港中央圖書館 (地下演講廳)",
+				"venuee": "Hong Kong Central Library (G/F Lecture Theatre)",
+				"latitude": "",
+				"longitude": "",
+				"_id": "6210513"
+			},
+			{
+				"venuec": "香港中央圖書館 (地下展覽館)",
+				"venuee": "Hong Kong Central Library (G/F Exhibition Gallery)",
+				"latitude": "",
+				"longitude": "",
+				"_id": "6210646"
+			},
+			{
+				"venuec": "紅磡公共圖書館",
+				"venuee": "Hung Hom Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "63"
+			},
+			{
+				"venuec": "九龍城公共圖書館",
+				"venuee": "Kowloon City Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "64"
+			},
+			{
+				"venuec": "九龍公共圖書館",
+				"venuee": "Kowloon Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "65"
+			},
+			{
+				"venuec": "荔枝角公共圖書館",
+				"venuee": "Lai Chi Kok Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "66"
+			},
+			{
+				"venuec": "藍田公共圖書館",
+				"venuee": "Lam Tin Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "67"
+			},
+			{
+				"venuec": "瀝源公共圖書館",
+				"venuee": "Lek Yuen Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "68"
+			},
+			{
+				"venuec": "調景嶺公共圖書館",
+				"venuee": "Tiu Keng Leng Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "6858"
+			},
+			{
+				"venuec": "駱克道公共圖書館",
+				"venuee": "Lockhart Road Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "69"
+			},
+			{
+				"venuec": "樂富公共圖書館",
+				"venuee": "Lok Fu Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "70"
+			},
+			{
+				"venuec": "龍興公共圖書館",
+				"venuee": "Lung Hing Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "71"
+			},
+			{
+				"venuec": "梅窩公共圖書館",
+				"venuee": "Mui Wo Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "72"
+			},
+			{
+				"venuec": "牛池灣公共圖書館",
+				"venuee": "Ngau Chi Wan Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "73"
+			},
+			{
+				"venuec": "香港太空館 (演講廳)",
+				"venuee": "Hong Kong Space Museum (Lecture Hall)",
+				"latitude": "22.29441",
+				"longitude": "114.17192",
+				"_id": "73810020"
+			},
+			{
+				"venuec": "牛頭角公共圖書館",
+				"venuee": "Ngau Tau Kok Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "74"
+			},
+			{
+				"venuec": "粉嶺南公共圖書館",
+				"venuee": "Fanling South Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "7434"
+			},
+			{
+				"venuec": "北葵涌公共圖書館",
+				"venuee": "North Kwai Chung Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "75"
+			},
+			{
+				"venuec": "香港電影資料館 (電影院)",
+				"venuee": "Hong Kong Film Archive (Cinema)",
+				"latitude": "22.285056",
+				"longitude": "114.222075",
+				"_id": "75010017"
+			},
+			{
+				"venuec": "香港電影資料館 (展覽廳)",
+				"venuee": "Hong Kong Film Archive (Exhibition Hall)",
+				"latitude": "22.285056",
+				"longitude": "114.222075",
+				"_id": "75010293"
+			},
+			{
+				"venuec": "南丫島北段公共圖書館",
+				"venuee": "North Lamma Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "76"
+			},
+			{
+				"venuec": "屯門大會堂 (演奏廳)",
+				"venuee": "Tuen Mun Town Hall (Auditorium)",
+				"latitude": "22.391810",
+				"longitude": "113.976771",
+				"_id": "76810048"
+			},
+			{
+				"venuec": "屯門大會堂 (文娛廳)",
+				"venuee": "Tuen Mun Town Hall (Cultural Activities Hall)",
+				"latitude": "22.391810",
+				"longitude": "113.976771",
+				"_id": "76810049"
+			},
+			{
+				"venuec": "屯門大會堂 (展覽廳)",
+				"venuee": "Tuen Mun Town Hall (Exhibition Gallery)",
+				"latitude": "22.391810",
+				"longitude": "113.976771",
+				"_id": "76810050"
+			},
+			{
+				"venuec": "屯門大會堂 (演講室(2))",
+				"venuee": "Tuen Mun Town Hall (Lecture Room (2))",
+				"latitude": "22.391810",
+				"longitude": "113.976771",
+				"_id": "76810200"
+			},
+			{
+				"venuec": "屯門大會堂 (舞蹈室)",
+				"venuee": "Tuen Mun Town Hall (Dance Studio)",
+				"latitude": "22.391810",
+				"longitude": "113.976771",
+				"_id": "76810294"
+			},
+			{
+				"venuec": "屯門大會堂 (音樂室)",
+				"venuee": "Tuen Mun Town Hall (Music Studio)",
+				"latitude": "22.391810",
+				"longitude": "113.976771",
+				"_id": "76810295"
+			},
+			{
+				"venuec": "屯門大會堂 (會議室)",
+				"venuee": "Tuen Mun Town Hall (Conference Room)",
+				"latitude": "22.391810",
+				"longitude": "113.976771",
+				"_id": "76810312"
+			},
+			{
+				"venuec": "屯門大會堂 (演講室(1))",
+				"venuee": "Tuen Mun Town Hall (Lecture Room (1))",
+				"latitude": "22.391810",
+				"longitude": "113.976771",
+				"_id": "76810831"
+			},
+			{
+				"venuec": "北角公共圖書館",
+				"venuee": "North Point Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "77"
+			},
+			{
+				"venuec": "圓洲角公共圖書館",
+				"venuee": "Yuen Chau Kok Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "7744"
+			},
+			{
+				"venuec": "石硤尾公共圖書館",
+				"venuee": "Shek Kip Mei Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "78"
+			},
+			{
+				"venuec": "坪洲公共圖書館",
+				"venuee": "Peng Chau Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "79"
+			},
+			{
+				"venuec": "保安道公共圖書館",
+				"venuee": "Po On Road Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "80"
+			},
+			{
+				"venuec": "薄扶林公共圖書館",
+				"venuee": "Pok Fu Lam Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "81"
+			},
+			{
+				"venuec": "馬鞍山公共圖書館",
+				"venuee": "Ma On Shan Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "811"
+			},
+			{
+				"venuec": "鰂魚涌公共圖書館",
+				"venuee": "Quarry Bay Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "82"
+			},
+			{
+				"venuec": "K11 Art House",
+				"venuee": "K11 Art House",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8262"
+			},
+			{
+				"venuec": "深水埗公共圖書館",
+				"venuee": "Sham Shui Po Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8265"
+			},
+			{
+				"venuec": "深水埗公共圖書館 (香港中央圖書館多用途展示及閱覽區)",
+				"venuee": "Sham Shui Po Public Library (Hong Kong Central Library Multi-Purpose Display and Reading Area\r\n)",
+				"latitude": "",
+				"longitude": "",
+				"_id": "826517385"
+			},
+			{
+				"venuec": "東九文化中心",
+				"venuee": "East Kowloon Cultural Centre",
+				"latitude": "22.32427",
+				"longitude": "114.21494",
+				"_id": "8268"
+			},
+			{
+				"venuec": "東九文化中心 (展隅)",
+				"venuee": "East Kowloon Cultural Centre (The Corner)",
+				"latitude": "22.32427",
+				"longitude": "114.21494",
+				"_id": "826817387"
+			},
+			{
+				"venuec": "東九文化中心 (劇場)",
+				"venuee": "East Kowloon Cultural Centre (The Theatre)",
+				"latitude": "22.32427",
+				"longitude": "114.21494",
+				"_id": "826817392"
+			},
+			{
+				"venuec": "東九文化中心 (觀點)",
+				"venuee": "East Kowloon Cultural Centre (The Spot)",
+				"latitude": "22.32427",
+				"longitude": "114.21494",
+				"_id": "826817393"
+			},
+			{
+				"venuec": "東九文化中心 (劇院)",
+				"venuee": "East Kowloon Cultural Centre (The Hall)",
+				"latitude": "22.32427",
+				"longitude": "114.21494",
+				"_id": "826817417"
+			},
+			{
+				"venuec": "東九文化中心 (創館)",
+				"venuee": "East Kowloon Cultural Centre (The Lab)",
+				"latitude": "22.32427",
+				"longitude": "114.21494",
+				"_id": "826817418"
+			},
+			{
+				"venuec": "東九文化中心 (形館)",
+				"venuee": "East Kowloon Cultural Centre (The Turns)",
+				"latitude": "22.32427",
+				"longitude": "114.21494",
+				"_id": "826817419"
+			},
+			{
+				"venuec": "東九文化中心 (樂館)",
+				"venuee": "East Kowloon Cultural Centre (The Beats)",
+				"latitude": "22.32427",
+				"longitude": "114.21494",
+				"_id": "826817420"
+			},
+			{
+				"venuec": "鯉魚門體育館活動室 (小)",
+				"venuee": "Activity Room (Small), Lei Yue Mun Sports Centre",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8299"
+			},
+			{
+				"venuec": "西貢公共圖書館",
+				"venuee": "Sai Kung Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "83"
+			},
+			{
+				"venuec": "中西區區內場地",
+				"venuee": "Venues in Central & Western district",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8331"
+			},
+			{
+				"venuec": "東區區內場地",
+				"venuee": "Venues in Eastern district",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8332"
+			},
+			{
+				"venuec": "南區區內場地",
+				"venuee": "Venues in Southern district",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8333"
+			},
+			{
+				"venuec": "灣仔區內場地",
+				"venuee": "Venues in Wan Chai district",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8334"
+			},
+			{
+				"venuec": "觀塘區內場地",
+				"venuee": "Venues in Kwun Tong district",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8336"
+			},
+			{
+				"venuec": "深水埗區內場地",
+				"venuee": "Venues in Sham Shui Po district",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8337"
+			},
+			{
+				"venuec": "黃大仙區內場地",
+				"venuee": "Venues in Wong Tai Sin district",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8338"
+			},
+			{
+				"venuec": "油尖旺區內場地",
+				"venuee": "Venues in Yau Tsim Mong district",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8339"
+			},
+			{
+				"venuec": "離島區內場地",
+				"venuee": "Venues in Islands district",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8340"
+			},
+			{
+				"venuec": "葵青區內場地",
+				"venuee": "Venues in Kwai Tsing district",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8341"
+			},
+			{
+				"venuec": "北區區內場地",
+				"venuee": "Venues in North district",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8342"
+			},
+			{
+				"venuec": "沙田區內場地",
+				"venuee": "Venues in Sha Tin district",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8344"
+			},
+			{
+				"venuec": "大埔區內場地",
+				"venuee": "Venues in Tai Po district",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8345"
+			},
+			{
+				"venuec": "荃灣區內場地",
+				"venuee": "Venues in Tsuen Wan district",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8346"
+			},
+			{
+				"venuec": "屯門區內場地",
+				"venuee": "Venues in Tuen Mun district",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8347"
+			},
+			{
+				"venuec": "元朗區內場地",
+				"venuee": "Venues in Yuen Long district",
+				"latitude": "",
+				"longitude": "",
+				"_id": "8348"
+			},
+			{
+				"venuec": "鯉魚門公共圖書館",
+				"venuee": "Lei Yue Mun Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "84"
+			},
+			{
+				"venuec": "新蒲崗公共圖書館",
+				"venuee": "San Po Kong Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "85"
+			},
+			{
+				"venuec": "秀茂坪公共圖書館",
+				"venuee": "Sau Mau Ping Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "86"
+			},
+			{
+				"venuec": "沙頭角公共圖書館",
+				"venuee": "Sha Tau Kok Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "87"
+			},
+			{
+				"venuec": "葵青劇院",
+				"venuee": "Kwai Tsing Theatre",
+				"latitude": "22.35665",
+				"longitude": "114.12623",
+				"_id": "871"
+			},
+			{
+				"venuec": "葵青劇院 (演藝廳)",
+				"venuee": "Kwai Tsing Theatre (Auditorium)",
+				"latitude": "22.35665",
+				"longitude": "114.12623",
+				"_id": "87110023"
+			},
+			{
+				"venuec": "荃灣大會堂 (演奏廳)",
+				"venuee": "Tsuen Wan Town Hall (Auditorium)",
+				"latitude": "22.37109",
+				"longitude": "114.11277",
+				"_id": "87210045"
+			},
+			{
+				"venuec": "元朗劇院 (演藝廳)",
+				"venuee": "Yuen Long Theatre (Auditorium)",
+				"latitude": "22.44152",
+				"longitude": "114.02289",
+				"_id": "87310051"
+			},
+			{
+				"venuec": "元朗劇院 (演講室)",
+				"venuee": "Yuen Long Theatre (Lecture Room)",
+				"latitude": "22.44152",
+				"longitude": "114.02289",
+				"_id": "87310196"
+			},
+			{
+				"venuec": "元朗劇院 (舞蹈室)",
+				"venuee": "Yuen Long Theatre (Dance Studio)",
+				"latitude": "22.44152",
+				"longitude": "114.02289",
+				"_id": "87310362"
+			},
+			{
+				"venuec": "元朗劇院 (排演室)",
+				"venuee": "Yuen Long Theatre (Rehearsal Room)",
+				"latitude": "22.44152",
+				"longitude": "114.02289",
+				"_id": "87310544"
+			},
+			{
+				"venuec": "元朗劇院 (活動室)",
+				"venuee": "Yuen Long Theatre (Function Room)",
+				"latitude": "22.44152",
+				"longitude": "114.02289",
+				"_id": "87311966"
+			},
+			{
+				"venuec": "元朗劇院 (大堂展覽場地)",
+				"venuee": "Yuen Long Theatre (Exhibition Corner)",
+				"latitude": "22.44152",
+				"longitude": "114.02289",
+				"_id": "87315528"
+			},
+			{
+				"venuec": "牛池灣文娛中心 (文娛廳)",
+				"venuee": "Ngau Chi Wan Civic Centre (Cultural Activities Hall)",
+				"latitude": "22.334583",
+				"longitude": "114.208766",
+				"_id": "87410028"
+			},
+			{
+				"venuec": "牛池灣文娛中心 (劇院)",
+				"venuee": "Ngau Chi Wan Civic Centre (Theatre)",
+				"latitude": "22.334583",
+				"longitude": "114.208766",
+				"_id": "87410030"
+			},
+			{
+				"venuec": "香港大會堂 (音樂廳)",
+				"venuee": "Hong Kong City Hall (Concert Hall)",
+				"latitude": "22.282279",
+				"longitude": "114.161545",
+				"_id": "87510008"
+			},
+			{
+				"venuec": "香港大會堂 (演奏廳)",
+				"venuee": "Hong Kong City Hall (Recital Hall)",
+				"latitude": "22.282279",
+				"longitude": "114.161545",
+				"_id": "87510009"
+			},
+			{
+				"venuec": "香港大會堂 (劇院)",
+				"venuee": "Hong Kong City Hall (Theatre)",
+				"latitude": "22.282279",
+				"longitude": "114.161545",
+				"_id": "87510010"
+			},
+			{
+				"venuec": "香港大會堂 (展覽廳)",
+				"venuee": "Hong Kong City Hall (Exhibition Hall)",
+				"latitude": "22.282279",
+				"longitude": "114.161545",
+				"_id": "87510305"
+			},
+			{
+				"venuec": "香港大會堂 (展覽館)",
+				"venuee": "Hong Kong City Hall (Exhibition Gallery)",
+				"latitude": "22.282279",
+				"longitude": "114.161545",
+				"_id": "87510494"
+			},
+			{
+				"venuec": "高山劇場 (劇院)",
+				"venuee": "Ko Shan Theatre (Theatre)",
+				"latitude": "22.31368",
+				"longitude": "114.18556",
+				"_id": "87610118"
+			},
+			{
+				"venuec": "高山劇場 (新翼演藝廳)",
+				"venuee": "Ko Shan Theatre (New Wing Auditorium)",
+				"latitude": "22.31368",
+				"longitude": "114.18556",
+				"_id": "87616551"
+			},
+			{
+				"venuec": "西灣河文娛中心 (文娛廳)",
+				"venuee": "Sai Wan Ho Civic Centre (Cultural Activities Hall)",
+				"latitude": "22.2818",
+				"longitude": "114.222501",
+				"_id": "87710033"
+			},
+			{
+				"venuec": "西灣河文娛中心 (劇院)",
+				"venuee": "Sai Wan Ho Civic Centre (Theatre)",
+				"latitude": "22.2818",
+				"longitude": "114.222501",
+				"_id": "87710034"
+			},
+			{
+				"venuec": "西灣河文娛中心 (大堂)",
+				"venuee": "Sai Wan Ho Civic Centre (Foyer)",
+				"latitude": "22.2818",
+				"longitude": "114.222501",
+				"_id": "87710802"
+			},
+			{
+				"venuec": "上環文娛中心 (演講廳)",
+				"venuee": "Sheung Wan Civic Centre (Lecture Hall)",
+				"latitude": "22.28602",
+				"longitude": "114.14967",
+				"_id": "87810041"
+			},
+			{
+				"venuec": "上環文娛中心 (劇院)",
+				"venuee": "Sheung Wan Civic Centre (Theatre)",
+				"latitude": "22.28602",
+				"longitude": "114.14967",
+				"_id": "87810042"
+			},
+			{
+				"venuec": "沙田公共圖書館",
+				"venuee": "Sha Tin Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "88"
+			},
+			{
+				"venuec": "石塘咀公共圖書館",
+				"venuee": "Shek Tong Tsui Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "89"
+			},
+			{
+				"venuec": "石圍角公共圖書館",
+				"venuee": "Shek Wai Kok Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "90"
+			},
+			{
+				"venuec": "上水公共圖書館",
+				"venuee": "Sheung Shui Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "91"
+			},
+			{
+				"venuec": "瑞和街公共圖書館",
+				"venuee": "Shui Wo Street Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "92"
+			},
+			{
+				"venuec": "順利邨公共圖書館",
+				"venuee": "Shun Lee Estate Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "93"
+			},
+			{
+				"venuec": "士美非路公共圖書館",
+				"venuee": "Smithfield Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "94"
+			},
+			{
+				"venuec": "南葵涌公共圖書館",
+				"venuee": "South Kwai Chung Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "95"
+			},
+			{
+				"venuec": "南丫島南段公共圖書館",
+				"venuee": "South Lamma Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "96"
+			},
+			{
+				"venuec": "赤柱公共圖書館",
+				"venuee": "Stanley Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "969"
+			},
+			{
+				"venuec": "大興公共圖書館",
+				"venuee": "Tai Hing Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "97"
+			},
+			{
+				"venuec": "大角咀公共圖書館",
+				"venuee": "Tai Kok Tsui Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "98"
+			},
+			{
+				"venuec": "大澳公共圖書館",
+				"venuee": "Tai O Public Library",
+				"latitude": "",
+				"longitude": "",
+				"_id": "99"
+			}
+		]
+	}
+}
