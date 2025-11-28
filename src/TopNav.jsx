@@ -1,5 +1,13 @@
+import { UserIcon, LogOutIcon } from 'lucide-react'
 import { Link, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 import { ModeToggle } from "@/components/mode-toggle"
 import {
   NavigationMenu,
@@ -66,21 +74,64 @@ export function TopNav() {
             {/* dark mode button */}
             <ModeToggle />
 
-            {/* Account */}
-            <Button
-              asChild
-              size="sm"
-              className="text-sm font-medium px-4 h-9 rounded-md shadow-sm cursor-pointer"
-            >
-              <Link to="/account">
-                Account
-              </Link>
-            </Button>
+            {/* User Menu */}
+            <DropdownMenuUserMenu username="csci2720" email="csci2720@gmail.com" role="Admin" />
         </div>
       </div>
 
       {/* bottom separator */}
       <div className="h-px w-full bg-border" />
     </nav>
+  )
+}
+
+const listItems = [
+  {
+    icon: UserIcon,
+    property: 'Profile'
+  },
+  {
+    icon: LogOutIcon,
+    property: 'Sign Out'
+  }
+]
+
+function DropdownMenuUserMenu(props) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button size='icon' className='overflow-hidden rounded-full'>
+          { props.username.charAt(0).toUpperCase() }
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className='w-56' align='end' alignOffset={-15}>
+        <DropdownMenuItem className="flex items-center gap-3">
+          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold">
+            {props.username.charAt(0).toUpperCase()}
+          </div>
+          <div className="flex flex-col">
+            <span className="font-bold leading-tight">
+              {props.username}
+            </span>
+            <span className="text-xs text-muted-foreground leading-tight">
+              {props.email}
+            </span>
+            {props.role && (
+              <span className="text-xs uppercase text-muted-foreground leading-tight">
+                {props.role}
+              </span>
+            )}
+          </div>
+        </DropdownMenuItem>
+        <DropdownMenuGroup>
+          {listItems.map((item, index) => (
+            <DropdownMenuItem key={index}>
+              <item.icon />
+              <span>{item.property}</span>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
