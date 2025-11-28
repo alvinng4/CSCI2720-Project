@@ -1,3 +1,5 @@
+import { PageShell } from "@/components/page-shell"
+
 /* Fake data */
 const locationData = [
   { id: 1, location: "location1", distance: 61, noOfEvents: 3 },
@@ -7,9 +9,11 @@ const locationData = [
 
 export function LocationList() {
   return (
-    <p className="text-muted-foreground">
-      Hello, world!
-    </p>
+    <PageShell title="Location List">
+      <p className="text-muted-foreground">
+        Hello, world!
+      </p>
+    </PageShell>
   )
 }
 

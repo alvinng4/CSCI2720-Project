@@ -1,7 +1,11 @@
+import { PageShell } from "@/components/page-shell"
+
 export function Map() {
   return (
-    <p className="text-muted-foreground">
-      Hello, world!
-    </p>
+    <PageShell title="Map">
+      <p className="text-muted-foreground">
+        Hello, world!
+      </p>
+    </PageShell>
   )
 }

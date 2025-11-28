@@ -1,7 +1,11 @@
+import { PageShell } from "@/components/page-shell"
+
 export function FavouriteList() {
   return (
-    <p className="text-muted-foreground">
-      Hello, world!
-    </p>
+    <PageShell title="Favourite List">
+      <p className="text-muted-foreground">
+        Hello, world!
+      </p>
+    </PageShell>
   )
 }

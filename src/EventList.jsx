@@ -1,7 +1,11 @@
+import { PageShell } from "@/components/page-shell"
+
 export function EventList() {
   return (
-    <p className="text-muted-foreground">
-      Hello, world!
-    </p>
+    <PageShell title="Event List">
+      <p className="text-muted-foreground">
+        Hello, world!
+      </p>
+    </PageShell>
   )
 }
