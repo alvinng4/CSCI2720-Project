@@ -27,6 +27,7 @@ function App() {
 
       <main>
         <Routes>
+          <Route path="/auth" element={<Navigate to="/" replace />} />
           <Route path="/" element={<Home />} />
           <Route path="/locationList" element={<LocationList />} />
           <Route path="/eventList" element={<EventList />} />
