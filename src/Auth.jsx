@@ -155,7 +155,7 @@ function SignUpForm(props) {
                 type="password"
                 required
                 value={props.data.confirmPassword}
-                onChange={p => props.onChange({ ...props.data, password: p.target.value })}
+                onChange={p => props.onChange({ ...props.data, confirmPassword: p.target.value })}
               />
             </Field>
             <Field>
