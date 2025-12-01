@@ -1,13 +1,17 @@
-import { Routes, Route, Navigate } from "react-router-dom"
+// src/App.jsx
+import { Routes, Route, Navigate } from "react-router-dom";
 
-import { Auth } from "@/Auth"
-import { EventList } from "@/EventList"
-import { FavouriteList } from "@/FavouriteList"
-import { Home } from "@/Home"
-import { LocationList } from "@/LocationList"
-import { Map } from "@/Map"
-import { Suggestions } from "@/Suggestions"
-import { TopNav } from "@/TopNav"
+import { Auth } from "@/Auth";
+import { Home } from "@/Home";
+import { LocationList } from "@/LocationList";
+import { EventList } from "@/EventList";     // this component shows admin UI if isAdmin(user)
+import { Map } from "@/Map";
+import { FavouriteList } from "@/FavouriteList";
+import { Suggestions } from "@/Suggestions";
+import { TopNav } from "@/TopNav";
+
+import { UsersAdmin } from "@/admin/UsersAdmin"; // admin-only page
+import { RequireAdmin } from "@/lib/RequireAdmin";
 
 function App() {
   var isAuthenticated = true
@@ -20,24 +24,42 @@ function App() {
       </Routes>
     )
   }
-
   return (
     <div>
       <TopNav />
 
       <main>
         <Routes>
-          <Route path="/auth" element={<Navigate to="/" replace />} />
+          {/* Auth */}
+          <Route path="/auth" element={<Auth />} />
+
+          {/* Public routes */}
           <Route path="/" element={<Home />} />
           <Route path="/locationList" element={<LocationList />} />
           <Route path="/eventList" element={<EventList />} />
           <Route path="/map" element={<Map />} />
           <Route path="/favouriteList" element={<FavouriteList />} />
           <Route path="/suggestions" element={<Suggestions />} />
+
+          {/* Admin-only route(s) */}
+          <Route
+            path="/users"
+            element={
+              <RequireAdmin>
+                <UsersAdmin />
+              </RequireAdmin>
+            }
+          />
+
+          {/* Optional: if someone hits the old /admin URL, send them to /eventList */}
+          <Route path="/admin/*" element={<Navigate to="/eventList" replace />} />
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

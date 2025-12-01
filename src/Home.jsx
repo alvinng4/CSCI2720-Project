@@ -16,7 +16,7 @@ export function Home() {
     {/* Banner */}
       <div className="w-full">
         <img
-          src="/images/home-pic.jpg"
+          src="/home-pic.jpg"
           alt="Hong Kong skyline"
           className="block w-full h-48 md:h-64 lg:h-80 object-cover"
         />
