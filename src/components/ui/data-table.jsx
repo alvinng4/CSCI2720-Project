@@ -16,11 +16,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Input } from "@/components/ui/input"
 
 export function DataTable({
   columns,
   data,
+  renderToolbar,
 }) {
   const [sorting, setSorting] = React.useState([])
   const [columnFilters, setColumnFilters] = React.useState(
@@ -44,16 +44,7 @@ export function DataTable({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center">
-        <Input
-          placeholder="Filter name"
-          value={(table.getColumn("name")?.getFilterValue()) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-xs"
-        />
-      </div>
+      {renderToolbar?.({ table })}
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>

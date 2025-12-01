@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button"
 import { PageShell } from "@/components/page-shell"
 import { DataTable } from "@/components/ui/data-table"
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
+import { Input } from "@/components/ui/input"
 
 /* Fake data */
 const locationData = [
@@ -77,7 +78,7 @@ export function LocationList() {
   return (
     <PageShell title="Location List">
       <div className="container mx-auto">
-        <DataTable columns={columns} data={locationData} />
+        <DataTable columns={columns} data={locationData} renderToolbar={toolBar} />
       </div>
     </PageShell>
   )
@@ -141,3 +142,17 @@ const columns = [
   },
 ]
 
+function toolBar({ table }) {
+  return (
+    <div className="flex items-center">
+      <Input
+        placeholder="Filter name"
+        value={(table.getColumn("name")?.getFilterValue()) ?? ""}
+        onChange={(event) =>
+          table.getColumn("name")?.setFilterValue(event.target.value)
+        }
+        className="max-w-xs"
+      />
+    </div>
+  )
+}
