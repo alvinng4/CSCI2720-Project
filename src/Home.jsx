@@ -24,11 +24,11 @@ export function Home() {
       
       <PageShell>
         {/* HERO */}
-        <div className="relative overflow-hidden rounded-3xl border bg-gradient-to-br from-indigo-50 via-white to-pink-50 p-8 shadow-sm">
+        <div className="relative overflow-hidden rounded-3xl border dark:border-black bg-gradient-to-br from-indigo-50 via-white to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-600 p-8 shadow-sm">
           <div className="absolute inset-0 -z-10 opacity-60 [background:radial-gradient(800px_circle_at_0%_0%,rgba(99,102,241,0.18),transparent_40%),radial-gradient(700px_circle_at_100%_100%,rgba(236,72,153,0.18),transparent_40%)]" />
-          <p className="text-xs uppercase tracking-wider text-indigo-600">HK Cultural Programmes</p>
+          <p className="text-xs uppercase tracking-wider text-indigo-600 dark:text-indigo-300">HK Cultural Programmes</p>
           <h1 className="mt-2 text-4xl font-bold leading-tight">
-            <span className="bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-indigo-600 to-pink-600 dark:from-indigo-300 dark:to-pink-200 bg-clip-text text-transparent">
               Find your favourite events!
             </span>
           </h1>

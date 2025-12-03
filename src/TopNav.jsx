@@ -68,7 +68,7 @@ export function TopNav() {
           to="/"
           className="mr-6 text-primary hover:text-primary/90 transition-colors cursor-pointer"
         >
-          <span className="hidden font-bold text-xl sm:inline-block">Project</span>
+          <span className="hidden font-bold text-xl sm:inline-block">Cultural HK</span>
         </Link>
 
         {/* nav items */}
