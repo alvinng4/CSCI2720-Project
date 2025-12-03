@@ -44,7 +44,7 @@ export function DataTable({
 
   return (
     <div className="flex flex-col gap-2">
-      {renderToolbar?.({ table })}
+      {renderToolbar?.(table)}
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>

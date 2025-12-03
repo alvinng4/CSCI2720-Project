@@ -10,10 +10,12 @@ const locationData = [
   {
     id: "22512700",
     name: "Hong Kong Heritage Museum (Thematic Galleries 1 & 2)",
+    num_events: 3,
   },
   {
     id: "3110267",
     name: "North District Town Hall (Function Room (2))",
+    num_events: 5,
   },
 ];
 
@@ -51,6 +53,22 @@ const columns = [
     ),
   },
   {
+    accessorKey: "num_events",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Number of events" />
+    ),
+    sortingFn: (rowA, rowB, columnId) => {
+      const stringA = rowA.getValue(columnId)
+      const stringB = rowB.getValue(columnId)
+      const a = Number(stringA)
+      const b = Number(stringB)
+      if (Number.isNaN(a) || Number.isNaN(b)) {
+        return stringA.localeCompare(stringB)
+      }
+      return a - b
+    },
+  },
+  {
     id: "actions",
     cell: () => {
       return (
@@ -68,7 +86,7 @@ const columns = [
   },
 ]
 
-function toolBar({ table }) {
+function toolBar(table) {
   return (
     <div className="flex items-center">
       <Input
