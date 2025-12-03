@@ -1,8 +1,3 @@
-/**
- * NOTE: While the DataTable are currently placed in "@/components/ui/data-table",
- * we may copy the code here and add custom components like distance filtering.
- */
-
 import { Check } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { PageShell } from "@/components/page-shell"
@@ -146,7 +141,7 @@ function toolBar({ table }) {
   return (
     <div className="flex items-center">
       <Input
-        placeholder="Filter name"
+        placeholder="Search by name"
         value={(table.getColumn("name")?.getFilterValue()) ?? ""}
         onChange={(event) =>
           table.getColumn("name")?.setFilterValue(event.target.value)
