@@ -25,6 +25,7 @@ function App() {
       </Routes>
     )
   }
+
   return (
     <div>
       <TopNav />
@@ -32,7 +33,7 @@ function App() {
       <main>
         <Routes>
           {/* Auth */}
-          <Route path="/auth" element={<Auth />} />
+          <Route path="/auth" element={<Navigate to="/" replace />} />
 
           {/* Public routes */}
           <Route path="/" element={<Home />} />

@@ -33,7 +33,7 @@ export function Auth() {
           className="font-medium cursor-pointer"
           onClick={() => setMode("login")}
         >
-          Project
+          Cultural HK
         </button>
 
         <div className="ml-auto">
