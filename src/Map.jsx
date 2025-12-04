@@ -8,11 +8,50 @@ import { FieldGroup, Field } from "@/components/ui/field"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
+
+
 export function Map() {
   const locations = locationsData.venues.venue;
   const center = [locations[0].latitude, locations[0].longitude];
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [comment, setComment] = useState("");
+
+  /* Fake comments */
+  const commentsData = [
+    {
+      "_id": "1",
+      "content": "cool",
+      "locID": "22512700" 
+    },
+    {
+      "_id": "2",
+      "content": "I like this",
+      "locID": "3110267" 
+    },
+    {
+      "_id": "3",
+      "content": "good",
+      "locID": "35510044" 
+    },{
+      "_id": "4",
+      "content": "too far",
+      "locID": "35517396" 
+    },{
+      "_id": "5",
+      "content": "boring",
+      "locID": "87110023" 
+    },{
+      "_id": "6",
+      "content": "great",
+      "locID": "87310051" 
+    },
+    {
+      "_id": "7",
+      "content": "haha",
+      "locID": "22512700" 
+    },
+  ]
+
   return (
     <PageShell title="Map">
       <div className="flex items-center justify-center gap-x-2">
@@ -27,12 +66,12 @@ export function Map() {
               <p>Comments</p>
               <br></br>
               <div>
-                <div className=" overflow-auto rounded-2xl border p-2 shadow-sm w-80 break-words whitespace-normal">
-                  Comment 1
-                </div>
-                <div className=" overflow-hidden rounded-2xl border p-2 shadow-sm w-80 break-words whitespace-normal">
-                  Comment 2
-                </div>
+                {commentsData.filter((com) => com.locID === selectedLocation?._id)
+                .map((com) => (
+                  <div key={com.id} className=" overflow-auto rounded-2xl border p-2 shadow-sm w-80 break-words whitespace-normal">
+                    {com.content}
+                  </div>
+                ))}
               </div>
               <br></br>
               <form className="w-80">
