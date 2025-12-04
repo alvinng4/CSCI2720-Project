@@ -11,14 +11,25 @@ import { Input } from "@/components/ui/input"
 
 
 export function Map() {
-  const locations = locationsData.venues.venue;
-  const center = [locations[0].latitude, locations[0].longitude];
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [comment, setComment] = useState("");
-
-  /* Fake comments */
-  const commentsData = [
-    {
+  const handleAddComment = (e) => {
+    e.preventDefault();
+    if(comment==="") return;
+    setCommentsData((prev) => [
+      ...prev,
+      {
+        _id: crypto.randomUUID(),
+        content: comment,
+        locID: selectedLocation._id
+      }
+    ]);
+    setComment("");
+  };
+const locations = locationsData.venues.venue;
+const center = [locations[0].latitude, locations[0].longitude];
+const [selectedLocation, setSelectedLocation] = useState(null);
+const [comment, setComment] = useState("");
+const [commentsData, setCommentsData] = useState([
+{
       "_id": "1",
       "content": "cool",
       "locID": "22512700" 
@@ -50,8 +61,7 @@ export function Map() {
       "content": "haha",
       "locID": "22512700" 
     },
-  ]
-
+]);
   return (
     <PageShell title="Map">
       <div className="flex items-center justify-center gap-x-2">
@@ -74,7 +84,7 @@ export function Map() {
                 ))}
               </div>
               <br></br>
-              <form className="w-80">
+              <form className="w-80" onSubmit={handleAddComment}>
                 <FieldGroup>
                   <Field>
                     <Input
@@ -86,7 +96,7 @@ export function Map() {
                     />
                   </Field>
                   <Field>
-                    <Button>Add Comment</Button>
+                    <Button type="submit">Add Comment</Button>
                   </Field>
                 </FieldGroup>
               </form>
