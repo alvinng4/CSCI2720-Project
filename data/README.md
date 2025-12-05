@@ -10,4 +10,15 @@ python preprocessing.py
 ```
 
 ## Initializing MongoDB database
-Todo...
+Note that Mongoose is required. Navigate to the parent directory and run
+```
+npm install
+```
+If you already have Mongoose installed, run the following commands to initialize your database
+```
+node init_db.js [dbName] [port]
+```
+
+> [!Warning]\
+> The program will not overwrite your database. Instead, it will insert new data.
+> If you want to have a fresh start, be sure to delete your database first.
