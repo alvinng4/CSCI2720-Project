@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button"
 import { Check, X } from "lucide-react"
 import { DataTable } from "@/components/ui/data-table"
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
+import { DataTableViewOptions }  from "@/components/ui/data-table-view-options"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -69,7 +70,7 @@ export function LocationListComponent({ isFavourite }) {
         columns={getColumns(isFavourite)}
         data={locations}
         renderToolbar={
-        (table) => toolBar(table, maxDist, distRange, setDistRange)
+          (table) => toolBar(table, maxDist, distRange, setDistRange)
         } 
       />
       </div>
@@ -180,12 +181,14 @@ function getColumns(isFavourite) {
   return [
     {
       accessorKey: "name",
+      title: "Name",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Name" />
       ),
     },
     {
       accessorKey: "num_events",
+      title: "# Events",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="# Events" />
       ),
@@ -202,12 +205,14 @@ function getColumns(isFavourite) {
     },
     {
       accessorKey: "district",
+      title: "District",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="District" />
       ),
     },
     {
       accessorKey: "distance",
+      title: "Distance (km)",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Distance (km)" />
       ),
@@ -241,6 +246,7 @@ function getColumns(isFavourite) {
     } :
     {
       accessorKey: "isFavourite",
+      title: "Favourite",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Favourite" />
       ),
@@ -261,9 +267,9 @@ function getColumns(isFavourite) {
 
 function toolBar(table, maxDist, distRange, setDistRange) {
   return (
-    <div className="flex items-center gap-x-2">
+    <div className="flex items-end gap-x-2">
+      <DataTableViewOptions table={table} />
       <Input
-        className="md:h-14"
         placeholder="Search by name"
         value={(table.getColumn("name")?.getFilterValue()) ?? ""}
         onChange={(event) =>
@@ -276,7 +282,7 @@ function toolBar(table, maxDist, distRange, setDistRange) {
           table.getColumn("district")?.setFilterValue(value == "all" ? "" : (value || ""))
         }
       >
-        <SelectTrigger className="md:!h-14 w-full">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select a district" />
         </SelectTrigger>
         <SelectContent>
