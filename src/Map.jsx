@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
 
-
 export function Map() {
   const handleAddComment = (e) => {
     e.preventDefault();
@@ -24,7 +23,7 @@ export function Map() {
     ]);
     setComment("");
   };
-const locations = locationsData.venues.venue;
+const locations = locationsData;
 const center = [locations[0].latitude, locations[0].longitude];
 const [selectedLocation, setSelectedLocation] = useState(null);
 const [comment, setComment] = useState("");

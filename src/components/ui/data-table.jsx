@@ -45,7 +45,14 @@ export function DataTable({
   })
 
   return (
-    <div className="flex flex-col-reverse gap-4 lg:flex-row justify-center">
+    <div className="flex flex-col gap-4 lg:flex-row justify-center">
+      {/* Side Menu */}
+      {renderSideMenu && (
+        <aside>
+          {renderSideMenu(table)}
+        </aside>
+      )}
+
       <div className="flex flex-col gap-2 flex-1 min-w-0">
         {renderToolbar?.(table)}
         <div className="overflow-hidden rounded-md border">
@@ -95,13 +102,6 @@ export function DataTable({
 
         <DataTablePagination table={table} />
       </div>
-
-      {/* Side Menu */}
-      {renderSideMenu && (
-        <aside>
-          {renderSideMenu(table)}
-        </aside>
-      )}
     </div>
   )
 }
