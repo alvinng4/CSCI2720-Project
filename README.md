@@ -12,16 +12,18 @@ npm run dev
 ```
 CSCI2720-Project/
 ├─ index.html
-├─ package.json
-├─ LICENSE
-├─ README.md
-├─ Other config files...
-└─ src/
+├─ Other misc files...
+├─ data/                               # Data preprocessing
+└─ src/                                # React components
    ├─ main.jsx
    ├─ App.jsx
    ├─ index.css
    ├─ TopNav.jsx
    ├─ Other core components...
-   ├─ components/ # Shadcn UI components
-   └─ lib/
+   ├─ public/
+   ├─ lib/
+   └─ components/                      # Reuseable components
+      ├─ location-list-component.jsx
+      ├─ page-shell.jsx
+      └─ ui/                           # Shadcn UI components
 ```

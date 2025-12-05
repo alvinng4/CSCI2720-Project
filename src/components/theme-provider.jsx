@@ -1,3 +1,7 @@
+/**
+ * Original source code available from: https://ui.shadcn.com/docs/dark-mode/vite
+ */
+
 import { createContext, useContext, useEffect, useState } from "react"
 
 const initialState = {

@@ -1,3 +1,7 @@
+/**
+ * Original source code available from: https://ui.shadcn.com/docs/dark-mode/vite
+ */
+
 import { Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "@/components/theme-provider"
