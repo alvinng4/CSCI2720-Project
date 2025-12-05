@@ -69,8 +69,8 @@ export function LocationListComponent({ isFavourite }) {
       <DataTable
         columns={getColumns(isFavourite)}
         data={locations}
-        renderToolbar={
-          (table) => toolBar(table, maxDist, distRange, setDistRange)
+        renderSideMenu={
+          (table) => sideMenu(table, maxDist, distRange, setDistRange)
         } 
       />
       </div>
@@ -265,10 +265,9 @@ function getColumns(isFavourite) {
   ]
 }
 
-function toolBar(table, maxDist, distRange, setDistRange) {
+function sideMenu(table, maxDist, distRange, setDistRange) {
   return (
-    <div className="flex items-end gap-x-2">
-      <DataTableViewOptions table={table} />
+    <div className="flex flex-col gap-4 min-w-64">
       <Input
         placeholder="Search by name"
         value={(table.getColumn("name")?.getFilterValue()) ?? ""}
@@ -322,6 +321,7 @@ function toolBar(table, maxDist, distRange, setDistRange) {
           step={0.01}
         />
       </div>
+      <DataTableViewOptions table={table} />
     </div>
   )
 }

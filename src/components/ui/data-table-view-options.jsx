@@ -18,7 +18,7 @@ export function DataTableViewOptions({ table, className }) {
         <Button
           variant="outline"
           size="sm"
-          className={cn(className, "ml-auto hidden h-8 lg:flex")}
+          className={cn(className, "ml-auto h-8")}
         >
           <Settings2 />
           View
