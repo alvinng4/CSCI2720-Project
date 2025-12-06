@@ -1,3 +1,4 @@
+import { LoadingScreen } from "@/components/ui/loading-screen"
 import { PageShell } from "@/components/page-shell"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom";
@@ -29,7 +30,7 @@ export function LocationDetail() {
   }, [])
 
   if (loading) {
-    return <div>Loading...</div>
+    return <LoadingScreen />
   }
   
   return (

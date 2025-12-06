@@ -2,6 +2,7 @@ import {
   getUserLocation,
   haversineDistance
 } from "@/lib/utils";
+import { LoadingScreen } from "@/components/ui/loading-screen"
 import { LocationSheet } from "@/LocationSheet";
 import { LocationSideMenu } from "@/components/location-side-menu";
 import { MapComponent } from "@/components/map-component";
@@ -110,7 +111,7 @@ export function Map() {
   });
 
   if (loading) {
-    return <div>Loading...</div>
+    return <LoadingScreen />
   }
 
   return (

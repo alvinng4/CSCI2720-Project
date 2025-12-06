@@ -9,6 +9,7 @@ import {
   getUserLocation,
   haversineDistance
 } from "@/lib/utils";
+import { LoadingScreen } from "@/components/ui/loading-screen"
 import { LocationSheet } from "@/LocationSheet";
 import { LocationSideMenu } from "@/components/location-side-menu";
 import { ToggleFavourite } from "@/components/toggle-favourite"
@@ -92,7 +93,7 @@ export function LocationListTable({ isFavourite }) {
   }, [locations])
 
   if (loading) {
-    return <div>Loading...</div>
+    return <LoadingScreen />
   }
 
   return (
