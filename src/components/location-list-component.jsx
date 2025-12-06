@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 import { newTerritoriesDistricts, kowloonDistricts, hkIslandDistricts } from "@/constants/districts"
 
@@ -34,8 +35,10 @@ export function LocationListComponent({ isFavourite }) {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
 
-  const [maxDist, setMaxDist] = useState(0)
-  const [distRange, setDistRange] = useState([0, 0])
+  const [maxDist, setMaxDist] = useState(0);
+  const [distRange, setDistRange] = useState([0, 0]);
+  
+  const navigate = useNavigate();
 
   useEffect(() => {
     let isCancelled = false
@@ -46,26 +49,30 @@ export function LocationListComponent({ isFavourite }) {
         (value) => { if (!isCancelled) setLoading(value) },
         (msg) => { if (!isCancelled) setErrorMsg(msg) },
         isFavourite,
-      )
+      );
     }
 
     fetchData();
 
     return () => {
-      isCancelled = true
+      isCancelled = true;
     }
   }, [])
 
   useEffect(() => {
     if (locations.length > 0) {
       const newMax = Math.max(...locations.map((item) => item.distance));
-      setMaxDist(newMax)
+      setMaxDist(newMax);
       setDistRange(([min]) => [min, newMax]);
     }
   }, [locations])
 
   if (loading) {
     return <div>Loading...</div>
+  }
+
+  function handleRowClick(row) {
+    navigate(`/location/${row.id}`);
   }
 
   return (
@@ -77,7 +84,8 @@ export function LocationListComponent({ isFavourite }) {
         data={locations}
         renderSideMenu={
           (table) => sideMenu(table, maxDist, distRange, setDistRange)
-        } 
+        }
+        onRowClick={handleRowClick}
       />
       </div>
     </>
