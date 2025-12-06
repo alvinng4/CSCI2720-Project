@@ -5,10 +5,6 @@
 import { DataTable } from "@/components/ui/data-table"
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
 import { DataTableViewOptions }  from "@/components/ui/data-table-view-options"
-import { 
-  getUserLocation,
-  haversineDistance
-} from "@/lib/utils";
 import { LoadingScreen } from "@/components/ui/loading-screen"
 import { LocationSheet } from "@/LocationSheet";
 import { LocationSideMenu } from "@/components/location-side-menu";
@@ -27,7 +23,7 @@ export function LocationListTable({ isFavourite }) {
     maxDist,
     distRange,
     setDistRange,
-  } = getLocationsWithDistance();
+  } = getLocationsWithDistance({isFavouriteOnly: isFavourite});
 
   if (loading) {
     return <LoadingScreen />
