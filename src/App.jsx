@@ -9,6 +9,7 @@ import { Map } from "@/Map";
 import { FavouriteList } from "@/FavouriteList";
 import { Suggestions } from "@/Suggestions";
 import { TopNav } from "@/TopNav";
+import { LocationDetail } from "@/LocationDetail";
 
 import { UsersAdmin } from "@/admin/UsersAdmin"; // admin-only page
 import { RequireAdmin } from "@/lib/RequireAdmin";
@@ -40,6 +41,8 @@ function App() {
           <Route path="/map" element={<Map />} />
           <Route path="/favouriteList" element={<FavouriteList />} />
           <Route path="/suggestions" element={<Suggestions />} />
+
+          <Route path="/location/:id" element={<LocationDetail />} />
 
           {/* Admin-only route(s) */}
           <Route
