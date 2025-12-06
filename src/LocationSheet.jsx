@@ -45,7 +45,7 @@ export function LocationSheet({ location, setSelectedLocation }) {
 
   const info = [
     { label: "District", value: location.district },
-    { label: "Distance", value: location.distance },
+    { label: "Distance", value: location.distance != null ? `${location.distance} km` : "N/A" },
     { label: "# Events", value: location.num_events },
   ];
 

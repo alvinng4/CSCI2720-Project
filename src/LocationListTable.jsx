@@ -2,16 +2,23 @@
  * Reusable location list table component (for LocationList and FavouriteList)
  */
 
-import { Button } from "@/components/ui/Button"
 import { DataTable } from "@/components/ui/data-table"
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
 import { DataTableViewOptions }  from "@/components/ui/data-table-view-options"
+import { 
+  getUserLocation,
+  haversineDistance
+} from "@/lib/utils";
 import { LocationSheet } from "@/LocationSheet";
 import { LocationSideMenu } from "@/components/location-side-menu";
 import { ToggleFavourite } from "@/components/toggle-favourite"
-import { useEffect, useState } from "react"
+import { 
+  useEffect,
+  useState 
+} from "react"
 
 export function LocationListTable({ isFavourite }) {
+  const [haveUserCoords, setHaveUserCoords] = useState(false);
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
@@ -23,28 +30,64 @@ export function LocationListTable({ isFavourite }) {
 
   useEffect(() => {
     let isCancelled = false
-
     async function fetchData() {
-      await loadLocationData(
-        (data) => { if (!isCancelled) setLocations(data) },
-        (value) => { if (!isCancelled) setLoading(value) },
-        (msg) => { if (!isCancelled) setErrorMsg(msg) },
-        isFavourite,
-      );
+      setLoading(true);
+      try {
+        let userCoords = null;
+
+        try {
+          userCoords = await getUserLocation();
+          setHaveUserCoords(true);
+        } catch (e) {
+          if (!isCancelled) {
+            setErrorMsg("Failed to get user location. Showing data without distance.")
+          }
+        }
+
+        await loadLocationData(
+          (data) => { 
+            if (isCancelled) { return; }
+            if (!userCoords)
+            { 
+              setLocations(data);
+              return;
+            }
+
+            const dataWithDistance = data.map((loc) => ({
+              ...loc,
+              distance: haversineDistance(
+                userCoords.latitude,
+                userCoords.longitude,
+                loc.latitude,
+                loc.longitude,
+              ),
+            }))
+            setLocations(dataWithDistance) 
+          },
+          isFavourite,
+        );
+      } finally {
+        if (!isCancelled) setLoading(false);
+      }
     }
 
     fetchData();
 
-    return () => {
-      isCancelled = true;
-    }
-  }, [])
+    return () => { isCancelled = true; };
+  }, [isFavourite])
 
   useEffect(() => {
-    if (locations.length > 0) {
-      const newMax = Math.max(...locations.map((item) => item.distance));
-      setMaxDist(newMax);
-      setDistRange(([min]) => [min, newMax]);
+    if (haveUserCoords)
+    {
+      const distances = locations
+        .map((item) => item.distance)
+        .filter((d) => typeof d === "number" && !Number.isNaN(d))
+
+      if (distances.length > 0) {
+        const newMax = Math.max(...distances);
+        setMaxDist(newMax);
+        setDistRange(([min]) => [min, newMax]);
+      }
     }
   }, [locations])
 
@@ -61,7 +104,7 @@ export function LocationListTable({ isFavourite }) {
       <div className="text-red-500">{errorMsg}</div>
       <div className="container mx-auto">
       <DataTable
-        columns={getColumns(isFavourite)}
+        columns={getColumns(isFavourite, haveUserCoords)}
         data={locations}
         renderSideMenu={(table) => (
           <LocationSideMenu
@@ -87,18 +130,12 @@ export function LocationListTable({ isFavourite }) {
   )
 }
 
-async function loadLocationData(setLocations, setLoading, setErrorMsg, isFavourite) {
-  setLoading(true);
-
-  try {
-    // TODO: database call to backend
-
-    /* Fake data */
-    const locationData = [
+async function loadLocationData(setLocations, isFavourite) {
+  /* Fake data */
+  const locationData = [
     {
       id: "22512700",
       name: "Hong Kong Heritage Museum (Thematic Galleries 1 & 2)",
-      distance: 10.17,
       district: "Sha Tin",
       num_events: 3,
       latitude: 22.31368,
@@ -108,7 +145,6 @@ async function loadLocationData(setLocations, setLoading, setErrorMsg, isFavouri
     {
       id: "3110267",
       name: "North District Town Hall (Function Room (2))",
-      distance: 12.17,
       district: "Sha Tin",
       num_events: 3,
       latitude: 22.2818,
@@ -118,7 +154,6 @@ async function loadLocationData(setLocations, setLoading, setErrorMsg, isFavouri
     {
       id: "35510044",
       name: "Tai Po Civic Centre (Black Box Theatre)",
-      distance: 14.17,
       district: "Sha Tin",
       num_events: 3,
       latitude: 22.32427,
@@ -128,7 +163,6 @@ async function loadLocationData(setLocations, setLoading, setErrorMsg, isFavouri
     {
       id: "35517396",
       name: "Tai Po Civic Centre (Function Room (2))",
-      distance: 16.17,
       district: "Sha Tin",
       num_events: 3,
       latitude: 22.356656,
@@ -138,7 +172,6 @@ async function loadLocationData(setLocations, setLoading, setErrorMsg, isFavouri
     {
       id: "826817417",
       name: "East Kowloon Cultural Centre (The Hall)",
-      distance: 18.17,
       district: "Sha Tin",
       num_events: 3,
       latitude: 22.31368,
@@ -148,7 +181,6 @@ async function loadLocationData(setLocations, setLoading, setErrorMsg, isFavouri
     {
       id: "87110023",
       name: "Kwai Tsing Theatre (Auditorium)",
-      distance: 20.17,
       district: "Sha Tin",
       num_events: 3,
       latitude: 22.334583,
@@ -158,7 +190,6 @@ async function loadLocationData(setLocations, setLoading, setErrorMsg, isFavouri
     {
       id: "87310051",
       name: "Yuen Long Theatre (Auditorium)",
-      distance: 10.17,
       district: "Sha Tin",
       num_events: 3,
       latitude: 22.282279,
@@ -168,7 +199,6 @@ async function loadLocationData(setLocations, setLoading, setErrorMsg, isFavouri
     {
       id: "87410030",
       name: "Ngau Chi Wan Civic Centre (Theatre)",
-      distance: 20.17,
       district: "Sha Tin",
       num_events: 7,
       latitude: 22.44152,
@@ -178,7 +208,6 @@ async function loadLocationData(setLocations, setLoading, setErrorMsg, isFavouri
     {
       id: "87510494",
       name: "Hong Kong City Hall (Exhibition Gallery)",
-      distance: 30.17,
       district: "Sha Tin",
       num_events: 8,
       latitude: 22.501639,
@@ -188,26 +217,19 @@ async function loadLocationData(setLocations, setLoading, setErrorMsg, isFavouri
     {
       id: "87616551",
       name: "Ko Shan Theatre (New Wing Auditorium)",
-      distance: 40.17,
       district: "Wan Chai",
       num_events: 4,
       latitude: 22.28602,
       longitude: 114.14967,
       isFavourite: false,
     },
-  ];
+  ]
 
-    setLocations(isFavourite ? locationData.filter(location => location.isFavourite) : locationData);
-  } catch (err) {
-    console.error(err);
-    setErrorMsg("Failed to load locations.");
-  } finally {
-    setLoading(false);
-  }
+  setLocations(isFavourite ? locationData.filter(location => location.isFavourite) : locationData);
 }
 
-function getColumns(isFavourite) {
-  return [
+function getColumns(isFavourite, haveUserCoords) {
+  const columns = [
     {
       accessorKey: "name",
       title: "Name",
@@ -239,7 +261,10 @@ function getColumns(isFavourite) {
         <DataTableColumnHeader column={column} title="District" />
       ),
     },
-    {
+  ]
+
+  if (haveUserCoords) {
+    columns.push({
       accessorKey: "distance",
       title: "Distance (km)",
       header: ({ column }) => (
@@ -255,24 +280,29 @@ function getColumns(isFavourite) {
         }
         return a - b
       },
-    },
-    isFavourite ? 
-    {
-      id: "actions",
-      cell: () => {
-        return <ToggleFavourite isFavourite={isFavourite} />;
-      },
-    } :
-    {
-      accessorKey: "isFavourite",
-      title: "Favourite",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Favourite" />
-      ),
-      cell: ({ row }) => {
-        const isFavourite = row.getValue("isFavourite")
-        return <ToggleFavourite isFavourite={isFavourite} />;
-      },
-    },
-  ]
+    })
+
+    if (isFavourite) {
+      columns.push({
+        id: "actions",
+        cell: () => {
+          return <ToggleFavourite isFavourite={isFavourite} />;
+        },
+      })
+    } else {
+      columns.push({
+        accessorKey: "isFavourite",
+        title: "Favourite",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Favourite" />
+        ),
+        cell: ({ row }) => {
+          const isFavourite = row.getValue("isFavourite")
+          return <ToggleFavourite isFavourite={isFavourite} />;
+        },
+      })
+    }
+  }
+
+  return columns
 }
