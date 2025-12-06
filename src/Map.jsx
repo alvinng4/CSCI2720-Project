@@ -1,8 +1,8 @@
+import { LocationSheet } from "@/LocationSheet";
 import { LocationSideMenu } from "@/components/location-side-menu";
 import { MapComponent } from "@/components/map-component";
 import { PageShell } from "@/components/page-shell"
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"
 
 /* Fake data */
 const locationData = [
@@ -113,7 +113,7 @@ export function Map() {
   const [filterDistrict, setFilterDistrict] = useState("");
   const [maxDist, setMaxDist] = useState(0);
   const [distRange, setDistRange] = useState([0, 0]);
-  const navigate = useNavigate();
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
   const locations = locationData;
 
@@ -147,28 +147,34 @@ export function Map() {
   });
 
   return (
-    <PageShell title="Map">
-      <div className="flex flex-col gap-4 lg:flex-row justify-center w-full">
-        <aside className="min-w-85">
-          <LocationSideMenu
-            getFilterName={() => filterName}
-            setFilterName={setFilterName}
-            getFilterDistrict={() => filterDistrict}
-            setFilterDistrict={setFilterDistrict}
-            maxDist={maxDist}
-            getDistRange={() => distRange}
-            setDistRange={setDistRange}
-          />
-        </aside>
-        <div className="w-full">
-          <MapComponent
-            locations={filteredLocations}
-            center={[locations[0].latitude, locations[0].longitude]}
-            onClick={(loc) => navigate(`/location/${loc.id}`)}
-            style={{ height: "700px", width: "100%", zIndex: "1"}}
-          />
+    <>
+      <LocationSheet
+        location={selectedLocation}
+        setSelectedLocation={setSelectedLocation}
+      />
+      <PageShell title="Map">
+        <div className="flex flex-col gap-4 lg:flex-row justify-center w-full">
+          <aside className="min-w-85">
+            <LocationSideMenu
+              getFilterName={() => filterName}
+              setFilterName={setFilterName}
+              getFilterDistrict={() => filterDistrict}
+              setFilterDistrict={setFilterDistrict}
+              maxDist={maxDist}
+              getDistRange={() => distRange}
+              setDistRange={setDistRange}
+            />
+          </aside>
+          <div className="w-full">
+            <MapComponent
+              locations={filteredLocations}
+              center={[locations[0].latitude, locations[0].longitude]}
+              onClick={(loc) => setSelectedLocation(loc)}
+              style={{ height: "700px", width: "100%", zIndex: "1"}}
+            />
+          </div>
         </div>
-      </div>
-    </PageShell>
+      </PageShell>
+    </>
   )
 }

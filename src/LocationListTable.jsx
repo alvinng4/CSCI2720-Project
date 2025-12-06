@@ -1,25 +1,25 @@
 /**
- * Reusable location list component (for LocationList and FavouriteList)
+ * Reusable location list table component (for LocationList and FavouriteList)
  */
 
 import { Button } from "@/components/ui/Button"
-import { Check, X } from "lucide-react"
 import { DataTable } from "@/components/ui/data-table"
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
 import { DataTableViewOptions }  from "@/components/ui/data-table-view-options"
+import { LocationSheet } from "@/LocationSheet";
 import { LocationSideMenu } from "@/components/location-side-menu";
+import { ToggleFavourite } from "@/components/toggle-favourite"
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
 
-export function LocationListComponent({ isFavourite }) {
+export function LocationListTable({ isFavourite }) {
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
 
   const [maxDist, setMaxDist] = useState(0);
   const [distRange, setDistRange] = useState([0, 0]);
-  
-  const navigate = useNavigate();
+
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
   useEffect(() => {
     let isCancelled = false
@@ -54,6 +54,10 @@ export function LocationListComponent({ isFavourite }) {
 
   return (
     <>
+      <LocationSheet
+        location={selectedLocation}
+        setSelectedLocation={setSelectedLocation}
+      />
       <div className="text-red-500">{errorMsg}</div>
       <div className="container mx-auto">
       <DataTable
@@ -76,7 +80,7 @@ export function LocationListComponent({ isFavourite }) {
             extraComponents={() => <DataTableViewOptions table={table} />}
           />
         )}
-        onRowClick={ (row) => navigate(`/location/${row.id}`) }
+        onRowClick={ (row) => setSelectedLocation(row) }
       />
       </div>
     </>
@@ -256,17 +260,7 @@ function getColumns(isFavourite) {
     {
       id: "actions",
       cell: () => {
-        return (
-          <div className="flex justify-end">
-            <Button
-              align="end"
-              variant="destructive"
-              size="sm"
-            >
-              <X />
-            </Button>
-          </div>
-        )
+        return <ToggleFavourite isFavourite={isFavourite} />;
       },
     } :
     {
@@ -277,14 +271,7 @@ function getColumns(isFavourite) {
       ),
       cell: ({ row }) => {
         const isFavourite = row.getValue("isFavourite")
-        return (
-          <Button
-            variant={isFavourite ? "default" : "outline"}
-            size="sm"
-          >
-            <Check />
-          </Button>
-        )
+        return <ToggleFavourite isFavourite={isFavourite} />;
       },
     },
   ]
