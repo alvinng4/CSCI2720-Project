@@ -4,31 +4,12 @@
 
 import { Button } from "@/components/ui/Button"
 import { Check, X } from "lucide-react"
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table"
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
 import { DataTableViewOptions }  from "@/components/ui/data-table-view-options"
-import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-  SelectSeparator,
-} from "@/components/ui/select"
-import { Slider } from "@/components/ui/slider"
+import { LocationSideMenu } from "@/components/location-side-menu";
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-
-import { newTerritoriesDistricts, kowloonDistricts, hkIslandDistricts } from "@/constants/districts"
 
 export function LocationListComponent({ isFavourite }) {
   const [locations, setLocations] = useState([]);
@@ -82,9 +63,23 @@ export function LocationListComponent({ isFavourite }) {
       <DataTable
         columns={getColumns(isFavourite)}
         data={locations}
-        renderSideMenu={
-          (table) => sideMenu(table, maxDist, distRange, setDistRange)
-        }
+        renderSideMenu={(table) => (
+          <LocationSideMenu
+            getFilterName={() => table.getColumn("name")?.getFilterValue() ?? ""}
+            setFilterName={(value) => table.getColumn("name")?.setFilterValue(value)}
+            getFilterDistrict={() => table.getColumn("district")?.getFilterValue() ?? ""}
+            setFilterDistrict={(value) =>
+              table.getColumn("district")?.setFilterValue(value === "all" ? "" : (value || ""))
+            }
+            maxDist={maxDist}
+            getDistRange={() => distRange}
+            setDistRange={(newValue) => {
+              setDistRange(newValue)
+              table.getColumn("distance")?.setFilterValue(newValue)
+            }}
+            extraComponents={() => <DataTableViewOptions table={table} />}
+          />
+        )}
         onRowClick={handleRowClick}
       />
       </div>
@@ -297,72 +292,4 @@ function getColumns(isFavourite) {
       },
     },
   ]
-}
-
-function sideMenu(table, maxDist, distRange, setDistRange) {
-  return (
-    <Card className="bg-transparent shadow-none gap-2">
-      <CardHeader>
-        <CardTitle>
-          <span>Options</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <Input
-          placeholder="Search by name"
-          value={(table.getColumn("name")?.getFilterValue()) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
-        />
-        <Select
-          value={(table.getColumn("district")?.getFilterValue()) ?? ""}
-          onValueChange={(value) =>
-            table.getColumn("district")?.setFilterValue(value == "all" ? "" : (value || ""))
-          }
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a district" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All districts</SelectItem>
-            <SelectSeparator />
-            <SelectGroup>
-              <SelectLabel>Hong Kong Island</SelectLabel>
-                {hkIslandDistricts.map((district) => (
-                  <SelectItem key={district} value={district}>{district}</SelectItem>
-                ))}
-            </SelectGroup>
-            <SelectSeparator />
-            <SelectGroup>
-              <SelectLabel>Kowloon</SelectLabel>
-                {kowloonDistricts.map((district) => (
-                  <SelectItem key={district} value={district}>{district}</SelectItem>
-                ))}
-            </SelectGroup>
-            <SelectSeparator />
-            <SelectGroup>
-              <SelectLabel>New Territories</SelectLabel>
-                {newTerritoriesDistricts.map((district) => (
-                  <SelectItem key={district} value={district}>{district}</SelectItem>
-                ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <div className="flex flex-col text-muted-foreground dark:bg-input/30 border-input w-full rounded-md border bg-transparent md:h-14 px-3 py-1 pb-3 gap-y-2 text-base shadow-xs md:text-sm">
-          <p>Distance Range ({distRange[0]} km - {distRange[1]} km)</p>
-          <Slider
-            value={distRange}
-            onValueChange={(newValue) => {
-              setDistRange(newValue)
-              table.getColumn("distance")?.setFilterValue(newValue)
-            }}
-            max={maxDist}
-            step={0.01}
-          />
-        </div>
-        <DataTableViewOptions table={table} />
-      </CardContent>
-    </Card>
-  )
 }
