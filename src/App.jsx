@@ -11,7 +11,7 @@ import { Suggestions } from "@/Suggestions";
 import { TopNav } from "@/TopNav";
 import { LocationDetail } from "@/LocationDetail";
 
-import { UsersAdmin } from "@/admin/UsersAdmin"; // admin-only page
+import { UserManager } from "@/admin/UserManager"; // admin-only page
 import { RequireAdmin } from "@/lib/RequireAdmin";
 
 function App() {
@@ -49,7 +49,7 @@ function App() {
             path="/users"
             element={
               <RequireAdmin>
-                <UsersAdmin />
+                <UserManager />
               </RequireAdmin>
             }
           />

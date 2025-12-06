@@ -1,6 +1,14 @@
 // src/TopNav.jsx
-import { UserIcon, LogOutIcon } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { 
+  UserIcon,
+  UserPenIcon,
+  LogOutIcon ,
+} from "lucide-react";
+import { 
+  Link,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -20,6 +28,7 @@ import {
 import { useAuth, isAdmin } from "@/lib/AuthContext";
 
 export function TopNav() {
+  const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
 
@@ -32,11 +41,6 @@ export function TopNav() {
     { to: "/favouriteList", label: "Favourite List" },
     { to: "/suggestions", label: "No idea?" },
   ];
-
-  // admin-only link(s)
-  if (isAdmin(user)) {
-    navigationItems.push({ to: "/users", label: "Users" });
-  }
 
   function NavigationItem({ to, label }) {
     const active = location.pathname === to;
@@ -59,6 +63,19 @@ export function TopNav() {
   const username = user?.name ?? "guest";
   const email = user?.email ?? "";
   const roleLabel = user?.role ? user.role.toUpperCase() : "";
+
+  const listItems = [
+    /* Admin only */
+    ...(
+      isAdmin(user)
+      ? [{ icon: UserPenIcon, label: "User Manager", key: "users" }]
+      : []
+    ),
+
+    /* Regular user */
+    { icon: UserIcon, label: "Profile", key: "profile" },
+    { icon: LogOutIcon, label: "Sign Out", key: "signout" },
+  ];
 
   return (
     <nav className="w-full">
@@ -90,6 +107,8 @@ export function TopNav() {
             email={email}
             role={roleLabel}
             onSignOut={logout}
+            onUsers={() => navigate("/users")}
+            listItems={listItems}
           />
         </div>
       </div>
@@ -100,12 +119,7 @@ export function TopNav() {
   );
 }
 
-const listItems = [
-  { icon: UserIcon, label: "Profile", key: "profile" },
-  { icon: LogOutIcon, label: "Sign Out", key: "signout" },
-];
-
-function DropdownMenuUserMenu({ username, email, role, onSignOut }) {
+function DropdownMenuUserMenu({ username, email, role, onSignOut, onUsers, listItems }) {
   const initial = (username?.[0] ?? "?").toUpperCase();
   return (
     <DropdownMenu>
@@ -135,19 +149,30 @@ function DropdownMenuUserMenu({ username, email, role, onSignOut }) {
         </DropdownMenuItem>
 
         <DropdownMenuGroup>
-          {listItems.map((item) =>
-            item.key === "signout" ? (
-              <DropdownMenuItem key={item.key} onClick={onSignOut}>
-                <item.icon />
-                <span>{item.label}</span>
-              </DropdownMenuItem>
-            ) : (
+          {listItems.map((item) => {
+            if (item.key === "signout") {
+              return (
+                <DropdownMenuItem key={item.key} onClick={onSignOut}>
+                  <item.icon />
+                  <span>{item.label}</span>
+                </DropdownMenuItem>
+              );
+            }
+            if (item.key === "users") {
+              return (
+                <DropdownMenuItem key={item.key} onClick={onUsers}>
+                  <item.icon />
+                  <span>{item.label}</span>
+                </DropdownMenuItem>
+              );
+            }
+            return (
               <DropdownMenuItem key={item.key}>
                 <item.icon />
                 <span>{item.label}</span>
               </DropdownMenuItem>
-            )
-          )}
+            );
+        })}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
