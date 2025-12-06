@@ -23,7 +23,9 @@ CSCI2720-Project/
    ├─ public/
    ├─ lib/
    └─ components/                      # Reuseable components
-      ├─ location-list-component.jsx
+      ├─ location-side-menu.jsx
+      ├─ map-component.jsx
+      ├─ toggle-favourite.jsx
       ├─ page-shell.jsx
       └─ ui/                           # Shadcn UI components
 ```
