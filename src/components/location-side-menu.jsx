@@ -1,3 +1,7 @@
+/**
+ * Reusable side menu component for filtering location lists
+ */
+
 import {
   Card,
   CardHeader,

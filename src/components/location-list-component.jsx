@@ -52,10 +52,6 @@ export function LocationListComponent({ isFavourite }) {
     return <div>Loading...</div>
   }
 
-  function handleRowClick(row) {
-    navigate(`/location/${row.id}`);
-  }
-
   return (
     <>
       <div className="text-red-500">{errorMsg}</div>
@@ -80,7 +76,7 @@ export function LocationListComponent({ isFavourite }) {
             extraComponents={() => <DataTableViewOptions table={table} />}
           />
         )}
-        onRowClick={handleRowClick}
+        onRowClick={ (row) => navigate(`/location/${row.id}`) }
       />
       </div>
     </>
