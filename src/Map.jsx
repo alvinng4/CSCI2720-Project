@@ -1,13 +1,114 @@
 import { PageShell } from "@/components/page-shell"
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import L from "leaflet";
-import locationsData from "/data/venues_cleaned.json";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { FieldGroup, Field } from "@/components/ui/field"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { MapComponent } from "@/components/map-component";
 
+/* Fake data */
+const locationData = [
+  {
+    id: "22512700",
+    name: "Hong Kong Heritage Museum (Thematic Galleries 1 & 2)",
+    distance: 10.17,
+    district: "Sha Tin",
+    num_events: 3,
+    latitude: 22.31368,
+    longitude: 114.18556,
+    isFavourite: true,
+  },
+  {
+    id: "3110267",
+    name: "North District Town Hall (Function Room (2))",
+    distance: 12.17,
+    district: "Sha Tin",
+    num_events: 3,
+    latitude: 22.2818,
+    longitude: 114.222501,
+    isFavourite: true,
+  },
+  {
+    id: "35510044",
+    name: "Tai Po Civic Centre (Black Box Theatre)",
+    distance: 14.17,
+    district: "Sha Tin",
+    num_events: 3,
+    latitude: 22.32427,
+    longitude: 114.21494,
+    isFavourite: false,
+  },
+  {
+    id: "35517396",
+    name: "Tai Po Civic Centre (Function Room (2))",
+    distance: 16.17,
+    district: "Sha Tin",
+    num_events: 3,
+    latitude: 22.356656,
+    longitude: 114.12623,
+    isFavourite: false,
+  },
+  {
+    id: "826817417",
+    name: "East Kowloon Cultural Centre (The Hall)",
+    distance: 18.17,
+    district: "Sha Tin",
+    num_events: 3,
+    latitude: 22.31368,
+    longitude: 114.18556,
+    isFavourite: false,
+  },
+  {
+    id: "87110023",
+    name: "Kwai Tsing Theatre (Auditorium)",
+    distance: 20.17,
+    district: "Sha Tin",
+    num_events: 3,
+    latitude: 22.334583,
+    longitude: 114.208766,
+    isFavourite: false,
+  },
+  {
+    id: "87310051",
+    name: "Yuen Long Theatre (Auditorium)",
+    distance: 10.17,
+    district: "Sha Tin",
+    num_events: 3,
+    latitude: 22.282279,
+    longitude: 114.161545,
+    isFavourite: false,
+  },
+  {
+    id: "87410030",
+    name: "Ngau Chi Wan Civic Centre (Theatre)",
+    distance: 20.17,
+    district: "Sha Tin",
+    num_events: 7,
+    latitude: 22.44152,
+    longitude: 114.02289,
+    isFavourite: false,
+  },
+  {
+    id: "87510494",
+    name: "Hong Kong City Hall (Exhibition Gallery)",
+    distance: 30.17,
+    district: "Sha Tin",
+    num_events: 8,
+    latitude: 22.501639,
+    longitude: 114.128911,
+    isFavourite: false,
+  },
+  {
+    id: "87616551",
+    name: "Ko Shan Theatre (New Wing Auditorium)",
+    distance: 40.17,
+    district: "Wan Chai",
+    num_events: 4,
+    latitude: 22.28602,
+    longitude: 114.14967,
+    isFavourite: false,
+  },
+];
 
 export function Map() {
   const handleAddComment = (e) => {
@@ -23,12 +124,12 @@ export function Map() {
     ]);
     setComment("");
   };
-const locations = locationsData;
-const center = [locations[0].latitude, locations[0].longitude];
-const [selectedLocation, setSelectedLocation] = useState(null);
-const [comment, setComment] = useState("");
-const [commentsData, setCommentsData] = useState([
-{
+
+  const locations = locationData;
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [comment, setComment] = useState("");
+  const [commentsData, setCommentsData] = useState([
+    {
       "_id": "1",
       "content": "cool",
       "locID": "22512700" 
@@ -60,7 +161,8 @@ const [commentsData, setCommentsData] = useState([
       "content": "haha",
       "locID": "22512700" 
     },
-]);
+  ]);
+
   return (
     <PageShell title="Map">
       <div className="flex items-center justify-center gap-x-2">
@@ -75,7 +177,7 @@ const [commentsData, setCommentsData] = useState([
               <p>Comments</p>
               <br></br>
               <div>
-                {commentsData.filter((com) => com.locID === selectedLocation?._id)
+                {commentsData.filter((com) => com.locID === selectedLocation?.id)
                 .map((com) => (
                   <div key={com.id} className=" overflow-auto rounded-2xl border p-2 shadow-sm w-80 break-words whitespace-normal">
                     {com.content}
@@ -100,8 +202,6 @@ const [commentsData, setCommentsData] = useState([
                 </FieldGroup>
               </form>
             </div>
-            
-            
           </SheetContent>
         </Sheet>
         {selectedLocation && (
@@ -110,33 +210,11 @@ const [commentsData, setCommentsData] = useState([
             onClick={() => setSelectedLocation(null)}
           />
         )}
-        <MapContainer
-          center={center}
-          zoom={11}
-          style={{ height: "700px", width: "80%" ,zIndex:"1"}}
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='© OpenStreetMap contributors'
-          />
-          {locations.map((loc) => (
-            <Marker 
-              key={loc._id} 
-              position={[loc.latitude, loc.longitude]}
-              eventHandlers={{ 
-                click: () => setSelectedLocation(loc),
-                mouseover: (e) => e.target.openPopup(),
-                mouseout: (e) => e.target.closePopup()
-               }}
-            >
-              <Popup>{loc.venuee}</Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-        
+        <MapComponent
+          locations={locations}
+          onClick={(loc) => setSelectedLocation(loc)}
+        />
       </div>
-      
-      
     </PageShell>
   )
 }
