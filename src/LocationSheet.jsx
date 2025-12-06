@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import { CommentsList } from "@/components/comments-list";
 import { MapComponent } from "@/components/map-component";
 import { 
   Sheet,
@@ -15,6 +16,28 @@ import {
 } from "@/components/ui/table"
 import { ToggleFavourite } from "@/components/toggle-favourite"
 import { useNavigate } from "react-router-dom"
+
+/* Fake comments */
+let comments = [
+  {
+    '_id': 1,
+    'user': { 'username': "testabc" },
+    'content': 'Cool!',
+    'timestamp': new Date(),
+  },
+  {
+    '_id': 2,
+    'user': { 'username': "testxxxxxxxxxxxxxxxxxxxxxxxxxx" },
+    'content': 'I like this.',
+    'timestamp': new Date(),
+  },
+  {
+    '_id': 3,
+    'user': { 'username': "testabc" },
+    'content': 'Test\nmulti-line\nTest.',
+    'timestamp': new Date(),
+  },
+]
 
 export function LocationSheet({ location, setSelectedLocation }) {
   const navigate = useNavigate();
@@ -33,13 +56,13 @@ export function LocationSheet({ location, setSelectedLocation }) {
         if (!open) { setSelectedLocation(null); }
       }}
     >
-      <SheetContent side="left" className="w-200">
+      <SheetContent side="left" className="w-200 flex flex-col">
         <SheetHeader className="px-4">
           <SheetTitle>
             {location?.name}
           </SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col px-4 gap-y-2">
+        <div className="flex-1 overflow-y-auto px-4 space-y-2">
           
           {/* Information */}
           <div>
@@ -80,7 +103,11 @@ export function LocationSheet({ location, setSelectedLocation }) {
           
           {/* Comments */}
           <div>
-            {makeSubsectionTitle('Comments')}
+            {makeSubsectionTitle(`Comments (${comments.length})`)}
+            <CommentsList
+              comments={comments}
+              className="px-3 py-3 border rounded-md bg-muted/40"
+            />
           </div>
         </div>
         <SheetFooter>
