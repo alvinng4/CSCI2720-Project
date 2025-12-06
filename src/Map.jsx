@@ -1,10 +1,8 @@
-import { PageShell } from "@/components/page-shell"
-import { useState } from "react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { FieldGroup, Field } from "@/components/ui/field"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { LocationSideMenu } from "@/components/location-side-menu";
 import { MapComponent } from "@/components/map-component";
+import { PageShell } from "@/components/page-shell"
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"
 
 /* Fake data */
 const locationData = [
@@ -111,109 +109,65 @@ const locationData = [
 ];
 
 export function Map() {
-  const handleAddComment = (e) => {
-    e.preventDefault();
-    if(comment==="") return;
-    setCommentsData((prev) => [
-      ...prev,
-      {
-        _id: crypto.randomUUID(),
-        content: comment,
-        locID: selectedLocation._id
-      }
-    ]);
-    setComment("");
-  };
+  const [filterName, setFilterName] = useState("");
+  const [filterDistrict, setFilterDistrict] = useState("");
+  const [maxDist, setMaxDist] = useState(0);
+  const [distRange, setDistRange] = useState([0, 0]);
+  const navigate = useNavigate();
 
   const locations = locationData;
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [comment, setComment] = useState("");
-  const [commentsData, setCommentsData] = useState([
-    {
-      "_id": "1",
-      "content": "cool",
-      "locID": "22512700" 
-    },
-    {
-      "_id": "2",
-      "content": "I like this",
-      "locID": "3110267" 
-    },
-    {
-      "_id": "3",
-      "content": "good",
-      "locID": "35510044" 
-    },{
-      "_id": "4",
-      "content": "too far",
-      "locID": "35517396" 
-    },{
-      "_id": "5",
-      "content": "boring",
-      "locID": "87110023" 
-    },{
-      "_id": "6",
-      "content": "great",
-      "locID": "87310051" 
-    },
-    {
-      "_id": "7",
-      "content": "haha",
-      "locID": "22512700" 
-    },
-  ]);
+
+  useEffect(() => {
+    if (locations.length > 0) {
+      const newMax = Math.max(...locations.map((item) => item.distance));
+      setMaxDist(newMax);
+      setDistRange(([min]) => [min, newMax]);
+    }
+  }, [locations])
+
+  const filteredLocations = locations.filter((loc) => {
+    const [minDistVal, maxDistVal] = distRange;
+
+    const matchName = (
+      !filterName ||
+      loc.name.toLowerCase().includes(filterName.toLowerCase())
+    );
+    if (!matchName) { return false }
+
+    const matchDistrict = (
+      !filterDistrict ||
+      loc.district.toLowerCase() === filterDistrict.toLowerCase()
+    );
+    if (!matchDistrict) { return false }
+
+    const matchDistance = (loc.distance >= minDistVal && loc.distance <= maxDistVal);
+    if (!matchDistance) { return false }
+
+    return true;
+  });
 
   return (
     <PageShell title="Map">
-      <div className="flex items-center justify-center gap-x-2">
-        <Sheet open={!!selectedLocation} onOpenChange={() => setSelectedLocation(null)}>
-          <SheetContent side="left" className="w-200">
-            <SheetHeader>
-              <SheetTitle>
-                {selectedLocation?.venuee}
-              </SheetTitle>
-            </SheetHeader>
-            <div className="justify-items-center gap-x-2">
-              <p>Comments</p>
-              <br></br>
-              <div>
-                {commentsData.filter((com) => com.locID === selectedLocation?.id)
-                .map((com) => (
-                  <div key={com.id} className=" overflow-auto rounded-2xl border p-2 shadow-sm w-80 break-words whitespace-normal">
-                    {com.content}
-                  </div>
-                ))}
-              </div>
-              <br></br>
-              <form className="w-80" onSubmit={handleAddComment}>
-                <FieldGroup>
-                  <Field>
-                    <Input
-                      id="comment"
-                      type="text"
-                      value={comment}
-                      placeholder="What is your comment?"
-                      onChange={(e) => setComment(e.target.value)}
-                    />
-                  </Field>
-                  <Field>
-                    <Button type="submit">Add Comment</Button>
-                  </Field>
-                </FieldGroup>
-              </form>
-            </div>
-          </SheetContent>
-        </Sheet>
-        {selectedLocation && (
-          <div
-            className="fixed inset-0 bg-black/10 z-40"
-            onClick={() => setSelectedLocation(null)}
+      <div className="flex flex-col gap-4 lg:flex-row justify-center w-full">
+        <aside className="min-w-85">
+          <LocationSideMenu
+            getFilterName={() => filterName}
+            setFilterName={setFilterName}
+            getFilterDistrict={() => filterDistrict}
+            setFilterDistrict={setFilterDistrict}
+            maxDist={maxDist}
+            getDistRange={() => distRange}
+            setDistRange={setDistRange}
           />
-        )}
-        <MapComponent
-          locations={locations}
-          onClick={(loc) => setSelectedLocation(loc)}
-        />
+        </aside>
+        <div className="w-full">
+          <MapComponent
+            locations={filteredLocations}
+            center={[locations[0].latitude, locations[0].longitude]}
+            onClick={(loc) => navigate(`/location/${loc.id}`)}
+            style={{ height: "700px", width: "100%", zIndex: "1"}}
+          />
+        </div>
       </div>
     </PageShell>
   )
