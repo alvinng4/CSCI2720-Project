@@ -229,7 +229,7 @@ function CreateUserSideMenu({ initial, onSubmit }) {
   const [role, setRole] = useState(initial?.role ?? "user");
 
   return (
-    <Card className="bg-transparent shadow-none gap-2">
+    <Card className="bg-transparent shadow-none gap-2 w-75">
       <CardHeader>
         <CardTitle>
           <span>Create User</span>
