@@ -406,7 +406,7 @@ function EditLocationSheet({ isEditing, location, onCancel, onSave }) {
       <SheetContent side="left" className="w-200 flex flex-col">
         <SheetHeader className="px-4">
           <SheetTitle>
-            Create Location (Admin)
+            Edit Location (Admin)
           </SheetTitle>
         </SheetHeader>
         <div className="flex-1 overflow-y-auto px-4 space-y-4">
