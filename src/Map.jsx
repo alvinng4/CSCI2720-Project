@@ -3,7 +3,7 @@ import { LocationSheet } from "@/LocationSheet";
 import { LocationSideMenu } from "@/components/location-side-menu";
 import { MapComponent } from "@/components/map-component";
 import { PageShell } from "@/components/page-shell"
-import { getLocationsWithDistance } from "@/hooks/get-locations-with-distance";
+import { useLocationsWithDistance } from "@/hooks/use-locations-with-distance";
 import { useState } from "react"
 
 
@@ -20,7 +20,7 @@ export function Map() {
     maxDist,
     distRange,
     setDistRange,
-  } = getLocationsWithDistance();
+  } = useLocationsWithDistance();
 
   const filteredLocations = locations.filter((loc) => {
     const [minDistVal, maxDistVal] = distRange;

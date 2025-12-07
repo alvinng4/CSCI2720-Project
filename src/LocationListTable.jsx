@@ -27,7 +27,7 @@ import {
   SelectSeparator,
 } from "@/components/ui/select"
 import { ToggleFavourite } from "@/components/toggle-favourite"
-import { getLocationsWithDistance } from "@/hooks/get-locations-with-distance";
+import { useLocationsWithDistance } from "@/hooks/use-locations-with-distance";
 import { useState } from "react"
 import { 
   useAuth,
@@ -63,7 +63,7 @@ export function LocationListTable({ isFavourite }) {
     maxDist,
     distRange,
     setDistRange,
-  } = getLocationsWithDistance({isFavouriteOnly: isFavourite});
+  } = useLocationsWithDistance({isFavouriteOnly: isFavourite});
 
   if (loading) {
     return <LoadingScreen />
