@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils"
 
 export function PageShell({ title, className, children }) {
   return (
-    <div className={cn("w-full px-6 py-8", className)}>
+    <div className={cn("w-full px-6 py-8 container mx-auto", className)}>
       {title ? (
         <header className="mb-6">
           <h1 className="text-3xl font-bold tracking-tight">{title}</h1>

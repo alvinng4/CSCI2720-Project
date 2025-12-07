@@ -76,7 +76,7 @@ export function LocationListTable({ isFavourite }) {
         setSelectedLocation={setSelectedLocation}
       />
       <div className="text-red-500">{errorMsg}</div>
-      <div className="flex flex-col container mx-auto gap-y-4">
+      <div className="flex flex-col gap-y-4">
         {isCreating && admin &&
           <CreateNewLocationPanal onCancel={stopCreating} onCreate={onCreateLocation} />
         }
