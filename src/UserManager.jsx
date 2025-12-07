@@ -126,11 +126,9 @@ export function UserManager() {
 
   return (
     <PageShell title="User Manager (Admin only)">
-      <div className="flex flex-col gap-6">
-        <UserTableContext.Provider value={contextValue}>
-          <DataTable columns={columns} data={rows} renderSideMenu={() => CreateUserSideMenu({ onSubmit: createUser })} renderToolbar={toolBar}/>
-        </UserTableContext.Provider>
-      </div>
+      <UserTableContext.Provider value={contextValue}>
+        <DataTable columns={columns} data={rows} renderSideMenu={() => CreateUserSideMenu({ onSubmit: createUser })} renderToolbar={toolBar}/>
+      </UserTableContext.Provider>
     </PageShell>
   );
 }
@@ -145,7 +143,7 @@ function NameCell({ row }) {
       <Input 
         value={editingName ?? ""} 
         onChange={(e) => setEditingName(e.target.value)} 
-        autoFocus // Optional: nice UX
+        autoFocus
       />
     );
   }
@@ -264,7 +262,7 @@ function CreateUserSideMenu({ initial, onSubmit }) {
           </Select>
 
           <Button type="submit">
-            {initial ? "Save" : "Create"}
+            Create
           </Button>
         </form>
       </CardContent>

@@ -1,284 +1,414 @@
-import React from "react";
-import { PageShell } from "@/components/page-shell";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useAuth, isAdmin } from "@/lib/AuthContext";
 import { adminStore } from "@/lib/adminStore";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@/components/ui/card";
+import { DataTable } from "@/components/ui/data-table"
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
+import { DataTableViewOptions }  from "@/components/ui/data-table-view-options"
+import { Input } from "@/components/ui/input";
+import { PageShell } from "@/components/page-shell";
+import { useAuth, isAdmin } from "@/lib/AuthContext";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 
 const { listEvents, createEvent, updateEvent, deleteEvent } = adminStore;
+const EventTableContext = createContext(null);
 
 export function EventList() {
   const { user } = useAuth();
   const admin = isAdmin(user);
-  return admin ? <EventListAdmin /> : <EventListPublic />;
-}
 
-/*Public*/
-function EventListPublic() {
-  const [rows, setRows] = React.useState([]);
-  React.useEffect(() => setRows(listEvents()), []);
+  const [rows, setRows] = useState([]);
+  useEffect(() => {
+    setRows(listEvents())
+  },[]);
+  const [isCreating, setIsCreating] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editingTitle, setEditingTitle] = useState(null);
+  const [editingDescription, setEditingDescription] = useState(null);
+  const [editingDateTime, setEditingDateTime] = useState(null);
+  const [editingPrice, setEditingPrice] = useState(null);
+  const [editingPresenters, setEditingPresenters] = useState(null);
+
+  /* Handlers */
+  function onCreate(eventData) {
+    console.log("creating");
+    createEvent(eventData);
+    setRows(listEvents());
+  }
+
+  function startCreating() {
+    setIsCreating(true);
+  }
+
+  function cancelCreating() {
+    setIsCreating(false);
+  }
+
+  function startEditing(id) {
+    const editingEvent = rows.find((event) => event.id === id);
+    if (editingEvent) {
+      setEditingId(id);
+      setEditingTitle(editingEvent.title);
+      setEditingDescription(editingEvent.description);
+      setEditingDateTime(editingEvent.dateTime);
+      setEditingPrice(editingEvent.price);
+      setEditingPresenters(editingEvent.presenters);
+    }
+  }
+
+  function stopEditing() {
+    setEditingId(null);
+    setEditingTitle(null);
+    setEditingDescription(null);
+    setEditingDateTime(null);
+    setEditingPrice(null);
+    setEditingPresenters(null);
+  }
+
+  function saveEdit(id) {
+    const patch = { 
+      title: editingTitle,
+      description: editingDescription,
+      dateTime: editingDateTime,
+      price: editingPrice,
+      presenters: editingPresenters 
+    };
+    const updated = updateEvent(id, patch);
+    setRows(listEvents());
+    stopEditing(null);
+  }
+
+  function handleDelete(id) {
+    const userConsent = confirm("Delete this event?");
+    if (!userConsent) {
+      return ;
+    }
+
+    deleteEvent(id);
+    setRows(listEvents());
+  }
+
+  /* Columns (created once only to prevent input issues) */
+  const columns = useMemo(() => {
+    const baseColumns = [
+      {
+        accessorKey: "title",
+        title: "Title",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
+        cell: ({ row }) => <TitleCell row={row} />,
+      },
+      {
+        accessorKey: "description",
+        title: "Description",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Description" />,
+        cell: ({ row }) => <DescriptionCell row={row} />,
+      },
+      // {
+      //   accessorKey: "venue",
+      //   title: "Venue",
+      //   header: ({ column }) => <DataTableColumnHeader column={column} title="Venue" />,
+      //   cell: ({ row }) => <VenueCell row={row} />,
+      // },
+      {
+        accessorKey: "dateTime",
+        title: "Date & Time",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Date & Time" />,
+        cell: ({ row }) => <DateTimeCell row={row} />,
+      },
+      {
+        accessorKey: "price",
+        title: "Price",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Price" />,
+        cell: ({ row }) => <PriceCell row={row} />,
+      },
+      {
+        accessorKey: "presenters",
+        title: "Presenter(s)",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Presenter(s)" />,
+        cell: ({ row }) => <PresentersCell row={row} />,
+      },
+    ]
+
+    if (admin) {
+      baseColumns.push({
+        id: "actions",
+        cell: ({ row }) => <ActionsCell row={row} />,
+      })
+    }
+
+    return baseColumns
+  }, [admin]);
+
+  /* Context values for table */
+  const contextValue = {
+    editingId,
+    editingTitle,
+    setEditingTitle,
+    editingDescription,
+    setEditingDescription,
+    editingDateTime,
+    setEditingDateTime,
+    editingPrice,
+    setEditingPrice,
+    editingPresenters,
+    setEditingPresenters,
+    startEditing,
+    stopEditing,
+    saveEdit,
+    handleDelete,
+  };
+
   return (
     <PageShell title="Event List">
-      <div className="rounded-2xl border overflow-x-auto">
-        <table className="min-w-full text-sm">
-          <thead className="bg-muted">
-            <tr>
-              <th className="px-3 py-2 text-left">Title</th>
-              <th className="px-3 py-2 text-left">Venue</th>
-              <th className="px-3 py-2 text-left">Date</th>
-              <th className="px-3 py-2 text-left">Price</th>
-              <th className="px-3 py-2 text-left">Presenter(s)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length === 0 ? (
-              <tr><td className="px-3 py-6 text-center text-muted-foreground" colSpan={5}>No events.</td></tr>
-            ) : rows.map(r => (
-              <tr key={r.id} className="border-b last:border-none">
-                <td className="px-3 py-3">{r.title}</td>
-                <td className="px-3 py-3">{r.venue}</td>
-                <td className="px-3 py-3">{fmtDateTime(r.date)}</td>
-                <td className="px-3 py-3">{r.price ?? "—"}</td>
-                <td className="px-3 py-3">{r.presenters ?? "—"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {isCreating && 
+        <CreateEventPanel 
+          onCreate={onCreate}
+          onCancel={cancelCreating}
+        />
+      }
+      <EventTableContext.Provider value={contextValue}>
+        <DataTable
+          columns={columns}
+          data={rows}
+          renderSideMenu={(table) => <EventSideMenu table={table} isAdmin={admin} startCreating={startCreating} />} 
+        />
+      </EventTableContext.Provider>
     </PageShell>
-  );
+  )
 }
 
-/*Admin*/
-function EventListAdmin() {
-  const [allRows, setAllRows] = React.useState([]);
-  const [q, setQ] = React.useState("");
-  const [page, setPage] = React.useState(1);
-  const pageSize = 10;
+function TitleCell({ row }) {
+  const { editingId, editingTitle, setEditingTitle } = useContext(EventTableContext);
+  const isEditing = (editingId === row.original.id);
 
-  const [showCreate, setShowCreate] = React.useState(false);
-  const [editing, setEditing] = React.useState(null);
-  const [lastUpdated, setLastUpdated] = React.useState(new Date());
-
-  React.useEffect(() => {
-    setAllRows(listEvents());
-    setLastUpdated(new Date());
-  }, []);
-
-  const rows = React.useMemo(() => {
-    const filtered = q.trim()
-      ? allRows.filter(r => r.title?.toLowerCase().includes(q.trim().toLowerCase()))
-      : allRows;
-    return filtered;
-  }, [allRows, q]);
-
-  const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
-  const pageRows = rows.slice((page - 1) * pageSize, page * pageSize);
-
-  function onCreate(payload) {
-    const doc = createEvent(payload);
-    setAllRows(prev => [doc, ...prev]);
-    setShowCreate(false);
-    setLastUpdated(new Date());
-    setPage(1);
+  if (isEditing) {
+    return (
+      <Input 
+        value={editingTitle ?? ""} 
+        onChange={(e) => setEditingTitle(e.target.value)} 
+        autoFocus
+      />
+    );
   }
+  return row.original.title;
+}
 
-  function onSave(id, patch) {
-    const updated = updateEvent(id, patch);
-    setAllRows(prev => prev.map(x => (x.id === id ? updated : x)));
-    setEditing(null);
-    setLastUpdated(new Date());
+function DescriptionCell({ row }) {
+  const { editingId, editingDescription, setEditingDescription } = useContext(EventTableContext);
+  const isEditing = (editingId === row.original.id);
+
+  if (isEditing) {
+    return (
+      <Input 
+        value={editingDescription ?? ""} 
+        onChange={(e) => setEditingDescription(e.target.value)} 
+        autoFocus
+      />
+    );
   }
+  return row.original.description;
+}
 
-  function onDelete(id) {
-    if (!confirm("Delete this event?")) return;
-    deleteEvent(id);
-    setAllRows(prev => prev.filter(x => x.id !== id));
-    setLastUpdated(new Date());
+function VenueCell({ row }) {
+  /**
+   * TODO: This is complicated. This should not be a string, but id to a venue
+   * When editing, it should be a dropdown menu to all available venues.
+  */ 
+}
+
+function DateTimeCell({ row }) {
+  // This may not be a string? but the data has very complicated 
+  // dateTime format, which can be hard to parse. Maybe just treat it
+  // as a string.
+  const { editingId, editingDateTime, setEditingDateTime } = useContext(EventTableContext);
+  const isEditing = (editingId === row.original.id);
+
+  if (isEditing) {
+    return (
+      <Input 
+        value={editingDateTime ?? ""} 
+        onChange={(e) => setEditingDateTime(e.target.value)} 
+        autoFocus
+      />
+    );
+  }
+  return row.original.dateTime;
+}
+
+function PriceCell({ row }) {
+  const { editingId, editingPrice, setEditingPrice } = useContext(EventTableContext);
+  const isEditing = (editingId === row.original.id);
+
+  if (isEditing) {
+    return (
+      <Input 
+        value={editingPrice ?? ""} 
+        onChange={(e) => setEditingPrice(e.target.value)} 
+        autoFocus
+      />
+    );
+  }
+  return row.original.price;
+}
+
+function PresentersCell({ row }) {
+  const { editingId, editingPresenters, setEditingPresenters } = useContext(EventTableContext);
+  const isEditing = (editingId === row.original.id);
+
+  if (isEditing) {
+    return (
+      <Input 
+        value={editingPresenters ?? ""} 
+        onChange={(e) => setEditingPresenters(e.target.value)} 
+        autoFocus
+      />
+    );
+  }
+  return row.original.presenters;
+}
+
+function ActionsCell({ row }) {
+  const { 
+    editingId,
+    startEditing, 
+    stopEditing, 
+    saveEdit, 
+    handleDelete 
+  } = useContext(EventTableContext);
+  
+  const isEditing = (editingId === row.original.id);
+
+  if (isEditing) {
+    return (
+      <div className="flex justify-end gap-2">
+        <Button size="sm" variant="outline" onClick={stopEditing}>
+          Cancel
+        </Button>
+        <Button size="sm" onClick={() => saveEdit(row.original.id)}>
+          Save
+        </Button>
+      </div>
+    );
   }
 
   return (
-    <PageShell>
-      {/* Top Toolbar */}
-      <div className="mb-4 flex flex-col gap-3 rounded-2xl border p-3 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-2">
-          <Button onClick={() => setShowCreate(true)}>New Event</Button>
-          <Input
-            className="w-[280px]"
-            placeholder="Search events by title..."
-            value={q}
-            onChange={(e) => { setQ(e.target.value); setPage(1); }}
-          />
-        </div>
-
-        <div className="text-xs text-muted-foreground">
-          Last Updated on {fmtLastUpdated(lastUpdated)}
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setPage(p => Math.max(1, p - 1))}
-            disabled={page === 1}
-          >
-            Previous
-          </Button>
-          <span className="text-xs">Page {page} of {totalPages}</span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
-
-      {/* Create panel*/}
-      {showCreate && (
-        <CreateEventPanel
-          onCancel={() => setShowCreate(false)}
-          onCreate={onCreate}
-        />
-      )}
-
-      {/* Table */}
-      <div className="rounded-2xl border overflow-x-auto">
-        <table className="min-w-full text-sm">
-          <thead className="bg-muted">
-            <tr>
-              <th className="px-3 py-2 text-left">EVENT TITLE</th>
-              <th className="px-3 py-2 text-left">DESCRIPTION</th>
-              <th className="px-3 py-2 text-left">VENUE</th>
-              <th className="px-3 py-2 text-left">PRICE</th>
-              <th className="px-3 py-2 text-left">PRESENTER(S)</th>
-              <th className="px-3 py-2 text-left">DATE &amp; TIME</th>
-              <th className="px-3 py-2 text-left">ACTIONS</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pageRows.length === 0 ? (
-              <tr>
-                <td className="px-3 py-6 text-center text-muted-foreground" colSpan={7}>
-                  No events.
-                </td>
-              </tr>
-            ) : (
-              pageRows.map((r) => (
-                <tr key={r.id} className="border-b last:border-none align-top">
-                  <td className="px-3 py-3">
-                    {editing?.id === r.id ? (
-                      <InlineEdit
-                        initial={r}
-                        onCancel={() => setEditing(null)}
-                        onSave={(patch) => onSave(r.id, patch)}
-                      />
-                    ) : (
-                      <div className="max-w-[260px] pr-2">{r.title}</div>
-                    )}
-                  </td>
-                  <td className="px-3 py-3 text-muted-foreground">
-                    {editing?.id === r.id ? null : (r.description ?? "N/A")}
-                  </td>
-                  <td className="px-3 py-3">{editing?.id === r.id ? null : r.venue}</td>
-                  <td className="px-3 py-3">{editing?.id === r.id ? null : (r.price ?? "—")}</td>
-                  <td className="px-3 py-3">
-                    {editing?.id === r.id ? null : (
-                      r.presenters ? (
-                        <span className="inline-block rounded-md bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-800">
-                          Presented by {r.presenters}
-                        </span>
-                      ) : "—"
-                    )}
-                  </td>
-                  <td className="px-3 py-3 whitespace-nowrap">
-                    {editing?.id === r.id ? null : fmtDateTime(r.date)}
-                  </td>
-                  <td className="px-3 py-3">
-                    {editing?.id === r.id ? null : (
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline" onClick={() => setEditing(r)}>Update</Button>
-                        <Button size="sm" variant="outline" onClick={() => onDelete(r.id)}>Delete</Button>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </PageShell>
+    <div className="flex justify-end gap-2">
+      <Button size="sm" variant="outline" onClick={() => startEditing(row.original.id)}>
+        Edit
+      </Button>
+      <Button size="sm" variant="destructive" onClick={() => handleDelete(row.original.id)}>
+        Delete
+      </Button>
+    </div>
   );
+}
+
+function EventSideMenu({ table, isAdmin, startCreating }) {
+  return (
+    <Card className="bg-transparent shadow-none gap-2">
+      <CardHeader>
+        <CardTitle>
+          <span>Options</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        <Input
+          placeholder="Search by title"
+          value={table.getColumn("title")?.getFilterValue() ?? ""}
+          onChange={(event) =>
+            table.getColumn("title")?.setFilterValue(event.target.value)
+          }
+        />
+        <Input
+          placeholder="Search by description"
+          value={table.getColumn("description")?.getFilterValue() ?? ""}
+          onChange={(event) =>
+            table.getColumn("description")?.setFilterValue(event.target.value)
+          }
+        />
+        <Input
+          placeholder="Search by presenters"
+          value={table.getColumn("presenters")?.getFilterValue() ?? ""}
+          onChange={(event) =>
+            table.getColumn("presenters")?.setFilterValue(event.target.value)
+          }
+        />
+        <DataTableViewOptions table={table} />
+        { isAdmin &&
+          <Button size="sm" onClick={startCreating}>
+            Create Event (Admin)
+          </Button>
+        }
+      </CardContent>
+    </Card>
+  )
 }
 
 /* create panel */
 function CreateEventPanel({ onCreate, onCancel }) {
-  const [title, setTitle] = React.useState("");
-  const [description, setDescription] = React.useState("");
-  const [venue, setVenue] = React.useState("");
-  const [date, setDate] = React.useState("");
-  const [time, setTime] = React.useState("");
-  const [price, setPrice] = React.useState("");
-  const [presenters, setPresenters] = React.useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  // const [venue, setVenue] = useState("");
+  const [dateTime, setDateTime] = useState("");
+  const [price, setPrice] = useState("");
+  const [presenters, setPresenters] = useState("");
 
-  function submit() {
-    if (!title || !venue || !date) return;
-    const iso = time ? `${date}T${time}` : date;
-    onCreate({ title, description, venue, date: iso, price, presenters });
+  function onSubmit() {
+    if (!title.trim()) return alert("Title is required");
+    onCreate({ 
+      title: title,
+      description: description,
+      dateTime: dateTime,
+      price: price,
+      presenters: presenters 
+    });
+    setTitle("");
+    setDescription("");
+    setDateTime("");
+    setPrice("");
+    setPresenters("");
   }
 
   return (
-    <div className="mb-4 rounded-2xl border p-4">
-      <h3 className="mb-3 font-semibold">New Event</h3>
-      <div className="grid gap-3 md:grid-cols-[1fr,1fr,180px,140px,1fr,1fr]">
-        <Input placeholder="Title" value={title} onChange={(e)=>setTitle(e.target.value)} required />
-        <Input placeholder="Venue" value={venue} onChange={(e)=>setVenue(e.target.value)} required />
-        <Input type="date" value={date} onChange={(e)=>setDate(e.target.value)} required />
-        <Input type="time" value={time} onChange={(e)=>setTime(e.target.value)} />
-        <Input placeholder="Description" value={description} onChange={(e)=>setDescription(e.target.value)} />
-        <Input placeholder="Presenter(s) / Price" value={presenters} onChange={(e)=>setPresenters(e.target.value)} />
-      </div>
-      <div className="mt-3 flex gap-2">
-        <Button variant="outline" onClick={submit}>Create</Button>
-        <Button variant="outline" onClick={onCancel}>Cancel</Button>
-      </div>
-    </div>
-  );
-}
+     <Card className="bg-transparent shadow-none gap-2">
+      <CardHeader>
+        <CardTitle>
+          <span>Create Event</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
+        <form
+          onSubmit={(e) => { 
+            e.preventDefault();
+            onSubmit();
+          }}
+          className="flex flex-col gap-3"
+        >
+          <Input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+          <Input placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
+          <Input placeholder="dateTime" value={dateTime} onChange={(e) => setDateTime(e.target.value)} />
+          <Input placeholder="Price" value={price} onChange={(e) => setPrice(e.target.value)} />
+          <Input placeholder="Presenter(s)" value={presenters} onChange={(e) => setPresenters(e.target.value)} />
 
-/* inline editor (same fields aligned with table) */
-function InlineEdit({ initial, onSave, onCancel }) {
-  const [title, setTitle] = React.useState(initial.title);
-  const [description, setDescription] = React.useState(initial.description ?? "");
-  const [venue, setVenue] = React.useState(initial.venue ?? "");
-  const [date, setDate] = React.useState((initial.date || "").slice(0,10));
-  const [time, setTime] = React.useState(initial.date?.slice(11,16) || "");
-  const [price, setPrice] = React.useState(initial.price ?? "");
-  const [presenters, setPresenters] = React.useState(initial.presenters ?? "");
-
-  function submit() {
-    const iso = time ? `${date}T${time}` : date;
-    onSave({ title, description, venue, date: iso, price, presenters });
-  }
-
-  return (
-    <div className="rounded-lg border p-3">
-      <div className="grid gap-3 md:grid-cols-[1fr,1fr,160px,120px,1fr,1fr]">
-        <Input value={title} onChange={e=>setTitle(e.target.value)} />
-        <Input value={venue} onChange={e=>setVenue(e.target.value)} />
-        <Input type="date" value={date} onChange={e=>setDate(e.target.value)} />
-        <Input type="time" value={time} onChange={e=>setTime(e.target.value)} />
-        <Input value={description} onChange={e=>setDescription(e.target.value)} placeholder="Description" />
-        <Input value={presenters} onChange={e=>setPresenters(e.target.value)} placeholder="Presenter(s) / Price" />
-      </div>
-      <div className="flex gap-2 pt-3">
-        <Button variant="outline" onClick={submit}>Save changes</Button>
-        <Button variant="outline" onClick={onCancel}>Cancel</Button>
-      </div>
-    </div>
+          <Button type="submit">
+            Create
+          </Button>
+          <Button variant="outline" onClick={onCancel}>
+            Cancel
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }
 
