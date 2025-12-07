@@ -25,14 +25,14 @@ import { newTerritoriesDistricts, kowloonDistricts, hkIslandDistricts } from "@/
 
 
 export function LocationSideMenu({
-    getFilterName,
-    setFilterName,
-    getFilterDistrict,
-    setFilterDistrict,
-    maxDist,
-    getDistRange,
-    setDistRange,
-    extraComponents,
+  getFilterName,
+  setFilterName,
+  getFilterDistrict,
+  setFilterDistrict,
+  maxDist,
+  getDistRange,
+  setDistRange,
+  extraComponents,
 }) {
   const distRange = getDistRange();
   return (
