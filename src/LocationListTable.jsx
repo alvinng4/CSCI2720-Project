@@ -3,12 +3,6 @@
  */
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table"
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
 import { DataTableViewOptions }  from "@/components/ui/data-table-view-options"
@@ -26,6 +20,13 @@ import {
   SelectValue,
   SelectSeparator,
 } from "@/components/ui/select"
+import { 
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle
+} from "@/components/ui/sheet";
 import { ToggleFavourite } from "@/components/toggle-favourite"
 import { useLocationsWithDistance } from "@/hooks/use-locations-with-distance";
 import { useState } from "react"
@@ -75,11 +76,15 @@ export function LocationListTable({ isFavourite }) {
         location={selectedLocation}
         setSelectedLocation={setSelectedLocation}
       />
+      { isCreating && admin &&
+        <CreateNewLocationSheet
+          isCreating={isCreating}
+          onCancel={stopCreating}
+          onCreate={onCreateLocation} 
+        />
+      }
       <div className="text-red-500">{errorMsg}</div>
       <div className="flex flex-col gap-y-4">
-        {isCreating && admin &&
-          <CreateNewLocationPanal onCancel={stopCreating} onCreate={onCreateLocation} />
-        }
         <DataTable
           columns={getColumns(isFavourite, haveUserCoords)}
           data={locations}
@@ -201,93 +206,84 @@ function Toolbar({ startCreating }) {
   );
 }
 
-function CreateNewLocationPanal({ onCancel, onCreate }) {
+function CreateNewLocationSheet({ isCreating, onCancel, onCreate }) {
   const [newLocationName, setNewLocationName] = useState("");
   const [newLocationDistrict, setNewLocationDistrict] = useState("");
   const [newLocationLatitude, setNewLocationLatitude] = useState(null);
   const [newLocationLongitude, setNewLocationLongitude] = useState(null);
 
   return (
-    <Card className="bg-transparent shadow-none gap-2">
-      <CardHeader>
-        <CardTitle>
-          <span>Create location</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <Input
-          placeholder="Location name"
-          value={newLocationName}
-          onChange={(event) =>
-            setNewLocationName(event.target.value)
-          }
-        />
-        <Select
-          value={newLocationDistrict}
-          onValueChange={(value) =>
-            setNewLocationDistrict(value)
-          }
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a district" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Hong Kong Island</SelectLabel>
-                {hkIslandDistricts.map((district) => (
-                  <SelectItem key={district} value={district}>{district}</SelectItem>
-                ))}
-            </SelectGroup>
-            <SelectSeparator />
-            <SelectGroup>
-              <SelectLabel>Kowloon</SelectLabel>
-                {kowloonDistricts.map((district) => (
-                  <SelectItem key={district} value={district}>{district}</SelectItem>
-                ))}
-            </SelectGroup>
-            <SelectSeparator />
-            <SelectGroup>
-              <SelectLabel>New Territories</SelectLabel>
-                {newTerritoriesDistricts.map((district) => (
-                  <SelectItem key={district} value={district}>{district}</SelectItem>
-                ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <Input
-          placeholder="Latitude"
-          value={newLocationLatitude}
-          type="number"
-          onChange={(event) =>
-            setNewLocationLatitude(event.target.value)
-          }
-        />
-        <Input
-          placeholder="Longitude"
-          value={newLocationLongitude}
-          type="number"
-          onChange={(event) =>
-            setNewLocationLongitude(event.target.value)
-          }
-        />
-        <div className="ml-auto flex gap-2">
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={onCancel}
-          className="h-8"
-        >
-          Cancel
-        </Button>
-        <Button
-          size="sm"
-          onClick={onCreate}
-          className="h-8"
-        >
-          Create
-        </Button>
-      </div>
-      </CardContent>
-    </Card>
+    <Sheet
+      open={isCreating}
+      onOpenChange={onCancel}
+    >
+      <SheetContent side="left" className="w-200 flex flex-col">
+        <SheetHeader className="px-4">
+          <SheetTitle>
+            Create Location (Admin)
+          </SheetTitle>
+        </SheetHeader>
+        <div className="flex-1 overflow-y-auto px-4 space-y-2">
+          <Input
+            placeholder="Location name"
+            value={newLocationName}
+            onChange={(event) =>
+              setNewLocationName(event.target.value)
+            }
+          />
+          <Select
+            value={newLocationDistrict}
+            onValueChange={(value) =>
+              setNewLocationDistrict(value)
+            }
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a district" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Hong Kong Island</SelectLabel>
+                  {hkIslandDistricts.map((district) => (
+                    <SelectItem key={district} value={district}>{district}</SelectItem>
+                  ))}
+              </SelectGroup>
+              <SelectSeparator />
+              <SelectGroup>
+                <SelectLabel>Kowloon</SelectLabel>
+                  {kowloonDistricts.map((district) => (
+                    <SelectItem key={district} value={district}>{district}</SelectItem>
+                  ))}
+              </SelectGroup>
+              <SelectSeparator />
+              <SelectGroup>
+                <SelectLabel>New Territories</SelectLabel>
+                  {newTerritoriesDistricts.map((district) => (
+                    <SelectItem key={district} value={district}>{district}</SelectItem>
+                  ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Input
+            placeholder="Latitude"
+            value={newLocationLatitude}
+            type="number"
+            onChange={(event) =>
+              setNewLocationLatitude(event.target.value)
+            }
+          />
+          <Input
+            placeholder="Longitude"
+            value={newLocationLongitude}
+            type="number"
+            onChange={(event) =>
+              setNewLocationLongitude(event.target.value)
+            }
+          />
+        </div>
+        <SheetFooter>
+          <Button onClick={onCreate}>Create location</Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
 }
