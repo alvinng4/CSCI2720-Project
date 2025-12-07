@@ -128,7 +128,7 @@ export function UserManager() {
     <PageShell title="User Manager (Admin only)">
       <div className="flex flex-col gap-6">
         <UserTableContext.Provider value={contextValue}>
-          <DataTable columns={columns} data={rows} renderSideMenu={CreateUserSideMenu} renderToolbar={toolBar}/>
+          <DataTable columns={columns} data={rows} renderSideMenu={() => CreateUserSideMenu({ onSubmit: createUser })} renderToolbar={toolBar}/>
         </UserTableContext.Provider>
       </div>
     </PageShell>
