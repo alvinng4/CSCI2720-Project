@@ -1,8 +1,7 @@
-// src/TopNav.jsx
 import { 
-  UserIcon,
-  UserPenIcon,
   LogOutIcon ,
+  TriangleAlert,
+  UserPenIcon,
 } from "lucide-react";
 import { 
   Link,
@@ -32,7 +31,7 @@ export function TopNav() {
   const location = useLocation();
   const { user, logout } = useAuth();
 
-  // base links
+  // Nav bar links
   const navigationItems = [
     { to: "/", label: "Home" },
     { to: "/locationList", label: "Location List" },
@@ -73,7 +72,6 @@ export function TopNav() {
     ),
 
     /* Regular user */
-    { icon: UserIcon, label: "Profile", key: "profile" },
     { icon: LogOutIcon, label: "Sign Out", key: "signout" },
   ];
 
@@ -150,28 +148,29 @@ function DropdownMenuUserMenu({ username, email, role, onSignOut, onUsers, listI
 
         <DropdownMenuGroup>
           {listItems.map((item) => {
-            if (item.key === "signout") {
-              return (
-                <DropdownMenuItem key={item.key} onClick={onSignOut}>
-                  <item.icon />
-                  <span>{item.label}</span>
-                </DropdownMenuItem>
-              );
+            switch (item.key) {
+              case "users":
+                return (
+                  <DropdownMenuItem key={item.key} onClick={onUsers}>
+                    <item.icon />
+                    <span>{item.label}</span>
+                  </DropdownMenuItem>
+                );
+              case "signout":
+                return (
+                  <DropdownMenuItem key={item.key} onClick={onSignOut}>
+                    <item.icon />
+                    <span>{item.label}</span>
+                  </DropdownMenuItem>
+                );
+              default:
+                return (
+                  <DropdownMenuItem key={item.key}>
+                    <TriangleAlert />
+                    <span>Error</span>
+                  </DropdownMenuItem>
+                );
             }
-            if (item.key === "users") {
-              return (
-                <DropdownMenuItem key={item.key} onClick={onUsers}>
-                  <item.icon />
-                  <span>{item.label}</span>
-                </DropdownMenuItem>
-              );
-            }
-            return (
-              <DropdownMenuItem key={item.key}>
-                <item.icon />
-                <span>{item.label}</span>
-              </DropdownMenuItem>
-            );
         })}
         </DropdownMenuGroup>
       </DropdownMenuContent>
