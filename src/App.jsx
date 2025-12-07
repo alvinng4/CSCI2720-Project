@@ -11,7 +11,7 @@ import { Suggestions } from "@/Suggestions";
 import { TopNav } from "@/TopNav";
 import { LocationDetail } from "@/LocationDetail";
 
-import { UserManager } from "@/admin/UserManager"; // admin-only page
+import { UserManager } from "@/UserManager"; // admin-only page
 import { RequireAdmin } from "@/lib/RequireAdmin";
 
 function App() {
