@@ -1,0 +1,72 @@
+[
+  {
+    "venuec": "高山劇場 (新翼演藝廳)",
+    "venuee": "Ko Shan Theatre (New Wing Auditorium)",
+    "latitude": "22.31368",
+    "longitude": "114.18556",
+    "id": "87616551"
+  },
+  {
+    "venuec": "西灣河文娛中心 (文娛廳)",
+    "venuee": "Sai Wan Ho Civic Centre (Cultural Activities Hall)",
+    "latitude": "22.2818",
+    "longitude": "114.222501",
+    "id": "87710033"
+  },
+  {
+    "venuec": "東九文化中心 (劇院)",
+    "venuee": "East Kowloon Cultural Centre (The Hall)",
+    "latitude": "22.32427",
+    "longitude": "114.21494",
+    "id": "826817417"
+  },
+  {
+    "venuec": "葵青劇院",
+    "venuee": "Kwai Tsing Theatre",
+    "latitude": "22.35665",
+    "longitude": "114.12623",
+    "id": "871"
+  },
+  {
+    "venuec": "牛池灣文娛中心 (劇院)",
+    "venuee": "Ngau Chi Wan Civic Centre (Theatre)",
+    "latitude": "22.334583",
+    "longitude": "114.208766",
+    "id": "87410030"
+  },
+  {
+    "venuec": "香港大會堂 (劇院)",
+    "venuee": "Hong Kong City Hall (Theatre)",
+    "latitude": "22.282279",
+    "longitude": "114.161545",
+    "id": "87510010"
+  },
+  {
+    "venuec": "元朗劇院 (舞蹈室)",
+    "venuee": "Yuen Long Theatre (Dance Studio)",
+    "latitude": "22.44152",
+    "longitude": "114.02289",
+    "id": "87310362"
+  },
+  {
+    "venuec": "香港太空館 (演講廳)",
+    "venuee": "Hong Kong Space Museum (Lecture Hall)",
+    "latitude": "22.29441",
+    "longitude": "114.17192",
+    "id": "73810020"
+  },
+  {
+    "venuec": "北區大會堂 (活動室(1))",
+    "venuee": "North District Town Hall (Function Room (1))",
+    "latitude": "22.501639",
+    "longitude": "114.128911",
+    "id": "3110565"
+  },
+  {
+    "venuec": "上環文娛中心 (劇院)",
+    "venuee": "Sheung Wan Civic Centre (Theatre)",
+    "latitude": "22.28602",
+    "longitude": "114.14967",
+    "id": "87810042"
+  }
+]
