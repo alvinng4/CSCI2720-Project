@@ -9,7 +9,7 @@ import "leaflet/dist/leaflet.css";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+    <ThemeProvider storageKey="vite-ui-theme">
       <BrowserRouter>
         <AuthProvider>
           <App />

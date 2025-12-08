@@ -1,64 +1,87 @@
 /**
- * Original source code available from: https://ui.shadcn.com/docs/dark-mode/vite
+ * Original, unmodified source code available from: https://ui.shadcn.com/docs/dark-mode/vite
  */
 
-import { createContext, useContext, useEffect, useState } from "react"
+import { 
+  createContext,
+  useContext,
+  useEffect,
+  useState 
+}
+from "react"
 
 const initialState = {
-  theme: "system",
-  setTheme: () => null,
-}
+  mode: "system",
+  theme: "light",
+  setMode: () => null,
+};
 
-const ThemeProviderContext = createContext(initialState)
+const ThemeProviderContext = createContext(initialState);
 
 export function ThemeProvider({
   children,
-  defaultTheme = "system",
+  defaultMode = "system",
   storageKey = "vite-ui-theme",
   ...props
 }) {
-  const [theme, setTheme] = useState(
-    () => (localStorage.getItem(storageKey)) || defaultTheme
-  )
+  const [mode, setMode] = useState(
+    () => (localStorage.getItem(storageKey)) || defaultMode
+  );
+  const [theme, setTheme] = useState("light");
 
+  /* Non-system mode */
   useEffect(() => {
-    const root = window.document.documentElement
+    if (mode === "system") { return; }
+    const root = window.document.documentElement;
+    root.classList.remove("light", "dark");
+    root.classList.add(mode);
+    setTheme(mode);
+  }, [mode])
 
-    root.classList.remove("light", "dark")
+  /* System mode */
+  useEffect(() => {
+    if (mode !== "system") { return; }
 
-    if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light"
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
 
-      root.classList.add(systemTheme)
-      return
+    const applySystemTheme = () => {
+      const systemTheme = media.matches ? "dark" : "light";
+      const root = window.document.documentElement;
+      root.classList.remove("light", "dark");
+      root.classList.add(systemTheme);
+      setTheme(systemTheme);
     }
 
-    root.classList.add(theme)
-  }, [theme])
+    applySystemTheme();
+    media.addEventListener("change", applySystemTheme);
+
+    return () => {
+      media.removeEventListener("change", applySystemTheme);
+    };
+  }, [theme]);
 
   const value = {
+    mode,
     theme,
-    setTheme: (theme) => {
+    setMode: (theme) => {
       localStorage.setItem(storageKey, theme)
-      setTheme(theme)
+      setMode(theme)
     },
-  }
+  };
 
   return (
     <ThemeProviderContext.Provider {...props} value={value}>
       {children}
     </ThemeProviderContext.Provider>
-  )
+  );
 }
 
 export const useTheme = () => {
-  const context = useContext(ThemeProviderContext)
+  const context = useContext(ThemeProviderContext);
 
-  if (context === undefined)
-    throw new Error("useTheme must be used within a ThemeProvider")
+  if (context === undefined) {
+    throw new Error("useTheme must be used within a ThemeProvider");
+  }
 
-  return context
+  return context;
 }

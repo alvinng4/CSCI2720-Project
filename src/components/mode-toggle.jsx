@@ -1,5 +1,5 @@
 /**
- * Original source code available from: https://ui.shadcn.com/docs/dark-mode/vite
+ * Original, unmodified source code available from: https://ui.shadcn.com/docs/dark-mode/vite
  */
 
 import { useTheme } from "@/components/theme-provider"
@@ -10,15 +10,15 @@ import {
 import { useCallback } from "react"
 
 export function ModeToggle() {
-  const { theme, setTheme } = useTheme()
-  const { startTransition } = useThemeTransition()
+  const { theme, setMode } = useTheme();
+  const { startTransition } = useThemeTransition();
 
   const handleThemeToggle = useCallback(() => {
-    const newMode = theme === "dark" ? "light" : "dark"
-    startTransition(() => setTheme(newMode))
-  }, [theme, setTheme, startTransition])
+    const newMode = theme === "dark" ? "light" : "dark";
+    startTransition(() => setMode(newMode));
+  }, [theme, setMode, startTransition])
 
-  const currentTheme = theme === "system" ? "light" : theme
+  const currentTheme = theme === "system" ? "light" : theme;
 
   return (
     <ThemeToggleButton
