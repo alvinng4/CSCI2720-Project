@@ -226,36 +226,36 @@ function getColumns(isFavourite, haveUserCoords, isAdmin, startEditing, handleDe
         },
       })
     }
+  }
 
-    if (isAdmin) {
-      columns.push({
-        id: "actions",
-        cell: ({ row }) => {
-          return (
-            <div className="flex justify-end gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  startEditing(row.original.id);
-                }}>
-                Edit
-              </Button>
-              <Button
-                size="sm"
-                variant="destructive"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  handleDelete(row.original.id)
-                }}>
-                Delete
-              </Button>
-            </div>
-          );
-        },
-      })
-    }
+  if (isAdmin) {
+    columns.push({
+      id: "actions",
+      cell: ({ row }) => {
+        return (
+          <div className="flex justify-end gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={(event) => {
+                event.stopPropagation();
+                startEditing(row.original.id);
+              }}>
+              Edit
+            </Button>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={(event) => {
+                event.stopPropagation();
+                handleDelete(row.original.id)
+              }}>
+              Delete
+            </Button>
+          </div>
+        );
+      },
+    })
   }
 
   return columns

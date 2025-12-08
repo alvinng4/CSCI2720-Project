@@ -218,7 +218,7 @@ export function useLocationWithDistance(id) {
         }
 
         if (!userCoords) {
-          return;
+          return setLocation(baseLoc);
         }
 
         const locWithDistance = {

@@ -37,8 +37,11 @@ export function Map() {
     );
     if (!matchDistrict) { return false }
 
-    const matchDistance = (loc.distance >= minDistVal && loc.distance <= maxDistVal);
-    if (!matchDistance) { return false }
+    const distance = loc.distance;
+    if (distance) {
+      const matchDistance = (distance >= minDistVal && distance <= maxDistVal);
+      if (!matchDistance) { return false }
+    }
 
     return true;
   });
@@ -53,8 +56,8 @@ export function Map() {
         location={selectedLocation}
         setSelectedLocation={setSelectedLocation}
       />
-      <div className="text-red-500">{errorMsg}</div>
       <PageShell title="Map">
+        <div className="text-red-500">{errorMsg}</div>
         <div className="flex flex-col gap-4 lg:flex-row justify-center w-full">
           <aside className="min-w-85">
             <LocationSideMenu

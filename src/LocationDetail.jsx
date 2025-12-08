@@ -58,8 +58,8 @@ export function LocationDetail() {
   
   return (
     <>
-      <div className="text-red-500">{errorMsg}</div>
       <PageShell title={location?.name}>
+        <div className="text-red-500">{errorMsg}</div>
         <div className="px-4 grid grid-cols-1 md:grid-cols-2 gap-6">       
 
           {/* Left column */}
