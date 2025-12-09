@@ -3,8 +3,8 @@
  * MongoDB database, for testing / development purpose.
  */
 
-import fs from 'fs';
-import mongoose from 'mongoose';
+const fs = require('fs');
+const mongoose = require('mongoose');
 
 const venues_file = "venues_cleaned.json"
 const events_file = "events_cleaned.json"
