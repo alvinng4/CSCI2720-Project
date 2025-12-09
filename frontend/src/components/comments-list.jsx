@@ -3,10 +3,10 @@ import { cn } from "@/lib/utils"
 import { Textarea } from "@/components/ui/textarea"
 import { useState } from "react"
 
-export function CommentsList({ comments, className, onSubmit }) {
+export function CommentsList({ comments, className, onSubmit, location }) {
   const [isLeavingComment, setIsLeavingComment] = useState(false);
   const [userInput, setUserInput] = useState("");
-
+  /* 
   if (!comments || comments.length === 0) {
     return (
       <div className={className}>
@@ -14,8 +14,9 @@ export function CommentsList({ comments, className, onSubmit }) {
       </div>
     );
   }
-
+*/
   return (
+    
     <div className={cn(className, "space-y-3 w-full")}>
       {
         isLeavingComment ? (
@@ -25,7 +26,14 @@ export function CommentsList({ comments, className, onSubmit }) {
             value={userInput}
             onChange={e => setUserInput(e.target.value)}
           />
-          <form onSubmit={onSubmit}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              onSubmit(userInput);
+              setUserInput("");
+              setIsLeavingComment(false);
+            }} 
+          >
             <div className="flex justify-end gap-2">
               <Button
                 variant="outline"
@@ -47,11 +55,16 @@ export function CommentsList({ comments, className, onSubmit }) {
           Leave a comment
         </Button>
       }
-      {comments.map((comment) => (
+      {(!comments || comments.length === 0)&&(
+        <div className={className}>
+          <p className="text-sm text-muted-foreground">No comments yet.</p>
+        </div>
+      )}
+      {comments?.map((comment) => (
         <CommentBubble key={comment["_id"]} comment={comment} />
       ))}
     </div>
-  );
+  )
 }
 
 function CommentBubble({ comment }) {

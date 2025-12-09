@@ -81,15 +81,12 @@ function LoginForm(props) {
       }),
     })
 
-    const data = await res.json();
-    console.log("LOGIN RESULT:", data);
-
-    if (!res.ok) {
-      alert(data.error)
-      return
-    }
+    const { token, user } = await res.json();
+    localStorage.setItem('authToken', token);
+    localStorage.setItem('user', JSON.stringify(user));
     
-    loginAs(data.user);
+    
+    loginAs(user);
     props.setIsAuthenticated(true);
     navigate("/");
   }

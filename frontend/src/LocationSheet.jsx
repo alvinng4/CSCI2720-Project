@@ -16,8 +16,11 @@ import {
 } from "@/components/ui/table"
 import { ToggleFavourite } from "@/components/toggle-favourite"
 import { useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react";
+import { useAuth } from "./lib/AuthContext";
 
-/* Fake comments */
+
+/* Fake comments 
 let comments = [
   {
     '_id': 1,
@@ -37,17 +40,75 @@ let comments = [
     'content': 'Test\nmulti-line\nTest.',
     'timestamp': new Date(),
   },
-]
+]*/
+
+
 
 export function LocationSheet({ location, setSelectedLocation }) {
   const navigate = useNavigate();
-  if (!location) { return null; }
+  const [comments, setComments] = useState([]);
+  const{user} = useAuth();
+  const token = localStorage.getItem('authToken');
+  useEffect(() => {
+    if (!location) return;
+
+    fetch(`http://localhost:4000/api/${location.id}/comments`,
+      {
+        headers: { 
+          "authorization": `Bearer ${token}`
+        }
+      }
+      )
+      .then(res => res.json())
+      .then(data => setComments(data))
+      .catch(() => setComments([]));
+  }, [location]);
+
+  if (!location) return null;
+
+  
 
   const info = [
     { label: "District", value: location.district },
     { label: "Distance", value: location.distance != null ? `${location.distance} km` : "N/A" },
     { label: "# Events", value: location.num_events },
   ];
+
+
+  
+  async function handleAddComment(userInput){
+    console.log(userInput);
+    console.log(location.id);
+    console.log(user.id);
+    console.log(token)
+    if (!token) {
+      alert("Please log in to leave a comment.");
+      return;
+    }
+    const res = await fetch(`http://localhost:4000/api/locations/${location.id}/comments`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json", 
+        "authorization": `Bearer ${token}`
+      },
+      
+      body: JSON.stringify({
+        userId: user.id,
+        locationId: location.id,
+        text: userInput,
+      }),
+
+    })
+    const data = await res.text();
+    console.log("RESULT:", data);
+
+    if (!res.ok) {
+      alert(data);
+      return
+    }
+
+  }
+
 
   return (
     <Sheet
@@ -107,6 +168,8 @@ export function LocationSheet({ location, setSelectedLocation }) {
             <CommentsList
               comments={comments}
               className="px-3 py-3 border rounded-md bg-muted/40"
+              location={location}
+              onSubmit={handleAddComment}
             />
           </div>
         </div>
@@ -123,3 +186,4 @@ function makeSubsectionTitle(title) {
     <h3 className="text-md font-semibold mb-2">{title}</h3>
   );
 }
+
