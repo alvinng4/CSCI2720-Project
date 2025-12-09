@@ -21,7 +21,7 @@ function App() {
   if (!isAuthenticated) {
     return (
       <Routes>
-        <Route path="/auth" element={<Auth onLogin={() => setIsAuthenticated(true)}/>} />
+        <Route path="/auth" element={<Auth setIsAuthenticated={setIsAuthenticated}/>} />
         <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>
     )

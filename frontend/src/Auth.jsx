@@ -14,12 +14,12 @@ import {
 } from "@/components/ui/field"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Input } from "@/components/ui/input"
+import { useAuth } from "./lib/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 
 
-
-
-export function Auth({onLogin}) {
+export function Auth({setIsAuthenticated}) {
   const [mode, setMode] = useState("login") // "login" | "signup"
   const [loginData, setLoginData] = useState({ email: "", password: "" })
   const [signupData, setSignupData] = useState({
@@ -50,7 +50,7 @@ export function Auth({onLogin}) {
             data={loginData}
             onChange={setLoginData}
             onSwitch={() => setMode("signup")}
-            onLogin={onLogin}
+            setIsAuthenticated={setIsAuthenticated}
           />
         ) : (
           <SignUpForm
@@ -65,7 +65,8 @@ export function Auth({onLogin}) {
 }
 
 function LoginForm(props) {
-
+  const { loginAs } = useAuth();
+  const navigate = useNavigate();
   async function handleLogin(e) {
     e.preventDefault();
 
@@ -80,16 +81,17 @@ function LoginForm(props) {
       }),
     })
 
-    const data = await res.text();
+    const data = await res.json();
     console.log("LOGIN RESULT:", data);
 
     if (!res.ok) {
-      alert(data.error || "Login failed")
+      alert(data.error)
       return
     }
-    props.onLogin();
-    const navigate = useNavigate();
-     navigate("/");
+    
+    loginAs(data.user);
+    props.setIsAuthenticated(true);
+    navigate("/");
   }
   return (
     <Card className="w-full max-w-sm">
