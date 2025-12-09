@@ -55,8 +55,29 @@ export function LocationListTable({ isFavourite }) {
     setIsCreating(false);
   }
 
-  function onCreateLocation({ locationData }) {
-    alert("This function is not implemented yet!");
+  async function onCreateLocation(locationData) {
+    //alert("This function is not implemented yet!");
+    const token = localStorage.getItem('authToken');
+    console.log(locationData)
+    const res = await fetch(`http://localhost:4000/api/locations/`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json", 
+        "authorization": `Bearer ${token}`
+      },
+      
+      body: JSON.stringify(locationData),
+
+    })
+    const data = await res.text();
+    console.log("RESULT:", data);
+    
+    if (!res.ok) {
+      alert(data);
+      return
+    }
+    
+  
   }
 
   function startEditing(id) {
@@ -278,7 +299,7 @@ function CreateNewLocationSheet({ isCreating, onCancel, onCreate }) {
   const [newLocationDistrict, setNewLocationDistrict] = useState("");
   const [newLocationLatitude, setNewLocationLatitude] = useState(22.3);
   const [newLocationLongitude, setNewLocationLongitude] = useState(114.2);
-
+  
   return (
     <Sheet
       open={isCreating}
@@ -372,7 +393,16 @@ function CreateNewLocationSheet({ isCreating, onCancel, onCreate }) {
           </div>
         </div>
         <SheetFooter>
-          <Button onClick={onCreate}>Create location</Button>
+          <Button onClick={()=>{
+            const locationData = {
+              nameE: newLocationName,
+              district: newLocationDistrict,
+              latitude: newLocationLatitude,
+              longitude: newLocationLongitude,
+            };
+            //console.log(locationData)
+            onCreate(locationData);
+          }}>Create location</Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>

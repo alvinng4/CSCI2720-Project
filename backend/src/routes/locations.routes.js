@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { requireAuth } = require('../middleware/auth');
+const { requireAuth , requireAdmin} = require('../middleware/auth');
 const Location = require('../models/Location');
 const Event = require('../models/Event');
 const Comment = require('../models/Comment');
@@ -125,4 +125,16 @@ router.delete('/comments/:commentId', requireAuth, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
+
+//create location
+router.post('/', requireAuth, requireAdmin, async (req, res, next) => {
+  try {
+    const { nameE, district, num_events = 0, latitude,longitude,isFavourite = false } = req.body;
+    if (!nameE || !district || !latitude || !longitude) return res.status(400).json({ error: 'Missing fields' });
+    const exists = await Location.findOne({ latitude,longitude });
+    if (exists) return res.status(409).json({ error: 'Location exists' });
+    const u = await Location.create({ nameE, district, num_events, latitude, longitude,isFavourite });
+    res.status(201).json({ id: u._id, nameE: u.nameE, num_events: u.num_events, latitude: u.latitude, longitude: u.longitude, isFavourite: u.isFavourite });
+  } catch (e) { next(e); }
+});
 module.exports = router;

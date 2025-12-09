@@ -21,8 +21,8 @@ const locationSchema = new mongoose.Schema(
     nameE: { type: String, required: true, index: true },
     district: { type: String },
     num_events: { type: Number, default: 0 },
-    latitude: { type: [Number], required: true },
-    longitude: { type: [Number], required: true },
+    latitude: { type: Number, required: true },
+    longitude: { type: Number, required: true },
     isFavourite: { type: [Boolean]},
   },
 );
