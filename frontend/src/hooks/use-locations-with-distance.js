@@ -7,7 +7,7 @@ import {
   useState
 } from "react"
 
-/* Fake data */
+/* Fake data 
 const fakeLocationsData = [
   {
     id: "22512700",
@@ -100,6 +100,24 @@ const fakeLocationsData = [
     isFavourite: false,
   },
 ]
+*/
+const res = await fetch("http://localhost:4000/api/locations/", {
+  method: "GET",
+})
+const data = await res.json();
+if (!res.ok) {
+  alert(data.error)
+}
+
+const fakeLocationsData = data.map(loc=>({
+  id: loc._id.toString(),        
+  name: loc.nameE || "",           
+  district: loc.district || "",    
+  num_events: loc.num_events || 0,
+  latitude: loc.latitude || 0,  
+  longitude: loc.longitude || 0,
+  isFavourite: loc.isFavourite || false,
+}));
 
 export function useLocationsWithDistance({ isFavouriteOnly = false } = {}) {
   const [haveUserCoords, setHaveUserCoords] = useState(false);

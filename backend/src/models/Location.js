@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 // 使用 GeoJSON 存经纬度，便于按距离查询
 const locationSchema = new mongoose.Schema(
+  /* 
   {
     name: { type: String, required: true, index: true }, // English name
     // 例如: { type: "Point", coordinates: [lng, lat] }
@@ -15,8 +16,17 @@ const locationSchema = new mongoose.Schema(
     eventCount: { type: Number, default: 0 }, // 缓存该地点的活动数量
     lastSyncedAt: { type: Date } // 最近同步时间
   },
-  { timestamps: true }
+  { timestamps: true }*/
+  {
+    nameE: { type: String, required: true, index: true },
+    district: { type: String },
+    num_events: { type: Number, default: 0 },
+    latitude: { type: [Number], required: true },
+    longitude: { type: [Number], required: true },
+    isFavourite: { type: [Boolean]},
+  },
 );
+
 
 locationSchema.index({ geo: '2dsphere' });
 

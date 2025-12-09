@@ -5,7 +5,8 @@ const Event = require('../models/Event');
 const Comment = require('../models/Comment');
 const User = require('../models/User');
 // 列表：支持关键词、区域、距离排序/过滤
-router.get('/', requireAuth, async (req, res, next) => {
+router.get('/',  async (req, res, next) => {
+  /*
   try {
     const { q, area, sortBy = 'name', order = 'asc', lng, lat, withinKm, limit = 100 } = req.query;
     const filter = {};
@@ -45,7 +46,13 @@ router.get('/', requireAuth, async (req, res, next) => {
     }
 
     res.json(result);
-  } catch (e) { next(e); }
+  } catch (e) { next(e); }*/
+  try {
+    const docs = await Location.find().lean();
+    res.json(docs);
+  } catch (e) {
+    next(e);
+  }
 });
 
 // 单地点详情（含活动汇总）
