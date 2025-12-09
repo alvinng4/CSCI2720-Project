@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { 
+  useEffect,
   createContext,
   useContext,
   useMemo,
@@ -28,16 +29,85 @@ import {
 const UserTableContext = createContext(null);
 
 export function UserManager() {
-  const [rows, setRows] = useState(() => adminStore.listUsers());
+  const token = localStorage.getItem('authToken');
+  //const [rows, setRows] = useState(() => adminStore.listUsers());
+  /*users: [
+      { id: "u1", name: "Admin Account", email: "admin@example.com", role: "admin" },
+    ], */
+  const [rows, setRows] = useState([]);
+  
+
+  useEffect(() => {
+    fetch(`http://localhost:4000/api/users`,
+      {
+        method: "GET",
+        headers: { 
+          "authorization": `Bearer ${token}`
+        }
+      }
+      )
+      .then(res => res.json())
+      .then(data => {
+        const mappedData = data.map((users)=>({
+          id: users._id,
+          name: users.username,
+          email: users.email,
+          role: users.role,
+        }))
+        setRows(mappedData);
+      })
+      .catch((err) => {
+        setRows([])
+        console.log(err);
+      })
+  });
+  
+
+
+  
+  
   const [editingId, setEditingId] = useState(null);
   const [editingName, setEditingName] = useState(null);
   const [editingEmail, setEditingEmail] = useState(null);
   const [editingRole, setEditingRole] = useState(null);
 
   /* Handlers */
-  function createUser(userData) {
-    adminStore.createUser(userData);
-    setRows(adminStore.listUsers());
+  async function createUser(userData) {
+    //adminStore.createUser(userData);
+    //setRows(adminStore.listUsers());
+    let password = '';
+    const array = new Uint32Array(10);
+    self.crypto.getRandomValues(array);
+    for(const char of array){
+      password += char;
+    }
+    userData.password = password;
+    const token = localStorage.getItem('authToken');
+    console.log(userData)
+    const mappedData = [userData].map((user)=>({
+      username: user.name,
+      email: user.email,
+      role: user.role,
+      password: user.password
+    }))
+    console.log(mappedData)
+    const res = await fetch(`http://localhost:4000/api/users/`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json", 
+        "authorization": `Bearer ${token}`
+      },
+      
+      body: JSON.stringify(mappedData[0]),
+
+    })
+    const data = await res.text();
+    console.log("RESULT:", data);
+    if(res.ok) alert("New user created, save your password:"+password);
+    if (!res.ok) {
+      alert(data);
+      return
+    }
   }
 
   function startEditing(id) {
@@ -227,7 +297,7 @@ function CreateUserSideMenu({ initial, onSubmit }) {
   const [name, setName] = useState(initial?.name ?? "");
   const [email, setEmail] = useState(initial?.email ?? "");
   const [role, setRole] = useState(initial?.role ?? "user");
-
+  
   return (
     <Card className="bg-transparent shadow-none gap-2 w-75">
       <CardHeader>
@@ -239,7 +309,7 @@ function CreateUserSideMenu({ initial, onSubmit }) {
         <form
           onSubmit={(e) => { 
             e.preventDefault();
-            onSubmit({ name, email, role });
+            onSubmit({ name, email, role, });
             setName("");
             setEmail("");
             setRole("");
