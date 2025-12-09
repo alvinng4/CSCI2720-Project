@@ -18,6 +18,7 @@ import { ToggleFavourite } from "@/components/toggle-favourite"
 import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react";
 import { useAuth } from "./lib/AuthContext";
+//import { timeStamp } from "console";
 
 
 /* Fake comments 
@@ -52,18 +53,33 @@ export function LocationSheet({ location, setSelectedLocation }) {
   useEffect(() => {
     if (!location) return;
 
-    fetch(`http://localhost:4000/api/${location.id}/comments`,
+    fetch(`http://localhost:4000/api/locations/${location.id}/comments`,
       {
+        method: "GET",
         headers: { 
           "authorization": `Bearer ${token}`
         }
       }
       )
       .then(res => res.json())
-      .then(data => setComments(data))
-      .catch(() => setComments([]));
+      .then(data => {
+        const mappedData = data.map((com)=>({
+          id: com._id,
+          user: {username: com.userId.username},
+          content: com.text,
+          timestamps: com.createdAt,
+        }));
+        console.log(mappedData)
+        setComments(mappedData)
+        console.log(comments)
+        console.log("Updated comments state:", mappedData); 
+      })
+      .catch((err) => {
+        setComments([])
+        console.log(err)
+      })
   }, [location]);
-
+  
   if (!location) return null;
 
   
@@ -85,6 +101,15 @@ export function LocationSheet({ location, setSelectedLocation }) {
       alert("Please log in to leave a comment.");
       return;
     }
+
+
+    const newComment = {
+      user: { username: user.username },
+      content: userInput,
+      timestamps: new Date().toISOString(),
+    };
+    setComments((prevComments) => [newComment, ...prevComments]);
+
     const res = await fetch(`http://localhost:4000/api/locations/${location.id}/comments`, {
       method: "POST",
       headers: { 
@@ -101,12 +126,12 @@ export function LocationSheet({ location, setSelectedLocation }) {
     })
     const data = await res.text();
     console.log("RESULT:", data);
-
+    
     if (!res.ok) {
       alert(data);
       return
     }
-
+    
   }
 
 
