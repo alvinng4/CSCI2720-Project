@@ -127,7 +127,7 @@ export function UserManager() {
     setEditingRole(null);
   }
 
-  function saveEdit(id) {
+  async function saveEdit(id) {
     const patch = { name: editingName, email: editingEmail, role: editingRole };
 
     if (!patch.name?.trim()) return alert("Name is required");
@@ -140,16 +140,64 @@ export function UserManager() {
       return;
     }
 
-    adminStore.updateUser(id, patch);
-    setRows(adminStore.listUsers());
+    //adminStore.updateUser(id, patch);
+    //setRows(adminStore.listUsers());
+
+    const token = localStorage.getItem('authToken');
+    console.log(id)
+    if (!patch || !id) {
+      alert("User data is invalid.");
+      return;
+    }
+    const res = await fetch(`http://localhost:4000/api/users/${id}`, {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json", 
+        "authorization": `Bearer ${token}`
+      },
+      
+      body: JSON.stringify(patch),
+
+    })
+    const data = await res.text();
+    console.log("RESULT:", data);
+    
+    if (!res.ok) {
+      alert(data);
+      return
+    }
     stopEditing();
   }
 
-  function handleDelete(id) {
+  async function handleDelete(id) {
     const userConsent = confirm("Delete this user?");
     if (userConsent) {
-      adminStore.deleteUser(id);
-      setRows(adminStore.listUsers());
+      //adminStore.deleteUser(id);
+      //setRows(adminStore.listUsers());
+      const token = localStorage.getItem('authToken');
+      
+      //alert("This function is not implemented yet!");
+      const res = await fetch(`http://localhost:4000/api/users/${id}`, {
+        method: "DELETE",
+        headers: { 
+          "Content-Type": "application/json", 
+          "authorization": `Bearer ${token}`
+        }
+      })
+      const data = await res.text();
+      console.log("RESULT:", data);
+      
+      if (!res.ok) {
+        alert(data);
+        return
+      }
+
+
+
+
+
+
+
     }
   }
 
