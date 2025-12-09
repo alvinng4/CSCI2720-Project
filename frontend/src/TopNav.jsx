@@ -26,7 +26,12 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useAuth, isAdmin } from "@/lib/AuthContext";
 
-export function TopNav() {
+
+
+
+
+
+export function TopNav({setIsAuthenticated}) {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
@@ -74,7 +79,7 @@ export function TopNav() {
     /* Regular user */
     { icon: LogOutIcon, label: "Sign Out", key: "signout" },
   ];
-
+  
   return (
     <nav className="w-full">
       <div className="flex items-center w-full px-6 py-3">
@@ -104,7 +109,11 @@ export function TopNav() {
             username={username}
             email={email}
             role={roleLabel}
-            onSignOut={logout}
+            onSignOut={()=>{
+              logout();
+              setIsAuthenticated(false);
+              setTimeout(() => navigate('/', { replace: true }), 0);
+            }}
             onUsers={() => navigate("/users")}
             listItems={listItems}
           />

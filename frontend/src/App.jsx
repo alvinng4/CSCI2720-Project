@@ -14,10 +14,12 @@ import { LocationDetail } from "@/LocationDetail";
 import { UserManager } from "@/UserManager"; // admin-only page
 import { RequireAdmin } from "@/lib/RequireAdmin";
 import { useState } from "react"
+import { useAuth } from "@/lib/AuthContext";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  const { user } = useAuth();
+  const [isAuthenticated, setIsAuthenticated] = useState(!!user);
+  
   if (!isAuthenticated) {
     return (
       <Routes>
@@ -29,7 +31,7 @@ function App() {
 
   return (
     <div>
-      <TopNav />
+      <TopNav setIsAuthenticated={setIsAuthenticated}/>
 
       <main>
         <Routes>
