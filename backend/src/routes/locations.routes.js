@@ -137,4 +137,33 @@ router.post('/', requireAuth, requireAdmin, async (req, res, next) => {
     res.status(201).json({ id: u._id, nameE: u.nameE, num_events: u.num_events, latitude: u.latitude, longitude: u.longitude, isFavourite: u.isFavourite });
   } catch (e) { next(e); }
 });
+
+//update location
+router.put('/:id', requireAuth, requireAdmin, async (req, res, next) => {
+  try {
+    const { nameE, district, num_events = 0, latitude,longitude,isFavourite = false } = req.body;
+    const update = {};
+    if (nameE) update.nameE = nameE;
+    if (district) update.district = district;
+    if (latitude) update.latitude = latitude;
+    if (longitude) update.longitude = longitude;
+    const u = await Location.findByIdAndUpdate(req.params.id, update);
+    res.json(u);
+  } catch (e) { next(e); }
+});
+
+
+//delete location
+router.delete('/:id', requireAuth, requireAdmin, async (req, res, next) => {
+  try {
+    await Location.findByIdAndDelete(req.params.id);
+    res.json({ ok: true });
+  } catch (e) { next(e); }
+});
+
+
+
+
+
+
 module.exports = router;

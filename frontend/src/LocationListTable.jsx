@@ -82,8 +82,13 @@ export function LocationListTable({ isFavourite }) {
 
   function startEditing(id) {
     if (admin) {
+      //console.log(id)
       setEditingLocation(locations.find((loc) => (loc.id === id)));
       setIsEditing(true);
+      if (!locations.find((loc) => (loc.id === id))) {
+        alert("Location not found");        
+      } 
+      //else console.log(locations.find((loc) => (loc.id === id)).id)
     }
   }
 
@@ -91,17 +96,56 @@ export function LocationListTable({ isFavourite }) {
     setIsEditing(false);
   }
 
-  function onSaveEdit({ locationData }) {
-    alert("This function is not implemented yet!");
+  async function onSaveEdit(id, locationData ) {
+    //alert("This function is not implemented yet!");
+    const token = localStorage.getItem('authToken');
+    console.log(id)
+    if (!locationData || !id) {
+      alert("Location data is invalid.");
+      return;
+    }
+    const res = await fetch(`http://localhost:4000/api/locations/${id}`, {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json", 
+        "authorization": `Bearer ${token}`
+      },
+      
+      body: JSON.stringify(locationData),
+
+    })
+    const data = await res.text();
+    console.log("RESULT:", data);
+    
+    if (!res.ok) {
+      alert(data);
+      return
+    }
+    stopEditing();
   }
 
-  function handleDelete(id) {
+  async function handleDelete(id) {
+    const token = localStorage.getItem('authToken');
     const userConsent = confirm("Delete this location?");
     if (!userConsent) {
       return ;
     }
+    //alert("This function is not implemented yet!");
+    const res = await fetch(`http://localhost:4000/api/locations/${id}`, {
+      method: "DELETE",
+      headers: { 
+        "Content-Type": "application/json", 
+        "authorization": `Bearer ${token}`
+      }
+    })
+    const data = await res.text();
+    console.log("RESULT:", data);
+    
+    if (!res.ok) {
+      alert(data);
+      return
+    }
 
-    alert("This function is not implemented yet!");
   }
 
   const {
@@ -260,6 +304,7 @@ function getColumns(isFavourite, haveUserCoords, isAdmin, startEditing, handleDe
               variant="outline"
               onClick={(event) => {
                 event.stopPropagation();
+                //console.log(row.original.id)
                 startEditing(row.original.id);
               }}>
               Edit
@@ -522,13 +567,16 @@ function EditLocationSheet({ isEditing, location, onCancel, onSave }) {
           </div>
         </div>
         <SheetFooter>
-          <Button onClick={() => onSave({
-              id: location.id,
-              name: editLocationName,
+          <Button onClick={() => {
+            const locationData = {
+              nameE: editLocationName,
               district: editLocationDistrict,
               latitude: editLocationLatitude,
-              longitude: editLocationLongitude
-            })
+              longitude: editLocationLongitude,
+            };
+            
+            onSave(location.id,locationData)
+          }
           }>Save edit</Button>
         </SheetFooter>
       </SheetContent>
