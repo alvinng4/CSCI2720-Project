@@ -15,6 +15,10 @@ import {
 import { ModeToggle } from "@/components/mode-toggle"
 import { Input } from "@/components/ui/input"
 
+
+
+
+
 export function Auth() {
   const [mode, setMode] = useState("login") // "login" | "signup"
   const [loginData, setLoginData] = useState({ email: "", password: "" })
@@ -24,7 +28,7 @@ export function Auth() {
     password: "",
     confirmPassword: "",
   })
-
+  
   return (
     <div className="flex min-h-svh flex-col">
       <div className="flex p-6">
@@ -111,13 +115,43 @@ function LoginForm(props) {
 }
 
 function SignUpForm(props) {
+
+  async function handleSignup(e) {
+    e.preventDefault()
+
+    if (props.data.password !== props.data.confirmPassword) {
+      alert("Passwords do not match");
+      return
+    }
+
+    const res = await fetch("http://localhost:4000/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: props.data.username,
+        email: props.data.email,
+        password: props.data.password,
+      }),
+    })
+    const data = await res.text();
+    console.log("SIGNUP RESULT:", data);
+
+    if (!res.ok) {
+      alert(data.error || "Signup failed");
+      return
+    }
+
+    alert("Account created! Please login.")
+    props.onSwitch();
+  }
+
   return (
     <Card className="w-full max-w-sm">
       <CardContent>
         <CardHeader className="flex flex-col items-center text-center py-2 pb-5">
           <CardTitle className="text-2xl font-bold">Sign Up</CardTitle>
         </CardHeader>
-        <form>
+        <form onSubmit={handleSignup}>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="username">Username</FieldLabel>
