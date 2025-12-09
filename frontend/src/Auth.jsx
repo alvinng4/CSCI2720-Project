@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input"
 
 
 
-export function Auth() {
+export function Auth({onLogin}) {
   const [mode, setMode] = useState("login") // "login" | "signup"
   const [loginData, setLoginData] = useState({ email: "", password: "" })
   const [signupData, setSignupData] = useState({
@@ -50,6 +50,7 @@ export function Auth() {
             data={loginData}
             onChange={setLoginData}
             onSwitch={() => setMode("signup")}
+            onLogin={onLogin}
           />
         ) : (
           <SignUpForm
@@ -64,13 +65,39 @@ export function Auth() {
 }
 
 function LoginForm(props) {
+
+  async function handleLogin(e) {
+    e.preventDefault();
+
+    const res = await fetch("http://localhost:4000/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: props.data.email,
+        password: props.data.password,
+      }),
+    })
+
+    const data = await res.text();
+    console.log("LOGIN RESULT:", data);
+
+    if (!res.ok) {
+      alert(data.error || "Login failed")
+      return
+    }
+    props.onLogin();
+    const navigate = useNavigate();
+     navigate("/");
+  }
   return (
     <Card className="w-full max-w-sm">
       <CardContent>
         <CardHeader className="flex flex-col items-center text-center py-2 pb-5">
           <CardTitle className="text-2xl font-bold">Login to your account</CardTitle>
         </CardHeader>
-        <form>
+        <form onSubmit={handleLogin}>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -137,11 +164,17 @@ function SignUpForm(props) {
     console.log("SIGNUP RESULT:", data);
 
     if (!res.ok) {
-      alert(data.error || "Signup failed");
+      alert(data);
       return
     }
 
     alert("Account created! Please login.")
+    props.onChange({
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
     props.onSwitch();
   }
 
