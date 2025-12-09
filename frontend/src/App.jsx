@@ -13,14 +13,15 @@ import { LocationDetail } from "@/LocationDetail";
 
 import { UserManager } from "@/UserManager"; // admin-only page
 import { RequireAdmin } from "@/lib/RequireAdmin";
+import { useState } from "react"
 
 function App() {
-  var isAuthenticated = true
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   if (!isAuthenticated) {
     return (
       <Routes>
-        <Route path="/auth" element={<Auth />} />
+        <Route path="/auth" element={<Auth onLogin={() => setIsAuthenticated(true)}/>} />
         <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>
     )
