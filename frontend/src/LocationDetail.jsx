@@ -11,8 +11,9 @@ import {
 import { ToggleFavourite } from "@/components/toggle-favourite"
 import { useLocationWithDistance } from "@/hooks/use-locations-with-distance";
 import { useParams } from "react-router-dom";
-
-/* Fake comments */
+import { useEffect, useState } from "react";
+import { useAuth } from "./lib/AuthContext";
+/* Fake comments 
 let comments = [
   {
     '_id': 1,
@@ -33,16 +34,50 @@ let comments = [
     'timestamp': new Date(),
   },
 ]
-
+*/
 export function LocationDetail() {
   const { id } = useParams();
-
   const {
     haveUserCoords,
     location,
     loading,
     errorMsg,
   } = useLocationWithDistance(id);
+  const [comments, setComments] = useState([]);
+  const{user} = useAuth();
+  const token = localStorage.getItem('authToken');
+  useEffect(() => {
+    if (!location) return;
+
+    fetch(`http://localhost:4000/api/locations/${location.id}/comments`,
+      {
+        method: "GET",
+        headers: { 
+          "authorization": `Bearer ${token}`
+        }
+      }
+      )
+      .then(res => res.json())
+      .then(data => {
+        const mappedData = data.map((com)=>({
+          id: com._id,
+          user: {username: com.userId.username},
+          content: com.text,
+          timestamps: com.createdAt,
+        }));
+        console.log(mappedData)
+        setComments(mappedData)
+        console.log(comments)
+        console.log("Updated comments state:", mappedData); 
+      })
+      .catch((err) => {
+        setComments([])
+        console.log(err)
+      })
+  }, [location]);
+  
+  if (!location) return null;  
+  
 
   if (loading) {
     return <LoadingScreen />
@@ -56,6 +91,51 @@ export function LocationDetail() {
     { label: "# Events", value: location.num_events },
   ];
   
+  async function handleAddComment(userInput){
+    console.log(userInput);
+    console.log(location.id);
+    console.log(user.id);
+    console.log(token)
+    if (!token) {
+      alert("Please log in to leave a comment.");
+      return;
+    }
+
+
+    const newComment = {
+      user: { username: user.username },
+      content: userInput,
+      timestamps: new Date().toISOString(),
+    };
+    setComments((prevComments) => [newComment, ...prevComments]);
+
+    const res = await fetch(`http://localhost:4000/api/locations/${location.id}/comments`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json", 
+        "authorization": `Bearer ${token}`
+      },
+      
+      body: JSON.stringify({
+        userId: user.id,
+        locationId: location.id,
+        text: userInput,
+      }),
+
+    })
+    const data = await res.text();
+    console.log("RESULT:", data);
+    
+    if (!res.ok) {
+      alert(data);
+      return
+    }
+    
+  }
+
+
+
+
   return (
     <>
       <PageShell title={location?.name}>
@@ -110,6 +190,8 @@ export function LocationDetail() {
               <CommentsList
                 comments={comments}
                 className="px-3 py-3 border rounded-md bg-muted/40"
+                location={location}
+                onSubmit={handleAddComment}
               />
             </div>
           </div>
