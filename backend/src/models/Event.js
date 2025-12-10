@@ -7,6 +7,8 @@ const eventSchema = new mongoose.Schema(
     venueId: { type: mongoose.Schema.Types.ObjectId, ref: 'Location', required: true },
     description: { type: String },
     presenter: { type: String },
+    date: { type: String, required: true },
+    price: String,
     time: { type: String, required: true }, // 活动时间字符串
     sourceId: { type: String, index: true }, // LCSD原始ID
     raw: { type: Object }, // 原始数据
