@@ -1,42 +1,36 @@
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { ModeToggle } from "@/components/mode-toggle"
-import { useAuth } from "@/lib/AuthContext";
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { ModeToggle } from "@/components/mode-toggle";
+import { setAuth } from "@/lib/AuthHelpers";
 import {
   MessageTypes,
   MessageTypeToColor,
-  useMessage
+  useMessage,
 } from "@/hooks/useMessage";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react"
-
+import { useState } from "react";
 
 export function Auth({ setIsAuthenticated }) {
   const Status = Object.freeze({
-    LOGIN: 'LOGIN',
-    SIGNUP: 'SIGNUP',
+    LOGIN: "LOGIN",
+    SIGNUP: "SIGNUP",
   });
-  const [mode, setMode] = useState(Status.LOGIN)
-  const [loginData, setLoginData] = useState({ email: "", password: "" })
+  const [mode, setMode] = useState(Status.LOGIN);
+  const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [signupData, setSignupData] = useState({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
-  })
+  });
 
   return (
     <div className="flex min-h-svh flex-col">
@@ -76,19 +70,13 @@ export function Auth({ setIsAuthenticated }) {
         )}
       </div>
     </div>
-  )
+  );
 }
 
 function LoginForm({ data, onChange, onSwitch, setIsAuthenticated }) {
-  const { loginAs } = useAuth();
   const navigate = useNavigate();
-  const {
-    message,
-    isShowMessage,
-    messageType,
-    showMessage,
-    resetMessage,
-  } = useMessage();
+  const { message, isShowMessage, messageType, showMessage, resetMessage } =
+    useMessage();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -99,13 +87,13 @@ function LoginForm({ data, onChange, onSwitch, setIsAuthenticated }) {
       const res = await fetch("http://localhost:4000/api/auth/login", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email: data.email,
           password: data.password,
         }),
-      })
+      });
 
       if (!res.ok) {
         // Get error message
@@ -123,12 +111,12 @@ function LoginForm({ data, onChange, onSwitch, setIsAuthenticated }) {
         return;
       }
 
-      showMessage("Success! You should be redirected soon...", MessageTypes.SPECIAL)
+      showMessage(
+        "Success! You should be redirected soon...",
+        MessageTypes.SPECIAL
+      );
       const { token, user } = await res.json();
-      localStorage.setItem('authToken', token);
-      localStorage.setItem('user', JSON.stringify(user));
-
-      loginAs(user);
+      setAuth({ token, user });
       setIsAuthenticated(true);
       navigate("/");
     } catch (err) {
@@ -140,7 +128,9 @@ function LoginForm({ data, onChange, onSwitch, setIsAuthenticated }) {
     <Card className="w-full max-w-sm">
       <CardContent>
         <CardHeader className="flex flex-col items-center text-center py-2 pb-5">
-          <CardTitle className="text-2xl font-bold">Login to your account</CardTitle>
+          <CardTitle className="text-2xl font-bold">
+            Login to your account
+          </CardTitle>
         </CardHeader>
         <form onSubmit={handleLogin}>
           <FieldGroup>
@@ -152,7 +142,7 @@ function LoginForm({ data, onChange, onSwitch, setIsAuthenticated }) {
                 type="email"
                 required
                 value={data.email}
-                onChange={e => onChange({ ...data, email: e.target.value })}
+                onChange={(e) => onChange({ ...data, email: e.target.value })}
               />
             </Field>
 
@@ -164,7 +154,9 @@ function LoginForm({ data, onChange, onSwitch, setIsAuthenticated }) {
                 type="password"
                 required
                 value={data.password}
-                onChange={p => onChange({ ...data, password: p.target.value })}
+                onChange={(p) =>
+                  onChange({ ...data, password: p.target.value })
+                }
               />
             </Field>
 
@@ -198,25 +190,23 @@ function LoginForm({ data, onChange, onSwitch, setIsAuthenticated }) {
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 function SignUpForm({ data, onChange, onSwitch, setLoginData }) {
-  const {
-    message,
-    isShowMessage,
-    messageType,
-    showMessage,
-    resetMessage,
-  } = useMessage();
+  const { message, isShowMessage, messageType, showMessage, resetMessage } =
+    useMessage();
 
   const handleSignup = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     resetMessage();
 
     if (data.password !== data.confirmPassword) {
-      showMessage("Confirm password do not match the actual password. Please try again", MessageTypes.ERROR);
-      return
+      showMessage(
+        "Confirm password do not match the actual password. Please try again",
+        MessageTypes.ERROR
+      );
+      return;
     }
 
     try {
@@ -229,7 +219,7 @@ function SignUpForm({ data, onChange, onSwitch, setLoginData }) {
           email: data.email,
           password: data.password,
         }),
-      })
+      });
 
       if (!res.ok) {
         // Get error message
@@ -247,7 +237,10 @@ function SignUpForm({ data, onChange, onSwitch, setLoginData }) {
         return;
       }
 
-      showMessage("Account created! You will be redirected soon...", MessageTypes.SPECIAL);
+      showMessage(
+        "Account created! You will be redirected soon...",
+        MessageTypes.SPECIAL
+      );
 
       // Reset input fields
       onChange({
@@ -259,14 +252,14 @@ function SignUpForm({ data, onChange, onSwitch, setLoginData }) {
 
       // Set email for login
       setLoginData({
-        email: data.email
+        email: data.email,
       });
 
       setTimeout(onSwitch, 3000);
     } catch (err) {
       showMessage("Network error, Please try again later.", MessageTypes.ERROR);
     }
-  }
+  };
 
   return (
     <Card className="w-full max-w-sm">
@@ -283,7 +276,9 @@ function SignUpForm({ data, onChange, onSwitch, setLoginData }) {
                 id="username"
                 required
                 value={data.username}
-                onChange={u => onChange({ ...data, username: u.target.value })}
+                onChange={(u) =>
+                  onChange({ ...data, username: u.target.value })
+                }
               />
             </Field>
 
@@ -295,7 +290,7 @@ function SignUpForm({ data, onChange, onSwitch, setLoginData }) {
                 type="email"
                 required
                 value={data.email}
-                onChange={e => onChange({ ...data, email: e.target.value })}
+                onChange={(e) => onChange({ ...data, email: e.target.value })}
               />
             </Field>
 
@@ -307,19 +302,25 @@ function SignUpForm({ data, onChange, onSwitch, setLoginData }) {
                 type="password"
                 required
                 value={data.password}
-                onChange={p => onChange({ ...data, password: p.target.value })}
+                onChange={(p) =>
+                  onChange({ ...data, password: p.target.value })
+                }
               />
             </Field>
 
             {/* Confirm password */}
             <Field>
-              <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
+              <FieldLabel htmlFor="confirmPassword">
+                Confirm Password
+              </FieldLabel>
               <Input
                 id="confirmPassword"
                 type="password"
                 required
                 value={data.confirmPassword}
-                onChange={p => onChange({ ...data, confirmPassword: p.target.value })}
+                onChange={(p) =>
+                  onChange({ ...data, confirmPassword: p.target.value })
+                }
               />
             </Field>
 
@@ -351,5 +352,5 @@ function SignUpForm({ data, onChange, onSwitch, setLoginData }) {
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }

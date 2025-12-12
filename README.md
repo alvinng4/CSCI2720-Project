@@ -2,11 +2,23 @@
 This is a group project for CSCI2720.
 
 ## Quick Start
+
+### Frontend
 To run the frontend, run the following commands:
 ```
 cd frontend
 npm install
 npm run dev
+```
+
+## Contributing
+It is recommended to use linter and formatter. For linting:
+```
+npm run lint
+```
+For formatting:
+```
+npm run format
 ```
 
 ## Directory structure

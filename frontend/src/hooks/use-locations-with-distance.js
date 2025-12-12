@@ -1,17 +1,18 @@
-import {
-  getUserLocation,
-  haversineDistance
-} from "@/lib/utils"
-import {
-  useEffect,
-  useState
-} from "react"
+import { getUserLocation, haversineDistance } from "@/lib/utils";
+import { getToken, getUser } from "@/lib/AuthHelpers";
+import { useEffect, useState } from "react";
 
 const API_BASE =
   (import.meta?.env?.VITE_API_BASE ?? "http://localhost:4000") + "/api";
 
 async function fetchAllLocations() {
-  const res = await fetch(`${API_BASE}/locations/`, { method: "GET" });
+  const res = await fetch(`${API_BASE}/locations/`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+    userId: `${getUser()?.id}`,
+  });
   const maybeJson = await res.json().catch(() => null);
   if (!res.ok) {
     const msg =
@@ -19,14 +20,16 @@ async function fetchAllLocations() {
       "Failed to load locations";
     throw new Error(msg);
   }
-  const list = Array.isArray(maybeJson?.data) ? maybeJson.data : (maybeJson || []);
+  const list = Array.isArray(maybeJson?.data)
+    ? maybeJson.data
+    : maybeJson || [];
   return list.map((loc) => ({
-    id: String(loc._id ?? loc.id ?? ""),
-    name: loc.nameE ?? loc.name ?? "",
-    district: loc.district ?? "",
-    num_events: loc.num_events ?? 0,
-    latitude: Number(loc.latitude) || 0,
-    longitude: Number(loc.longitude) || 0,
+    id: loc._id,
+    name: loc.nameE,
+    district: loc.district,
+    num_events: loc.numEvents,
+    latitude: Number(loc.latitude),
+    longitude: Number(loc.longitude),
     isFavourite: !!loc.isFavourite,
   }));
 }
@@ -40,7 +43,9 @@ async function fetchLocationById(id) {
       "Failed to load location";
     throw new Error(msg);
   }
-  const loc = Array.isArray(maybeJson?.data) ? maybeJson.data[0] : (maybeJson || {});
+  const loc = Array.isArray(maybeJson?.data)
+    ? maybeJson.data[0]
+    : maybeJson || {};
   return {
     id: String(loc._id ?? loc.id ?? ""),
     name: loc.nameE ?? loc.name ?? "",
@@ -75,25 +80,28 @@ export function useLocationsWithDistance({ isFavouriteOnly = false } = {}) {
           setHaveUserCoords(true);
         } catch {
           if (!cancelled) {
-            setErrorMsg("Failed to get user location. Showing data without distance.");
+            setErrorMsg(
+              "Failed to get user location. Showing data without distance."
+            );
           }
         }
 
         const base = await fetchAllLocations();
-        const filtered = isFavouriteOnly ? base.filter((x) => x.isFavourite) : base;
+        const filtered = isFavouriteOnly
+          ? base.filter((x) => x.isFavourite)
+          : base;
 
-        const withDistance =
-          userCoords
-            ? filtered.map((loc) => ({
-                ...loc,
-                distance: haversineDistance(
-                  userCoords.latitude,
-                  userCoords.longitude,
-                  loc.latitude,
-                  loc.longitude
-                ),
-              }))
-            : filtered;
+        const withDistance = userCoords
+          ? filtered.map((loc) => ({
+              ...loc,
+              distance: haversineDistance(
+                userCoords.latitude,
+                userCoords.longitude,
+                loc.latitude,
+                loc.longitude
+              ),
+            }))
+          : filtered;
 
         if (!cancelled) setLocations(withDistance);
       } catch (err) {
@@ -151,22 +159,24 @@ export function useLocationWithDistance(id) {
           userCoords = await getUserLocation();
           setHaveUserCoords(true);
         } catch {
-          if (!cancelled) setErrorMsg("Failed to get user location. Showing data without distance.");
+          if (!cancelled)
+            setErrorMsg(
+              "Failed to get user location. Showing data without distance."
+            );
         }
 
         const baseLoc = await fetchLocationById(id);
-        const withDistance =
-          userCoords
-            ? {
-                ...baseLoc,
-                distance: haversineDistance(
-                  userCoords.latitude,
-                  userCoords.longitude,
-                  baseLoc.latitude,
-                  baseLoc.longitude
-                ),
-              }
-            : baseLoc;
+        const withDistance = userCoords
+          ? {
+              ...baseLoc,
+              distance: haversineDistance(
+                userCoords.latitude,
+                userCoords.longitude,
+                baseLoc.latitude,
+                baseLoc.longitude
+              ),
+            }
+          : baseLoc;
 
         if (!cancelled) setLocation(withDistance);
       } catch (err) {
@@ -175,18 +185,10 @@ export function useLocationWithDistance(id) {
         if (!cancelled) setLoading(false);
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [id, reloadKey]);
 
   return { haveUserCoords, location, loading, errorMsg, refresh };
-}
-
-
-async function loadLocationsData(setter) {
-  const rows = await fetchAllLocations();
-  setter(rows);
-}
-
-async function loadLocationData(id) {
-  return fetchLocationById(id);
 }

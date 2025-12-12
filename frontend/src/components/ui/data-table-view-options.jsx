@@ -1,19 +1,19 @@
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
-import { Settings2 } from "lucide-react"
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { Settings2 } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
 export function DataTableViewOptions({ table, className }) {
   return (
-    <DropdownMenu >
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
@@ -34,7 +34,7 @@ export function DataTableViewOptions({ table, className }) {
               typeof column.accessorFn !== "undefined" && column.getCanHide()
           )
           .map((column) => {
-            const title = column.columnDef.title ?? column.id
+            const title = column.columnDef.title ?? column.id;
 
             return (
               <DropdownMenuCheckboxItem
@@ -45,9 +45,9 @@ export function DataTableViewOptions({ table, className }) {
               >
                 {title}
               </DropdownMenuCheckboxItem>
-            )
+            );
           })}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

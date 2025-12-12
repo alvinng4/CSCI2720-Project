@@ -3,20 +3,18 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-} from "lucide-react"
+} from "lucide-react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
-export function DataTablePagination({
-  table,
-}) {
+export function DataTablePagination({ table }) {
   return (
     <div className="flex items-center justify-between px-2">
       <div className="flex-1" />
@@ -26,7 +24,7 @@ export function DataTablePagination({
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
-              table.setPageSize(Number(value))
+              table.setPageSize(Number(value));
             }}
           >
             <SelectTrigger className="h-8 w-[70px]">
@@ -89,5 +87,5 @@ export function DataTablePagination({
         </div>
       </div>
     </div>
-  )
+  );
 }

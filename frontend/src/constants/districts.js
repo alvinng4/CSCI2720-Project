@@ -31,4 +31,4 @@ export const districts = [
   ...newTerritoriesDistricts,
   ...kowloonDistricts,
   ...hkIslandDistricts,
-]
+];

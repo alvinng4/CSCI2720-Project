@@ -66,7 +66,10 @@ async function main() {
     await insertAdminAccounts();
 
     /* Insert locations data */
-    const locationIdMap = await insertLocationData(VENUES_PATH, VENUE_ID_TO_DISTRICT);
+    const locationIdMap = await insertLocationData(
+      VENUES_PATH,
+      VENUE_ID_TO_DISTRICT
+    );
 
     /* Insert Event data */
     await insertEventData(EVENTS_PATH, locationIdMap);

@@ -1,37 +1,31 @@
-import { fetchEvents, createEventAPI, updateEventAPI, deleteEventAPI } from "@/lib/events.api";
-import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
-import { DataTable } from "@/components/ui/data-table"
-import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
-import { DataTableViewOptions }  from "@/components/ui/data-table-view-options"
+  fetchEvents,
+  createEventAPI,
+  updateEventAPI,
+  deleteEventAPI,
+} from "@/lib/events.api";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { DataTable } from "@/components/ui/data-table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { DataTableViewOptions } from "@/components/ui/data-table-view-options";
 import { Input } from "@/components/ui/input";
 import { PageShell } from "@/components/page-shell";
-import { 
+import {
   Sheet,
   SheetContent,
   SheetFooter,
   SheetHeader,
-  SheetTitle
+  SheetTitle,
 } from "@/components/ui/sheet";
-import { useAuth, isAdmin } from "@/lib/AuthContext";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react"
+import { getUser, isAdmin } from "@/lib/AuthHelpers";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { fetchLocations } from "@/lib/locations.api";
 
 const EventTableContext = createContext(null);
 
 export function EventList() {
-  const { user } = useAuth();
+  const user = getUser();
   const admin = isAdmin(user);
   const [errorMsg, setErrorMsg] = useState("");
   const [rows, setRows] = useState([]);
@@ -53,7 +47,7 @@ export function EventList() {
         const data = await fetchEvents();
         const arr = Array.isArray(data) ? data : (data?.data ?? []);
         setRows(
-          arr.map(e => ({
+          arr.map((e) => ({
             id: e._id,
             title: e.title,
             description: e.description ?? "",
@@ -65,14 +59,14 @@ export function EventList() {
             date: e.date,
             time: e.time,
           }))
-        )
+        );
       } catch (e) {
         console.error(e);
         setErrorMsg(e.message || "Failed to fetch events");
         setRows([]);
       }
     })();
-  },[]);
+  }, []);
   const [isCreating, setIsCreating] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editingTitle, setEditingTitle] = useState(null);
@@ -90,18 +84,21 @@ export function EventList() {
     try {
       setErrorMsg("");
       const created = await createEventAPI(buildEventPayload(eventData));
-      setRows(prev => [{ 
-        id: created._id,
-        title: created.title,
-        description: created.description ?? "",
-        price: created.price ?? "",
-        presenters: created.presenter ?? "",
-        venue: created.venue,
-        venueId: created.venueId,
-        dateTime: [created.date, created.time].filter(Boolean).join(" "),
-        date: created.date,
-        time: created.time,
-      }, ...prev]);
+      setRows((prev) => [
+        {
+          id: created._id,
+          title: created.title,
+          description: created.description ?? "",
+          price: created.price ?? "",
+          presenters: created.presenter ?? "",
+          venue: created.venue,
+          venueId: created.venueId,
+          dateTime: [created.date, created.time].filter(Boolean).join(" "),
+          date: created.date,
+          time: created.time,
+        },
+        ...prev,
+      ]);
       setIsCreating(false);
       bumpUpdatedAt();
     } catch (e) {
@@ -111,19 +108,27 @@ export function EventList() {
     }
   }
 
-  function buildEventPayload({ title, description, date, time, price, presenters, venueId, venue }) {
+  function buildEventPayload({
+    title,
+    description,
+    date,
+    time,
+    price,
+    presenters,
+    venueId,
+    venue,
+  }) {
     return {
       title: title?.trim(),
       description: description || undefined,
-      date,          // REQUIRED by backend
-      time,          // REQUIRED by backend
+      date, // REQUIRED by backend
+      time, // REQUIRED by backend
       price: price || undefined,
       presenter: presenters || undefined,
-      venueId,       // REQUIRED by backend
-      venue,         // REQUIRED by backend (denormalized venue name)
+      venueId, // REQUIRED by backend
+      venue, // REQUIRED by backend (denormalized venue name)
     };
   }
-  
 
   function startCreating() {
     setIsCreating(true);
@@ -172,18 +177,26 @@ export function EventList() {
         venue: editingVenueName,
       });
       const updated = await updateEventAPI(id, patch);
-      setRows(prev => prev.map(x => x.id === id ? ({
-        id: updated._id,
-        title: updated.title,
-        description: updated.description ?? "",
-        price: updated.price ?? "",
-        presenters: updated.presenter ?? "",
-        venue: updated.venue,
-        venueId: updated.venueId,
-        dateTime: [updated.date, updated.time].filter(Boolean).join(" "),
-        date: updated.date,
-        time: updated.time,
-      }) : x));
+      setRows((prev) =>
+        prev.map((x) =>
+          x.id === id
+            ? {
+                id: updated._id,
+                title: updated.title,
+                description: updated.description ?? "",
+                price: updated.price ?? "",
+                presenters: updated.presenter ?? "",
+                venue: updated.venue,
+                venueId: updated.venueId,
+                dateTime: [updated.date, updated.time]
+                  .filter(Boolean)
+                  .join(" "),
+                date: updated.date,
+                time: updated.time,
+              }
+            : x
+        )
+      );
       stopEditing();
       bumpUpdatedAt();
     } catch (e) {
@@ -192,14 +205,13 @@ export function EventList() {
       setErrorMsg(e.message || "Failed to save event");
     }
   }
-  
 
   async function handleDelete(id) {
     if (!confirm("Delete this event?")) return;
     try {
       setErrorMsg("");
       await deleteEventAPI(id);
-      setRows(prev => prev.filter(x => x.id !== id));
+      setRows((prev) => prev.filter((x) => x.id !== id));
       bumpUpdatedAt();
     } catch (e) {
       console.error(e);
@@ -207,7 +219,6 @@ export function EventList() {
       setErrorMsg(e.message || "Failed to delete event");
     }
   }
-  
 
   /* Columns (created once only to prevent input issues) */
   const columns = useMemo(() => {
@@ -225,14 +236,21 @@ export function EventList() {
       {
         accessorKey: "title",
         title: "Title",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Title" />
+        ),
         cell: ({ row }) => {
-          const { editingId, editingTitle, setEditingTitle } = useContext(EventTableContext);
-          const isEditing = (editingId === row.original.id);
+          const { editingId, editingTitle, setEditingTitle } =
+            useContext(EventTableContext);
+          const isEditing = editingId === row.original.id;
           if (isEditing) {
             return (
               <div style={{ width: W.title }}>
-                <Input value={editingTitle ?? ""} onChange={(e) => setEditingTitle(e.target.value)} autoFocus />
+                <Input
+                  value={editingTitle ?? ""}
+                  onChange={(e) => setEditingTitle(e.target.value)}
+                  autoFocus
+                />
               </div>
             );
           }
@@ -250,14 +268,20 @@ export function EventList() {
       {
         accessorKey: "description",
         title: "Description",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Description" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Description" />
+        ),
         cell: ({ row }) => {
-          const { editingId, editingDescription, setEditingDescription } = useContext(EventTableContext);
-          const isEditing = (editingId === row.original.id);
+          const { editingId, editingDescription, setEditingDescription } =
+            useContext(EventTableContext);
+          const isEditing = editingId === row.original.id;
           if (isEditing) {
             return (
               <div style={{ width: W.desc }}>
-                <Input value={editingDescription ?? ""} onChange={(e) => setEditingDescription(e.target.value)} />
+                <Input
+                  value={editingDescription ?? ""}
+                  onChange={(e) => setEditingDescription(e.target.value)}
+                />
               </div>
             );
           }
@@ -275,14 +299,19 @@ export function EventList() {
       {
         accessorKey: "venue",
         title: "Venue",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Venue" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Venue" />
+        ),
         cell: ({ row }) => {
           const {
-            editingId, venues,
-            editingVenueId, setEditingVenueId,
-            editingVenueName, setEditingVenueName,
+            editingId,
+            venues,
+            editingVenueId,
+            setEditingVenueId,
+            editingVenueName,
+            setEditingVenueName,
           } = useContext(EventTableContext);
-          const isEditing = (editingId === row.original.id);
+          const isEditing = editingId === row.original.id;
 
           if (isEditing) {
             return (
@@ -293,12 +322,12 @@ export function EventList() {
                   onChange={(e) => {
                     const id = e.target.value;
                     setEditingVenueId(id);
-                    const v = venues.find(x => (x._id || x.id) === id);
+                    const v = venues.find((x) => (x._id || x.id) === id);
                     setEditingVenueName(v?.nameE || v?.name || "");
                   }}
                 >
                   <option value="">Select a venue</option>
-                  {venues.map(v => (
+                  {venues.map((v) => (
                     <option key={v._id || v.id} value={v._id || v.id}>
                       {v.nameE || v.name}
                     </option>
@@ -308,7 +337,11 @@ export function EventList() {
             );
           }
           return (
-            <div style={{ width: W.venue }} className="truncate" title={row.original.venue}>
+            <div
+              style={{ width: W.venue }}
+              className="truncate"
+              title={row.original.venue}
+            >
               {row.original.venue || "—"}
             </div>
           );
@@ -317,27 +350,46 @@ export function EventList() {
       {
         accessorKey: "dateTime",
         title: "Date & Time",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Date & Time" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Date & Time" />
+        ),
         cell: ({ row }) => {
           const {
-            editingId, editingDate, setEditingDate, editingTime, setEditingTime,
+            editingId,
+            editingDate,
+            setEditingDate,
+            editingTime,
+            setEditingTime,
           } = useContext(EventTableContext);
-          const isEditing = (editingId === row.original.id);
+          const isEditing = editingId === row.original.id;
 
           if (isEditing) {
             return (
               <div style={{ width: W.dt }} className="flex items-center gap-2">
-                <Input type="date" value={editingDate ?? ""} onChange={(e) => setEditingDate(e.target.value)} />
-                <Input type="time" value={editingTime ?? ""} onChange={(e) => setEditingTime(e.target.value)} />
+                <Input
+                  type="date"
+                  value={editingDate ?? ""}
+                  onChange={(e) => setEditingDate(e.target.value)}
+                />
+                <Input
+                  type="time"
+                  value={editingTime ?? ""}
+                  onChange={(e) => setEditingTime(e.target.value)}
+                />
               </div>
             );
           }
 
           const d = row.original.date;
           const t = row.original.time;
-          const txt = (!d && !t) ? "—" : `${d ?? ""}${d && t ? " " : ""}${t ?? ""}`;
+          const txt =
+            !d && !t ? "—" : `${d ?? ""}${d && t ? " " : ""}${t ?? ""}`;
           return (
-            <div style={{ width: W.dt }} className="truncate whitespace-nowrap" title={txt}>
+            <div
+              style={{ width: W.dt }}
+              className="truncate whitespace-nowrap"
+              title={txt}
+            >
               {txt}
             </div>
           );
@@ -346,19 +398,29 @@ export function EventList() {
       {
         accessorKey: "price",
         title: "Price",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Price" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Price" />
+        ),
         cell: ({ row }) => {
-          const { editingId, editingPrice, setEditingPrice } = useContext(EventTableContext);
-          const isEditing = (editingId === row.original.id);
+          const { editingId, editingPrice, setEditingPrice } =
+            useContext(EventTableContext);
+          const isEditing = editingId === row.original.id;
           if (isEditing) {
             return (
               <div style={{ width: W.price }}>
-                <Input value={editingPrice ?? ""} onChange={(e) => setEditingPrice(e.target.value)} />
+                <Input
+                  value={editingPrice ?? ""}
+                  onChange={(e) => setEditingPrice(e.target.value)}
+                />
               </div>
             );
           }
           return (
-            <div style={{ width: W.price }} className="truncate" title={row.original.price}>
+            <div
+              style={{ width: W.price }}
+              className="truncate"
+              title={row.original.price}
+            >
               {row.original.price || "—"}
             </div>
           );
@@ -367,19 +429,25 @@ export function EventList() {
       {
         accessorKey: "presenters",
         title: "Presenter(s)",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Presenter(s)" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Presenter(s)" />
+        ),
         cell: ({ row }) => {
-          const { editingId, editingPresenters, setEditingPresenters } = useContext(EventTableContext);
-          const isEditing = (editingId === row.original.id);
-        
+          const { editingId, editingPresenters, setEditingPresenters } =
+            useContext(EventTableContext);
+          const isEditing = editingId === row.original.id;
+
           if (isEditing) {
             return (
               <div style={{ width: W.presenters }}>
-                <Input value={editingPresenters ?? ""} onChange={(e) => setEditingPresenters(e.target.value)} />
+                <Input
+                  value={editingPresenters ?? ""}
+                  onChange={(e) => setEditingPresenters(e.target.value)}
+                />
               </div>
             );
           }
-        
+
           const txt = row.original.presenters || "—";
           return (
             <div style={{ width: W.presenters }} className="py-4">
@@ -390,24 +458,25 @@ export function EventList() {
                 >
                   {txt}
                 </span>
-              ) : "—"}
+              ) : (
+                "—"
+              )}
             </div>
-          );        
+          );
         },
       },
     ];
 
     if (admin) {
       baseColumns.push({
-      id: "actions",
-      cell: ({ row }) => <ActionsCell row={row} />,
-      enableSorting: false,
+        id: "actions",
+        cell: ({ row }) => <ActionsCell row={row} />,
+        enableSorting: false,
       });
     }
 
     return baseColumns;
   }, [admin]);
-
 
   /* Context values for table */
   const contextValue = {
@@ -424,8 +493,10 @@ export function EventList() {
     setEditingPrice,
     editingPresenters,
     setEditingPresenters,
-    editingVenueId, setEditingVenueId,
-    editingVenueName, setEditingVenueName,
+    editingVenueId,
+    setEditingVenueId,
+    editingVenueName,
+    setEditingVenueName,
     venues,
     startEditing,
     stopEditing,
@@ -435,13 +506,13 @@ export function EventList() {
 
   return (
     <PageShell title="Event List">
-      {admin && 
+      {admin && (
         <CreateNewEventSheet
           isCreating={isCreating}
           onCreate={onCreate}
           onCancel={cancelCreating}
         />
-      }
+      )}
       <EventTableContext.Provider value={contextValue}>
         <div className="overflow-x-auto">
           <DataTable
@@ -462,18 +533,19 @@ export function EventList() {
         </div>
       </EventTableContext.Provider>
     </PageShell>
-  )
+  );
 }
 
 function TitleCell({ row }) {
-  const { editingId, editingTitle, setEditingTitle } = useContext(EventTableContext);
-  const isEditing = (editingId === row.original.id);
+  const { editingId, editingTitle, setEditingTitle } =
+    useContext(EventTableContext);
+  const isEditing = editingId === row.original.id;
 
   if (isEditing) {
     return (
-      <Input 
-        value={editingTitle ?? ""} 
-        onChange={(e) => setEditingTitle(e.target.value)} 
+      <Input
+        value={editingTitle ?? ""}
+        onChange={(e) => setEditingTitle(e.target.value)}
         autoFocus
       />
     );
@@ -482,14 +554,15 @@ function TitleCell({ row }) {
 }
 
 function DescriptionCell({ row }) {
-  const { editingId, editingDescription, setEditingDescription } = useContext(EventTableContext);
-  const isEditing = (editingId === row.original.id);
+  const { editingId, editingDescription, setEditingDescription } =
+    useContext(EventTableContext);
+  const isEditing = editingId === row.original.id;
 
   if (isEditing) {
     return (
-      <Input 
-        value={editingDescription ?? ""} 
-        onChange={(e) => setEditingDescription(e.target.value)} 
+      <Input
+        value={editingDescription ?? ""}
+        onChange={(e) => setEditingDescription(e.target.value)}
         autoFocus
       />
     );
@@ -501,11 +574,13 @@ function VenueCell({ row }) {
   const {
     editingId,
     venues,
-    editingVenueId, setEditingVenueId,
-    editingVenueName, setEditingVenueName,
+    editingVenueId,
+    setEditingVenueId,
+    editingVenueName,
+    setEditingVenueName,
   } = useContext(EventTableContext);
 
-  const isEditing = (editingId === row.original.id);
+  const isEditing = editingId === row.original.id;
 
   if (isEditing) {
     return (
@@ -515,12 +590,12 @@ function VenueCell({ row }) {
         onChange={(e) => {
           const id = e.target.value;
           setEditingVenueId(id);
-          const v = venues.find(x => (x._id || x.id) === id);
+          const v = venues.find((x) => (x._id || x.id) === id);
           setEditingVenueName(v?.nameE || v?.name || "");
         }}
       >
         <option value="">Select a venue</option>
-        {venues.map(v => (
+        {venues.map((v) => (
           <option key={v._id || v.id} value={v._id || v.id}>
             {v.nameE || v.name}
           </option>
@@ -533,15 +608,16 @@ function VenueCell({ row }) {
   return row.original.venue || "—";
 }
 
-
 function DateTimeCell({ row }) {
   const {
     editingId,
-    editingDate, setEditingDate,
-    editingTime, setEditingTime,
+    editingDate,
+    setEditingDate,
+    editingTime,
+    setEditingTime,
   } = useContext(EventTableContext);
 
-  const isEditing = (editingId === row.original.id);
+  const isEditing = editingId === row.original.id;
 
   if (isEditing) {
     return (
@@ -566,16 +642,16 @@ function DateTimeCell({ row }) {
   return `${d ?? ""}${d && t ? " " : ""}${t ?? ""}`;
 }
 
-
 function PriceCell({ row }) {
-  const { editingId, editingPrice, setEditingPrice } = useContext(EventTableContext);
-  const isEditing = (editingId === row.original.id);
+  const { editingId, editingPrice, setEditingPrice } =
+    useContext(EventTableContext);
+  const isEditing = editingId === row.original.id;
 
   if (isEditing) {
     return (
-      <Input 
-        value={editingPrice ?? ""} 
-        onChange={(e) => setEditingPrice(e.target.value)} 
+      <Input
+        value={editingPrice ?? ""}
+        onChange={(e) => setEditingPrice(e.target.value)}
         autoFocus
       />
     );
@@ -584,8 +660,9 @@ function PriceCell({ row }) {
 }
 
 function PresentersCell({ row }) {
-  const { editingId, editingPresenters, setEditingPresenters } = useContext(EventTableContext);
-  const isEditing = (editingId === row.original.id);
+  const { editingId, editingPresenters, setEditingPresenters } =
+    useContext(EventTableContext);
+  const isEditing = editingId === row.original.id;
 
   if (isEditing) {
     return (
@@ -600,10 +677,7 @@ function PresentersCell({ row }) {
   const txt = row.original.presenters || "—";
 
   return (
-    <div
-      style={{ width: 220 }}
-      className="overflow-hidden"
-    >
+    <div style={{ width: 220 }} className="overflow-hidden">
       <span
         className="inline-block max-w-full truncate
                    bg-green-100 text-green-700 px-4 py-2 rounded-xl
@@ -616,17 +690,11 @@ function PresentersCell({ row }) {
   );
 }
 
-
 function ActionsCell({ row }) {
-  const { 
-    editingId,
-    startEditing, 
-    stopEditing, 
-    saveEdit, 
-    handleDelete 
-  } = useContext(EventTableContext);
-  
-  const isEditing = (editingId === row.original.id);
+  const { editingId, startEditing, stopEditing, saveEdit, handleDelete } =
+    useContext(EventTableContext);
+
+  const isEditing = editingId === row.original.id;
 
   if (isEditing) {
     return (
@@ -643,10 +711,18 @@ function ActionsCell({ row }) {
 
   return (
     <div className="flex justify-end gap-2">
-      <Button size="sm" variant="outline" onClick={() => startEditing(row.original.id)}>
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => startEditing(row.original.id)}
+      >
         Edit
       </Button>
-      <Button size="sm" variant="destructive" onClick={() => handleDelete(row.original.id)}>
+      <Button
+        size="sm"
+        variant="destructive"
+        onClick={() => handleDelete(row.original.id)}
+      >
         Delete
       </Button>
     </div>
@@ -655,11 +731,7 @@ function ActionsCell({ row }) {
 
 function Toolbar({ startCreating }) {
   return (
-    <Button
-      size="sm"
-      onClick={startCreating}
-      className="ml-auto h-8"
-    >
+    <Button size="sm" onClick={startCreating} className="ml-auto h-8">
       Create Event (Admin)
     </Button>
   );
@@ -705,9 +777,8 @@ function EventSideMenu({ table }) {
         <DataTableViewOptions table={table} />
       </CardContent>
     </Card>
-  )
+  );
 }
-
 
 function CreateNewEventSheet({ isCreating, onCreate, onCancel }) {
   const [title, setTitle] = useState("");
@@ -747,17 +818,23 @@ function CreateNewEventSheet({ isCreating, onCreate, onCancel }) {
     onCreate({
       title: title.trim(),
       description,
-      date,          // required
-      time,          // required
+      date, // required
+      time, // required
       price,
-      presenters,    // will be mapped to `presenter`
-      venueId,       // required
+      presenters, // will be mapped to `presenter`
+      venueId, // required
       venue: venueName, // required
-    });    
+    });
 
     // reset
-    setTitle(""); setDescription(""); setDate(""); setTime("");
-    setPrice(""); setPresenters(""); setVenueId(""); setVenueName("");
+    setTitle("");
+    setDescription("");
+    setDate("");
+    setTime("");
+    setPrice("");
+    setPresenters("");
+    setVenueId("");
+    setVenueName("");
   }
 
   return (
@@ -768,12 +845,24 @@ function CreateNewEventSheet({ isCreating, onCreate, onCancel }) {
         </SheetHeader>
 
         <form
-          onSubmit={(e) => { e.preventDefault(); submit(); }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            submit();
+          }}
           className="flex flex-col gap-3"
         >
           <div className="flex-1 overflow-y-auto px-4 space-y-2">
-            <Input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-            <Input placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
+            <Input
+              placeholder="Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+            <Input
+              placeholder="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
 
             {/* Venue select */}
             <label className="text-sm font-medium">Venue</label>
@@ -783,13 +872,13 @@ function CreateNewEventSheet({ isCreating, onCreate, onCancel }) {
               onChange={(e) => {
                 const id = e.target.value;
                 setVenueId(id);
-                const v = venues.find(x => (x._id || x.id) === id);
+                const v = venues.find((x) => (x._id || x.id) === id);
                 setVenueName(v?.nameE || v?.name || "");
               }}
               required
             >
               <option value="">Select a venue</option>
-              {venues.map(v => (
+              {venues.map((v) => (
                 <option key={v._id || v.id} value={v._id || v.id}>
                   {v.nameE || v.name}
                 </option>
@@ -815,8 +904,16 @@ function CreateNewEventSheet({ isCreating, onCreate, onCancel }) {
               required
             />
 
-            <Input placeholder="Price" value={price} onChange={(e) => setPrice(e.target.value)} />
-            <Input placeholder="Presenter(s)" value={presenters} onChange={(e) => setPresenters(e.target.value)} />
+            <Input
+              placeholder="Price"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+            />
+            <Input
+              placeholder="Presenter(s)"
+              value={presenters}
+              onChange={(e) => setPresenters(e.target.value)}
+            />
           </div>
 
           <SheetFooter>
@@ -849,8 +946,12 @@ function fmtDateTime(iso) {
   const mon = dt.toLocaleDateString(undefined, { month: "short" });
   const yr = dt.getFullYear();
   const wk = dt.toLocaleDateString(undefined, { weekday: "short" });
-  const t = dt.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  const t = dt.toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+  });
   //"1 Dec 2024 (Sun) 7:30pm"
-  return `${day} ${mon} ${yr} (${wk}) ${t}`.replace("AM","am").replace("PM","pm");
+  return `${day} ${mon} ${yr} (${wk}) ${t}`
+    .replace("AM", "am")
+    .replace("PM", "pm");
 }
-

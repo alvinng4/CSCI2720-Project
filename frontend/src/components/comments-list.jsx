@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { Textarea } from "@/components/ui/textarea"
-import { useState } from "react"
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 
 export function CommentsList({ comments, className, onSubmit, location }) {
   const [isLeavingComment, setIsLeavingComment] = useState(false);
@@ -16,15 +16,13 @@ export function CommentsList({ comments, className, onSubmit, location }) {
   }
 */
   return (
-    
     <div className={cn(className, "space-y-3 w-full")}>
-      {
-        isLeavingComment ? (
-          <>
+      {isLeavingComment ? (
+        <>
           <Textarea
             placeholder="Share your thoughts"
             value={userInput}
-            onChange={e => setUserInput(e.target.value)}
+            onChange={(e) => setUserInput(e.target.value)}
           />
           <form
             onSubmit={(e) => {
@@ -32,7 +30,7 @@ export function CommentsList({ comments, className, onSubmit, location }) {
               onSubmit(userInput);
               setUserInput("");
               setIsLeavingComment(false);
-            }} 
+            }}
           >
             <div className="flex justify-end gap-2">
               <Button
@@ -42,20 +40,22 @@ export function CommentsList({ comments, className, onSubmit, location }) {
               >
                 Cancel
               </Button>
-              <Button className="px-3 py-2 text-xs" type="submit">Submit</Button>
+              <Button className="px-3 py-2 text-xs" type="submit">
+                Submit
+              </Button>
             </div>
           </form>
-          </>
-        ) :
-        <Button 
+        </>
+      ) : (
+        <Button
           variant="outline"
           className="w-full px-3 py-2 text-sm border rounded-md bg-background cursor-text hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
           onClick={() => setIsLeavingComment(true)}
         >
           Leave a comment
         </Button>
-      }
-      {(!comments || comments.length === 0)&&(
+      )}
+      {(!comments || comments.length === 0) && (
         <div className={className}>
           <p className="text-sm text-muted-foreground">No comments yet.</p>
         </div>
@@ -64,7 +64,7 @@ export function CommentsList({ comments, className, onSubmit, location }) {
         <CommentBubble key={comment["_id"]} comment={comment} />
       ))}
     </div>
-  )
+  );
 }
 
 function CommentBubble({ comment }) {
@@ -73,11 +73,10 @@ function CommentBubble({ comment }) {
   const { user, content, timestamp } = comment;
   const username = user?.username;
   const initial = user?.username?.[0]?.toUpperCase() ?? "?";
-  const displayUsername = (
+  const displayUsername =
     username && username.length > MAX_USERNAME_LEN
-    ? username.slice(0, MAX_USERNAME_LEN) + "..."
-    : username
-  );
+      ? username.slice(0, MAX_USERNAME_LEN) + "..."
+      : username;
 
   const formattedTime = timestamp ? new Date(timestamp).toLocaleString() : "";
 

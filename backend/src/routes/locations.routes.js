@@ -1,169 +1,119 @@
-const router = require('express').Router();
-const { requireAuth , requireAdmin} = require('../middleware/auth');
-const Location = require('../models/Location');
-const Event = require('../models/Event');
-const Comment = require('../models/Comment');
-const User = require('../models/User');
-// 列表：支持关键词、区域、距离排序/过滤
-router.get('/',  async (req, res, next) => {
-  /*
+import express from "express";
+import Location from "../models/Location.js";
+import requireAdmin from "../middleware/require-admin.js";
+import requireAuth from "../middleware/require-auth.js";
+
+const router = express.Router();
+
+/* Create location */
+// router.post("/", requireAuth, requireAdmin, async (req, res, next) => {
+//   try {
+//     // Check input
+//     const { location } = req.body;
+//     if (
+//       !location.nameC ||
+//       !location.nameE ||
+//       !location.district ||
+//       !location.latitude ||
+//       !location.longitude
+//     ) {
+//       return res.status(400).json({ error: "Missing fields" });
+//     }
+
+//     // Check if location already exist
+//     const exists = await Location.findOne({ latitude, longitude });
+//     if (exists) return res.status(409).json({ error: "Location exists" });
+//     const u = await Location.create({
+//       nameE,
+//       district,
+//       num_events,
+//       latitude,
+//       longitude,
+//       isFavourite,
+//     });
+//     res.status(201).json({
+//       id: u._id,
+//       nameE: u.nameE,
+//       num_events: u.num_events,
+//       latitude: u.latitude,
+//       longitude: u.longitude,
+//       isFavourite: u.isFavourite,
+//     });
+//   } catch (e) {
+//     next(e);
+//   }
+// });
+
+/* Read single location */
+router.get("/:id", requireAuth, async (req, res, next) => {
   try {
-    const { q, area, sortBy = 'name', order = 'asc', lng, lat, withinKm, limit = 100 } = req.query;
-    const filter = {};
-    if (q) filter.name = { $regex: new RegExp(q, 'i') };
-    if (area) filter.area = area;
-
-    let cursor = Location.find(filter);
-
-    if (lng && lat && withinKm) {
-      cursor = Location.find({
-        ...filter,
-        geo: {
-          $near: {
-            $geometry: { type: 'Point', coordinates: [Number(lng), Number(lat)] },
-            $maxDistance: Number(withinKm) * 1000
-          }
-        }
-      });
+    const loc = await Location.findById(req.params.id).lean();
+    if (!loc) {
+      return res
+        .status(404)
+        .json({ error: `Location with id ${req.params.id} not found.` });
     }
-
-    const docs = await cursor.limit(Number(limit)).lean();
-
-    // 排序：name / eventCount / distance（distance需要提供lng/lat）
-    let result = docs;
-    if (sortBy === 'distance' && lng && lat) {
-      const user = { lng: Number(lng), lat: Number(lat) };
-      const { haversineKm } = require('../services/geo');
-      result = docs.map(d => {
-        const [dlng, dlat] = d.geo.coordinates;
-        const dist = haversineKm({ lng: dlng, lat: dlat }, user);
-        return { ...d, distanceKm: dist };
-      }).sort((a,b) => (order==='desc'? b.distanceKm - a.distanceKm : a.distanceKm - b.distanceKm));
-    } else if (sortBy === 'eventCount') {
-      result = docs.sort((a,b) => (order==='desc'? b.eventCount - a.eventCount : a.eventCount - b.eventCount));
-    } else {
-      result = docs.sort((a,b) => (order==='desc'? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)));
-    }
-
-    res.json(result);
-  } catch (e) { next(e); }*/
-  try {
-    const docs = await Location.find().lean();
-    res.json(docs);
+    const numEvents = await Event.countDocuments({ venueId: loc._id });
+    loc["numEvents"] = numEvents;
+    res.json({ location: loc });
   } catch (e) {
     next(e);
   }
 });
 
-// 单地点详情（含活动汇总）
-router.get('/:id', requireAuth, async (req, res, next) => {
+/* Read locations */
+router.get("/", requireAuth, async (req, res, next) => {
   try {
-    const loc = await Location.findById(req.params.id).lean();
-    if (!loc) return res.status(404).json({ error: 'Not found' });
-    const events = await Event.find({ venueId: loc._id }).sort({ startTime: 1 }).lean();
-    res.json({ location: loc, events });
-  } catch (e) { next(e); }
-});
-
-// 收藏/取消收藏
-router.post('/:id/favourite', requireAuth, async (req, res, next) => {
-  try {
-    const userId = req.user.id;
-    const locationId = req.params.id;
-    const user = await User.findById(userId);
-    if (!user) return res.status(401).json({ error: 'Unauthorized' });
-
-    const idx = user.favourites.findIndex(f => f.toString() === locationId);
-    if (idx === -1) {
-      user.favourites.push(locationId);
-      await user.save();
-      return res.json({ favourited: true });
-    } else {
-      user.favourites.splice(idx, 1);
-      await user.save();
-      return res.json({ favourited: false });
-    }
-  } catch (e) { next(e); }
-});
-
-// 获取某地点评论
-router.get('/:id/comments', requireAuth, async (req, res, next) => {
-  try {
-    // 正确链式调用：find -> sort -> populate -> lean -> await
-    const list = await Comment.find({ locationId: req.params.id })
-      .sort({ createdAt: -1 })
-      .populate('userId', 'username') // 关联用户，只返回username字段
-      .lean(); // 转换为普通JS对象（提升性能）
-    res.json(list);
-  } catch (e) { 
-    next(e); 
+    const locations = await Location.aggregate([
+      {
+        $lookup: {
+          from: "events",
+          localField: "_id",
+          foreignField: "location",
+          as: "events",
+        },
+      },
+      {
+        $addFields: {
+          numEvents: { $size: "$events" },
+        },
+      },
+      {
+        $lookup: {
+          from: "favourites",
+          let: { location: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$location", "$$location"] },
+                    { $eq: ["$user", req.userId] },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "userFavourite",
+        },
+      },
+      {
+        $addFields: {
+          isFavourite: { $gt: [{ $size: "$userFavourite" }, 0] },
+        },
+      },
+      {
+        $project: {
+          events: 0,
+          userFavourite: 0,
+        },
+      },
+      { $sort: { nameE: 1 } },
+    ]);
+    res.status(200).json(locations);
+  } catch (e) {
+    next(e);
   }
 });
 
-// 添加评论
-router.post('/:id/comments', requireAuth, async (req, res, next) => {
-  try {
-    const { text } = req.body || {};
-    if (!text || !text.trim()) return res.status(400).json({ error: 'Empty comment' });
-    const comment = await Comment.create({ userId: req.user.id, locationId: req.params.id, text: text.trim() });
-    const populated = await comment.populate('userId', 'username');
-    res.status(201).json(populated);
-  } catch (e) { next(e); }
-});
-
-// 删除评论（作者或管理员）
-router.delete('/comments/:commentId', requireAuth, async (req, res, next) => {
-  try {
-    const Comment = require('../models/Comment');
-    const c = await Comment.findById(req.params.commentId);
-    if (!c) return res.status(404).json({ error: 'Not found' });
-    if (c.userId.toString() !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({ error: 'Forbidden' });
-    }
-    await Comment.deleteOne({ _id: c._id });
-    res.json({ ok: true });
-  } catch (e) { next(e); }
-});
-
-
-//create location
-router.post('/', requireAuth, requireAdmin, async (req, res, next) => {
-  try {
-    const { nameE, district, num_events = 0, latitude,longitude,isFavourite = false } = req.body;
-    if (!nameE || !district || !latitude || !longitude) return res.status(400).json({ error: 'Missing fields' });
-    const exists = await Location.findOne({ latitude,longitude });
-    if (exists) return res.status(409).json({ error: 'Location exists' });
-    const u = await Location.create({ nameE, district, num_events, latitude, longitude,isFavourite });
-    res.status(201).json({ id: u._id, nameE: u.nameE, num_events: u.num_events, latitude: u.latitude, longitude: u.longitude, isFavourite: u.isFavourite });
-  } catch (e) { next(e); }
-});
-
-//update location
-router.put('/:id', requireAuth, requireAdmin, async (req, res, next) => {
-  try {
-    const { nameE, district, num_events = 0, latitude,longitude,isFavourite = false } = req.body;
-    const update = {};
-    if (nameE) update.nameE = nameE;
-    if (district) update.district = district;
-    if (latitude) update.latitude = latitude;
-    if (longitude) update.longitude = longitude;
-    const u = await Location.findByIdAndUpdate(req.params.id, update);
-    res.json(u);
-  } catch (e) { next(e); }
-});
-
-
-//delete location
-router.delete('/:id', requireAuth, requireAdmin, async (req, res, next) => {
-  try {
-    await Location.findByIdAndDelete(req.params.id);
-    res.json({ ok: true });
-  } catch (e) { next(e); }
-});
-
-
-
-
-
-
-module.exports = router;
+export default router;

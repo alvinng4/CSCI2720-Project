@@ -4,7 +4,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { Auth } from "@/Auth";
 import { Home } from "@/Home";
 import { LocationList } from "@/LocationList";
-import { EventList } from "@/EventList";     // this component shows admin UI if isAdmin(user)
+import { EventList } from "@/EventList"; // this component shows admin UI if isAdmin(user)
 import { Map } from "@/Map";
 import { FavouriteList } from "@/FavouriteList";
 import { Suggestions } from "@/Suggestions";
@@ -13,25 +13,27 @@ import { LocationDetail } from "@/LocationDetail";
 
 import { UserManager } from "@/UserManager"; // admin-only page
 import { RequireAdmin } from "@/lib/RequireAdmin";
-import { useState } from "react"
-import { useAuth } from "@/lib/AuthContext";
+import { useState } from "react";
+import { isAuthenticated as hasAuth } from "@/lib/AuthHelpers";
 
 function App() {
-  const { user } = useAuth();
-  const [isAuthenticated, setIsAuthenticated] = useState(!!user);
-  
+  const [isAuthenticated, setIsAuthenticated] = useState(() => hasAuth());
+
   if (!isAuthenticated) {
     return (
       <Routes>
-        <Route path="/auth" element={<Auth setIsAuthenticated={setIsAuthenticated}/>} />
+        <Route
+          path="/auth"
+          element={<Auth setIsAuthenticated={setIsAuthenticated} />}
+        />
         <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>
-    )
+    );
   }
 
   return (
     <div>
-      <TopNav setIsAuthenticated={setIsAuthenticated}/>
+      <TopNav setIsAuthenticated={setIsAuthenticated} />
 
       <main>
         <Routes>
@@ -59,7 +61,10 @@ function App() {
           />
 
           {/* Optional: if someone hits the old /admin URL, send them to /eventList */}
-          <Route path="/admin/*" element={<Navigate to="/eventList" replace />} />
+          <Route
+            path="/admin/*"
+            element={<Navigate to="/eventList" replace />}
+          />
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />

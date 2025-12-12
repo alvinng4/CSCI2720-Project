@@ -1,53 +1,48 @@
-import { LoadingScreen } from "@/components/ui/loading-screen"
+import { LoadingScreen } from "@/components/ui/loading-screen";
 import { LocationSheet } from "@/LocationSheet";
 import { LocationSideMenu } from "@/components/location-side-menu";
 import { MapComponent } from "@/components/map-component";
-import { PageShell } from "@/components/page-shell"
+import { PageShell } from "@/components/page-shell";
 import { useLocationsWithDistance } from "@/hooks/use-locations-with-distance";
-import { useState } from "react"
-
+import { useState } from "react";
 
 export function Map() {
   const [filterName, setFilterName] = useState("");
   const [filterDistrict, setFilterDistrict] = useState("");
   const [selectedLocation, setSelectedLocation] = useState(null);
 
-  const {
-    _,
-    locations,
-    loading,
-    errorMsg,
-    maxDist,
-    distRange,
-    setDistRange,
-  } = useLocationsWithDistance();
+  const { _, locations, loading, errorMsg, maxDist, distRange, setDistRange } =
+    useLocationsWithDistance();
 
   const filteredLocations = locations.filter((loc) => {
     const [minDistVal, maxDistVal] = distRange;
 
-    const matchName = (
-      !filterName ||
-      loc.name.toLowerCase().includes(filterName.toLowerCase())
-    );
-    if (!matchName) { return false }
+    const matchName =
+      !filterName || loc.name.toLowerCase().includes(filterName.toLowerCase());
+    if (!matchName) {
+      return false;
+    }
 
-    const matchDistrict = (
+    const matchDistrict =
       !filterDistrict ||
-      loc.district.toLowerCase() === filterDistrict.toLowerCase()
-    );
-    if (!matchDistrict) { return false }
+      loc.district.toLowerCase() === filterDistrict.toLowerCase();
+    if (!matchDistrict) {
+      return false;
+    }
 
     const distance = loc.distance;
     if (distance) {
-      const matchDistance = (distance >= minDistVal && distance <= maxDistVal);
-      if (!matchDistance) { return false }
+      const matchDistance = distance >= minDistVal && distance <= maxDistVal;
+      if (!matchDistance) {
+        return false;
+      }
     }
 
     return true;
   });
 
   if (loading) {
-    return <LoadingScreen />
+    return <LoadingScreen />;
   }
 
   return (
@@ -75,11 +70,11 @@ export function Map() {
               locations={filteredLocations}
               center={[locations[0]?.latitude, locations[0]?.longitude]}
               onClick={(loc) => setSelectedLocation(loc)}
-              style={{ height: "700px", width: "100%", zIndex: "1"}}
+              style={{ height: "700px", width: "100%", zIndex: "1" }}
             />
           </div>
         </div>
       </PageShell>
     </>
-  )
+  );
 }

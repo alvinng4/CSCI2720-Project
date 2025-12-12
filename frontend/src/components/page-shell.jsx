@@ -1,5 +1,5 @@
-import { Separator } from "@/components/ui/separator"
-import { cn } from "@/lib/utils"
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 export function PageShell({ title, className, children }) {
   return (
@@ -13,5 +13,5 @@ export function PageShell({ title, className, children }) {
 
       <main className={title ? "mt-4" : ""}>{children}</main>
     </div>
-  )
+  );
 }
