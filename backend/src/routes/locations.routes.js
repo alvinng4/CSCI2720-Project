@@ -55,7 +55,7 @@ router.get("/:id", requireAuth, async (req, res, next) => {
         .status(404)
         .json({ error: `Location with id ${req.params.id} not found.` });
     }
-    const numEvents = await Event.countDocuments({ venueId: loc._id });
+    const numEvents = await Event.countDocuments({ location: loc._id });
     loc["numEvents"] = numEvents;
     res.json({ location: loc });
   } catch (e) {
