@@ -1,8 +1,41 @@
 import Comment from "../models/Comment.js";
 import express from "express";
 import requireAuth from "../middleware/require-auth.js";
+import User from "../models/User.js";
+import Location from "../models/Location.js";
 
 const router = express.Router();
+
+/* Create comments */
+router.post("/", requireAuth, async (req, res, next) => {
+  try {
+    const { content, user, location } = req.body;
+    const actualUser = await User.findById(user);
+    const actualLocation = await Location.findById(location);
+
+    if (!actualUser || !actualLocation) {
+      return res
+        .status(400)
+        .json({
+          error:
+            "Failed to find matching user / location data for comment in database",
+        });
+    }
+
+    const comment = new Comment({
+      content,
+      user,
+      location,
+      createdAt: new Date(),
+    });
+
+    await comment.save();
+    await comment.populate("user");
+    return res.status(201).json(comment);
+  } catch (e) {
+    next(e);
+  }
+});
 
 /* Read comments */
 router.get("/", requireAuth, async (req, res, next) => {
