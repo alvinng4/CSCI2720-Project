@@ -66,10 +66,10 @@ async function main() {
     await insertAdminAccounts();
 
     /* Insert locations data */
-    await insertLocationData(VENUES_PATH, VENUE_ID_TO_DISTRICT);
+    const locationIdMap = await insertLocationData(VENUES_PATH, VENUE_ID_TO_DISTRICT);
 
     /* Insert Event data */
-    await insertEventData(EVENTS_PATH);
+    await insertEventData(EVENTS_PATH, locationIdMap);
 
     /* Close connection */
     console.log("\nInitialization completed. Closing connection...");
@@ -109,7 +109,6 @@ async function insertLocationData(venuesPath, venueIdToDistrict) {
   const rawLocationData = JSON.parse(fs.readFileSync(venuesPath, "utf8"));
   const locationData = rawLocationData.map((venue) => {
     return {
-      sourceId: Number(venue.id),
       nameC: venue.venuec.trim(),
       nameE: venue.venuee.trim(),
       latitude: Number(venue.latitude),
@@ -120,22 +119,20 @@ async function insertLocationData(venuesPath, venueIdToDistrict) {
 
   /* Insert locations onto database */
   console.log("Inserting location data onto database");
-  await LocationModel.insertMany(locationData);
-  console.log(`Inserted ${locationData.length} locations.`);
+  const insertedLocations = await LocationModel.insertMany(locationData);
+  console.log(`Inserted  ${locationData.length} locations.`);
+
+  const locationIdMap = new Map();
+  rawLocationData.forEach((venue, index) => {
+    locationIdMap.set(Number(venue.id), insertedLocations[index]._id);
+  });
+  return locationIdMap;
 }
 
-async function insertEventData(eventsFile) {
+async function insertEventData(eventsFile, locationIdMap) {
   /* Load events data */
   console.log(`\nLoading event data from ${eventsFile}`);
   const rawEventData = JSON.parse(fs.readFileSync(eventsFile, "utf8"));
-
-  // Get location reference
-  console.log("Looking up locations from database to get their object id");
-  const dbLocations = await LocationModel.find();
-  const locationIdMap = new Map();
-  dbLocations.forEach((loc) => {
-    locationIdMap.set(loc.sourceId, loc._id);
-  });
 
   const eventData = rawEventData.map((event) => {
     const locationObjectId = locationIdMap.get(Number(event.venueid));
@@ -146,7 +143,6 @@ async function insertEventData(eventsFile) {
     }
 
     return {
-      sourceId: Number(event.id),
       titleC: event.titlec.trim(),
       titleE: event.titlee.trim(),
       location: locationObjectId,
