@@ -1,20 +1,49 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const eventSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true },
-    venue: { type: String, required: true }, 
-    venueId: { type: mongoose.Schema.Types.ObjectId, ref: 'Location', required: true },
-    description: { type: String },
-    presenter: { type: String },
-    date: { type: String, required: true },
-    price: String,
-    time: { type: String, required: true }, // 活动时间字符串
-    sourceId: { type: String, index: true }, // LCSD原始ID
-    raw: { type: Object }, // 原始数据
-    lastSyncedAt: { type: Date }
+    sourceId: { type: Number, required: true, unique: true },
+
+    titleC: { type: String, required: true, trim: true },
+    titleE: { type: String, required: true, trim: true },
+
+    location: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Location",
+      required: true,
+    },
+
+    preDateC: { type: String, trim: true },
+    preDateE: { type: String, trim: true },
+
+    progTimeC: { type: String, trim: true },
+    progTimeE: { type: String, trim: true },
+
+    ageLimitC: { type: String, trim: true },
+    ageLimitE: { type: String, trim: true },
+
+    priceC: { type: String, trim: true },
+    priceE: { type: String, trim: true },
+
+    descC: { type: String, trim: true },
+    descE: { type: String, trim: true },
+
+    urlC: { type: String, trim: true },
+    urlE: { type: String, trim: true },
+
+    tAgentUrlC: { type: String, trim: true },
+    tAgentUrlE: { type: String, trim: true },
+
+    remarkC: { type: String, trim: true },
+    remarkE: { type: String, trim: true },
+
+    enquiry: { type: String, trim: true },
+    email: { type: String, trim: true },
+
+    presenterOrgC: { type: String, trim: true },
+    presenterOrgE: { type: String, trim: true },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.models.Event || mongoose.model('Event', eventSchema);
+export default mongoose.models.Event || mongoose.model("Event", eventSchema);
