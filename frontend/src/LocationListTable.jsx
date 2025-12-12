@@ -176,7 +176,8 @@ export function LocationListTable({ isFavourite }) {
     haveUserCoords,
     admin,
     startEditing,
-    handleDelete
+    handleDelete,
+    refresh
   );
 
   if (loading) {
@@ -249,7 +250,8 @@ function getColumns(
   haveUserCoords,
   isAdmin,
   startEditing,
-  handleDelete
+  handleDelete,
+  refresh
 ) {
   const columns = [
     {
@@ -322,10 +324,10 @@ function getColumns(
       accessorKey: "isFavourite",
       title: "Favourite",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Favourite" />
+        <DataTableColumnHeader column={column} title="Favourite" onUpdate={refresh} />
       ),
       cell: ({ row }) => {
-        return <ToggleFavourite location={row.original} />;
+        return <ToggleFavourite location={row.original} onUpdate={refresh} />;
       },
     });
   }

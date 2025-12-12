@@ -6,7 +6,7 @@ import { useState } from "react";
 const API_BASE =
   (import.meta?.env?.VITE_API_BASE ?? "http://localhost:4000") + "/api";
 
-export function ToggleFavourite({ location, className }) {
+export function ToggleFavourite({ location, onUpdate, className }) {
   const [isFavourite, setIsFavourite] = useState(location.isFavourite);
   const toggleFavourite = async (event) => {
     event.stopPropagation();
@@ -36,6 +36,7 @@ export function ToggleFavourite({ location, className }) {
 
     const data = await res.json();
     setIsFavourite(data.isFavourite);
+    onUpdate();
   };
 
   return (
