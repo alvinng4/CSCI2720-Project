@@ -7,8 +7,7 @@ const API_BASE =
 
 async function fetchAllLocations() {
   let res = null;
-  try
-  {
+  try {
     res = await fetch(`${API_BASE}/locations/`, {
       method: "GET",
       headers: {
@@ -43,8 +42,7 @@ async function fetchAllLocations() {
 
 async function fetchLocationById(id) {
   let res = null;
-  try
-  {
+  try {
     res = await fetch(`${API_BASE}/locations/${id}`, {
       method: "GET",
       headers: {

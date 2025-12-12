@@ -1,14 +1,86 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getToken, getUser } from "@/lib/AuthHelpers";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  MessageTypes,
+  MessageTypeToColor,
+  useMessage,
+} from "@/hooks/use-message";
 
-export function CommentsList({ comments, className, onSubmit, location }) {
+const API_BASE =
+  (import.meta?.env?.VITE_API_BASE ?? "http://localhost:4000") + "/api";
+
+export function CommentsList({ className, location, setCommentLength }) {
   const [isLeavingComment, setIsLeavingComment] = useState(false);
   const [userInput, setUserInput] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [comments, setComments] = useState([]);
+  const { message, isShowMessage, messageType, showMessage, resetMessage } =
+    useMessage();
+
+  /* Load comments */
+  useEffect(() => {
+    (async () => {
+      resetMessage();
+      setIsLoading(true);
+      setCommentLength(0);
+      let res = null;
+      try {
+        res = await fetch(
+          `${API_BASE}/comments/?location=${encodeURIComponent(location?.id ?? "")}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${getToken()}`,
+            },
+          }
+        );
+      } catch {
+        showMessage(
+          "Failed to fetch comment data from database.",
+          MessageTypes.ERROR
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      if (!res.ok) {
+        // Get error message
+        let uiMessage = "Unknown error. Please try again later.";
+        try {
+          const data = await res.json();
+          if (data?.error) {
+            uiMessage = data.error;
+          }
+        } catch {
+          // Do nothing
+        }
+
+        showMessage(uiMessage, MessageTypes.ERROR);
+        setIsLoading(false);
+        return;
+      }
+
+      resetMessage();
+      const comments = await res.json();
+      setComments(comments);
+      setCommentLength(comments?.length ?? 0);
+      setIsLoading(false);
+    })();
+  }, [location]);
 
   return (
     <div className={cn(className, "space-y-3 w-full")}>
+      {/* Feedback message */}
+      <p
+        hidden={!isShowMessage}
+        className={cn("text-center", MessageTypeToColor[messageType])}
+      >
+        {message}
+      </p>
       {isLeavingComment ? (
         <>
           <Textarea
@@ -47,14 +119,20 @@ export function CommentsList({ comments, className, onSubmit, location }) {
           Leave a comment
         </Button>
       )}
-      {(!comments || comments.length === 0) && (
-        <div>
-          <p className="text-sm text-muted-foreground">No comments yet.</p>
-        </div>
+      {isLoading ? (
+        <LoadingScreen />
+      ) : (
+        <>
+          {(!comments || comments.length === 0) && (
+            <div>
+              <p className="text-sm text-muted-foreground">No comments yet.</p>
+            </div>
+          )}
+          {comments?.map((comment) => (
+            <CommentBubble key={comment["_id"]} comment={comment} />
+          ))}
+        </>
       )}
-      {comments?.map((comment) => (
-        <CommentBubble key={comment["_id"]} comment={comment} />
-      ))}
     </div>
   );
 }
@@ -62,7 +140,7 @@ export function CommentsList({ comments, className, onSubmit, location }) {
 function CommentBubble({ comment }) {
   const MAX_USERNAME_LEN = 20;
 
-  const { user, content, timestamp } = comment;
+  const { user, content, createdAt } = comment;
   const username = user?.username;
   const initial = user?.username?.[0]?.toUpperCase() ?? "?";
   const displayUsername =
@@ -70,7 +148,7 @@ function CommentBubble({ comment }) {
       ? username.slice(0, MAX_USERNAME_LEN) + "..."
       : username;
 
-  const formattedTime = timestamp ? new Date(timestamp).toLocaleString() : "";
+  const formattedTime = createdAt ? new Date(createdAt).toLocaleString() : "";
 
   return (
     <div className="flex gap-3">
@@ -84,7 +162,7 @@ function CommentBubble({ comment }) {
         <span className="text-sm font-medium">{displayUsername}</span>
 
         {/* Actual content */}
-        <div className="mt-1 rounded-lg bg-muted px-3 py-2 text-sm whitespace-pre-line">
+        <div className="mt-1 rounded-lg bg-secondary px-3 py-2 text-sm whitespace-pre-line">
           {content}
         </div>
 

@@ -3,8 +3,7 @@ const API_BASE =
 
 export async function fetchLocations() {
   const token = localStorage.getItem("authToken");
-  try
-  {
+  try {
     res = await fetch(`${API_BASE}/locations/`, {
       method: "GET",
       headers: {
