@@ -36,14 +36,10 @@ export function LocationSheet({ location, setSelectedLocation }) {
           content: com.text,
           timestamps: com.createdAt,
         }));
-        console.log(mappedData);
         setComments(mappedData);
-        console.log(comments);
-        console.log("Updated comments state:", mappedData);
       })
       .catch((err) => {
         setComments([]);
-        console.log(err);
       });
   }, [location]);
 
