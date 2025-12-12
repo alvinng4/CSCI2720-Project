@@ -114,4 +114,20 @@ router.get("/", requireAuth, async (req, res, next) => {
   }
 });
 
+/* Update location */
+router.put("/:id", requireAuth, async (req, res, next) => {
+  try {
+    const { nameE, district, latitude, longitude } = req.body;
+    const update = {};
+    if (nameE) update.nameE = nameE;
+    if (district) update.district = district;
+    if (latitude) update.latitude = latitude;
+    if (longitude) update.longitude = longitude;
+    const u = await Location.findByIdAndUpdate(req.params.id, update);
+    res.json(u);
+  } catch (e) {
+    next(e);
+  }
+});
+
 export default router;

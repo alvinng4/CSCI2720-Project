@@ -31,21 +31,16 @@ import {
 import { ToggleFavourite } from "@/components/toggle-favourite";
 import { useLocationsWithDistance } from "@/hooks/use-locations-with-distance";
 import { useState } from "react";
-import {
-  getToken,
-  getUser,
-  isAdmin
-} from "@/lib/AuthHelpers";
+import { getToken, getUser, isAdmin } from "@/lib/AuthHelpers";
 import {
   newTerritoriesDistricts,
   kowloonDistricts,
   hkIslandDistricts,
 } from "@/constants/districts";
 
-
 const API_BASE =
   (import.meta?.env?.VITE_API_BASE ?? "http://localhost:4000") + "/api";
-  
+
 export function LocationListTable({ isFavourite }) {
   const user = getUser();
   const admin = isAdmin(user);
@@ -78,7 +73,7 @@ export function LocationListTable({ isFavourite }) {
             ...locationData,
             latitude: Number(locationData.latitude),
             longitude: Number(locationData.longitude),
-          }
+          },
         }),
       });
     } catch {
@@ -86,10 +81,8 @@ export function LocationListTable({ isFavourite }) {
     }
 
     if (!res.ok) {
-      const data = await res.json();
-      const error = data.error;
-      let uiMessage = typeof error === "string" ? error : "Some error occured";
-      alert(uiMessage);
+      const data = await res.json().catch(() => null);
+      alert(data?.message || "Some error occured");
       return;
     }
 
@@ -100,13 +93,11 @@ export function LocationListTable({ isFavourite }) {
 
   function startEditing(id) {
     if (admin) {
-      //console.log(id)
       setEditingLocation(locations.find((loc) => loc.id === id));
       setIsEditing(true);
       if (!locations.find((loc) => loc.id === id)) {
         alert("Location not found");
       }
-      //else console.log(locations.find((loc) => (loc.id === id)).id)
     }
   }
 
@@ -115,17 +106,16 @@ export function LocationListTable({ isFavourite }) {
   }
 
   async function onSaveEdit(id, locationData) {
-    const token = localStorage.getItem("authToken");
-    console.log(id);
     if (!locationData || !id) {
       alert("Location data is invalid.");
       return;
     }
-    const res = await fetch(`http://localhost:4000/api/locations/${id}`, {
+
+    const res = await fetch(`${API_BASE}/locations/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        authorization: `Bearer ${token}`,
+        authorization: `Bearer ${getToken()}`,
       },
 
       body: JSON.stringify({
@@ -135,28 +125,27 @@ export function LocationListTable({ isFavourite }) {
       }),
     });
     const data = await res.json().catch(() => null);
-    console.log("RESULT:", data);
 
     if (!res.ok) {
       alert(data?.message || "Failed to update");
       return;
     }
+
     stopEditing();
-    alert("Location updated");
+    alert("Location successfully updated");
     refresh();
   }
 
   async function handleDelete(id) {
-    const token = localStorage.getItem("authToken");
     const userConsent = confirm("Delete this location?");
     if (!userConsent) {
       return;
     }
-    const res = await fetch(`http://localhost:4000/api/locations/${id}`, {
+    const res = await fetch(`${API_BASE}/locations/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        authorization: `Bearer ${token}`,
+        authorization: `Bearer ${getToken()}`,
       },
     });
     const data = await res.json().catch(() => null);
@@ -334,7 +323,11 @@ function getColumns(
       accessorKey: "isFavourite",
       title: "Favourite",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Favourite" onUpdate={refresh} />
+        <DataTableColumnHeader
+          column={column}
+          title="Favourite"
+          onUpdate={refresh}
+        />
       ),
       cell: ({ row }) => {
         return <ToggleFavourite location={row.original} onUpdate={refresh} />;
