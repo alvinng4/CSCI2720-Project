@@ -81,7 +81,7 @@ export function UserManager() {
       return;
     }
 
-    alert("New user created. Password: " + user.data.password);
+    alert("New user created. Password: " + userData.password);
   }
 
   function startEditing(id) {
@@ -114,7 +114,6 @@ export function UserManager() {
       return;
     }
 
-    console.log(id);
     if (!patch || !id) {
       alert("User data is invalid.");
       return;
@@ -129,7 +128,6 @@ export function UserManager() {
       body: JSON.stringify(patch),
     });
     const data = await res.text();
-    console.log("RESULT:", data);
 
     if (!res.ok) {
       alert(data);
@@ -149,7 +147,6 @@ export function UserManager() {
         },
       });
       const data = await res.text();
-      console.log("RESULT:", data);
 
       if (!res.ok) {
         alert(data);
@@ -210,7 +207,7 @@ export function UserManager() {
 
   return (
     <PageShell title="User Manager (Admin only)">
-      {isAdmin &&
+      {isAdmin && (
         <UserTableContext.Provider value={contextValue}>
           <DataTable
             columns={columns}
@@ -219,7 +216,7 @@ export function UserManager() {
             renderToolbar={toolBar}
           />
         </UserTableContext.Provider>
-      }
+      )}
     </PageShell>
   );
 }
