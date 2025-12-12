@@ -149,13 +149,11 @@ export function LocationListTable({ isFavourite }) {
       },
     });
     const data = await res.json().catch(() => null);
-    console.log("RESULT:", data);
 
     if (!res.ok) {
       alert(data?.message || "Delete failed");
       return;
     }
-    alert("Location deleted");
     refresh();
   }
 

@@ -130,4 +130,14 @@ router.put("/:id", requireAuth, async (req, res, next) => {
   }
 });
 
+/* Delete Location */
+router.delete("/:id", requireAuth, async (req, res, next) => {
+  try {
+    await Location.findByIdAndDelete(req.params.id);
+    res.json({ ok: true });
+  } catch (e) {
+    next(e);
+  }
+});
+
 export default router;
