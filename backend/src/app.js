@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
-// import authRoutes from "./routes/auth.routes.js";
+import authRoutes from "./routes/auth.routes.js";
 // import usersRoutes from "./routes/users.routes.js";
 // import locationsRoutes from "./routes/locations.routes.js";
 // import eventsRoutes from "./routes/events.routes.js";
@@ -21,7 +21,7 @@ app.get("/api/health", (_req, res) => {
   res.json({ ok: true, time: new Date().toISOString() });
 });
 
-// app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRoutes);
 // app.use("/api/users", usersRoutes);
 // app.use("/api/locations", locationsRoutes);
 // app.use("/api/events", eventsRoutes);
