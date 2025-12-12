@@ -6,13 +6,20 @@ const API_BASE =
   (import.meta?.env?.VITE_API_BASE ?? "http://localhost:4000") + "/api";
 
 async function fetchAllLocations() {
-  const res = await fetch(`${API_BASE}/locations/`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
-    userId: `${getUser()?.id}`,
-  });
+  let res = null;
+  try
+  {
+    const res = await fetch(`${API_BASE}/locations/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+      userId: `${getUser()?.id}`,
+    });
+  } catch {
+    throw new Error("Failed to fetch location data from database.");
+  }
+
   const maybeJson = await res.json().catch(() => null);
   if (!res.ok) {
     const msg =
@@ -30,30 +37,43 @@ async function fetchAllLocations() {
     num_events: loc.numEvents,
     latitude: Number(loc.latitude),
     longitude: Number(loc.longitude),
-    isFavourite: !!loc.isFavourite,
+    isFavourite: false, //!!loc.isFavourite,
   }));
 }
 
 async function fetchLocationById(id) {
-  const res = await fetch(`${API_BASE}/locations/${id}`, { method: "GET" });
-  const maybeJson = await res.json().catch(() => null);
-  if (!res.ok) {
-    const msg =
-      (maybeJson && (maybeJson.error || maybeJson.message)) ||
-      "Failed to load location";
-    throw new Error(msg);
+  let res = null;
+  try
+  {
+    res = await fetch(`${API_BASE}/locations/${id}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+      userId: `${getUser()?.id}`,
+    });
+  } catch {
+    throw new Error("Failed to fetch location data from database.");
   }
-  const loc = Array.isArray(maybeJson?.data)
-    ? maybeJson.data[0]
-    : maybeJson || {};
+
+  if (!res.ok) {
+    throw new Error("Failed to load location.");
+  }
+
+  const data = await res.json();
+  const loc = data.location;
+  if (!loc) {
+    throw new Error("Failed to load location.");
+  }
+
   return {
-    id: String(loc._id ?? loc.id ?? ""),
-    name: loc.nameE ?? loc.name ?? "",
-    district: loc.district ?? "",
-    num_events: loc.num_events ?? 0,
-    latitude: Number(loc.latitude) || 0,
-    longitude: Number(loc.longitude) || 0,
-    isFavourite: !!loc.isFavourite,
+    id: loc._id,
+    name: loc.nameE,
+    district: loc.district,
+    num_events: loc.numEvents,
+    latitude: Number(loc.latitude),
+    longitude: Number(loc.longitude),
+    isFavourite: false, //!!loc.isFavourite,
   };
 }
 
@@ -159,10 +179,11 @@ export function useLocationWithDistance(id) {
           userCoords = await getUserLocation();
           setHaveUserCoords(true);
         } catch {
-          if (!cancelled)
+          if (!cancelled) {
             setErrorMsg(
               "Failed to get user location. Showing data without distance."
             );
+          }
         }
 
         const baseLoc = await fetchLocationById(id);
@@ -177,12 +198,18 @@ export function useLocationWithDistance(id) {
               ),
             }
           : baseLoc;
-
-        if (!cancelled) setLocation(withDistance);
+        if (!cancelled) {
+          setLocation(withDistance);
+        }
       } catch (err) {
-        if (!cancelled) setErrorMsg(err.message || "Failed to load location");
+        console.log(err);
+        if (!cancelled) {
+          setErrorMsg(err.message || "Failed to load location");
+        }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     })();
     return () => {

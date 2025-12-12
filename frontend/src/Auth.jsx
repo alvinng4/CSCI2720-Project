@@ -14,7 +14,7 @@ import {
   MessageTypes,
   MessageTypeToColor,
   useMessage,
-} from "@/hooks/useMessage";
+} from "@/hooks/use-message";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
