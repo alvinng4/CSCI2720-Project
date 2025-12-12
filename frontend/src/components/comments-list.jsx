@@ -72,6 +72,54 @@ export function CommentsList({ className, location, setCommentLength }) {
     })();
   }, [location]);
 
+  /* Submit comment */
+  const submitComment = async (content) => {
+    resetMessage();
+    let res = null;
+    const user = getUser();
+    try {
+      res = await fetch(`${API_BASE}/comments/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getToken()}`,
+        },
+        body: JSON.stringify({
+          content,
+          user: user.id,
+          location: location.id,
+        }),
+      });
+    } catch {
+      showMessage("Failed to submit comment to database.", MessageTypes.ERROR);
+      setIsLoading(false);
+      return;
+    }
+
+    if (!res.ok) {
+      // Get error message
+      let uiMessage = "Unknown error. Please try again later.";
+      try {
+        const data = await res.json();
+        if (data?.error) {
+          uiMessage = data.error;
+        }
+      } catch {
+        // Do nothing
+      }
+
+      showMessage(uiMessage, MessageTypes.ERROR);
+      setIsLoading(false);
+      return;
+    }
+
+    resetMessage();
+    const newComment = await res.json();
+    setComments((comments) => [newComment, ...comments]);
+    setCommentLength((s) => s + 1);
+    setIsLoading(false);
+  };
+
   return (
     <div className={cn(className, "space-y-3 w-full")}>
       {/* Feedback message */}
@@ -91,7 +139,7 @@ export function CommentsList({ className, location, setCommentLength }) {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              onSubmit(userInput);
+              submitComment(userInput);
               setUserInput("");
               setIsLeavingComment(false);
             }}
