@@ -1,20 +1,21 @@
-require('dotenv').config();
-const { connectDB } = require('./config/db');
-const { ensureAdmin } = require('./config/env');
+import App from "./app.js";
+import connectDB from "./libs/connect-db.js";
+import dotenv from "dotenv";
 
-const app = require('./app');
+dotenv.config();
 
+const DB_PORT = process.env.DB_PORT || 27017;
+const DB_NAME = process.env.DB_NAME || "culturalApp";
 const PORT = process.env.PORT || 4000;
 
 (async () => {
   try {
-    await connectDB();
-    await ensureAdmin(); // 初次启动确保有一个 admin 账号
-    app.listen(PORT, () => {
+    await connectDB(DB_PORT, DB_NAME);
+    App.listen(PORT, () => {
       console.log(`API server listening on http://localhost:${PORT}`);
     });
   } catch (err) {
-    console.error('Failed to start server:', err);
+    console.error("Failed to start server. Error: ", err);
     process.exit(1);
   }
 })();

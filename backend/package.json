@@ -4,9 +4,10 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
+    "dev": "node src/index.js",
     "lint": "eslint .",
     "format": "prettier \"**/*.{js,jsx,json}\" --write",
-    "init-db": "node init_db.js"
+    "init-db": "node init-db.js"
   },
   "devDependencies": {
     "eslint": "^9.39.1",
@@ -15,6 +16,10 @@
     "prettier": "^3.7.4"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
     "mongoose": "^8.20.2"
   }
 }
