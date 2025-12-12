@@ -31,13 +31,21 @@ import {
 import { ToggleFavourite } from "@/components/toggle-favourite";
 import { useLocationsWithDistance } from "@/hooks/use-locations-with-distance";
 import { useState } from "react";
-import { getUser, isAdmin } from "@/lib/AuthHelpers";
+import {
+  getToken,
+  getUser,
+  isAdmin
+} from "@/lib/AuthHelpers";
 import {
   newTerritoriesDistricts,
   kowloonDistricts,
   hkIslandDistricts,
 } from "@/constants/districts";
 
+
+const API_BASE =
+  (import.meta?.env?.VITE_API_BASE ?? "http://localhost:4000") + "/api";
+  
 export function LocationListTable({ isFavourite }) {
   const user = getUser();
   const admin = isAdmin(user);
@@ -56,35 +64,37 @@ export function LocationListTable({ isFavourite }) {
   }
 
   async function onCreateLocation(locationData) {
-    const token = localStorage.getItem("authToken");
-    console.log(locationData);
-    const res = await fetch(`http://localhost:4000/api/locations/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${token}`,
-      },
+    let res = null;
+    try {
+      res = await fetch(`${API_BASE}/locations/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${getToken()}`,
+        },
 
-      body: JSON.stringify({
-        ...locationData,
-        // ensure numbers
-        latitude: Number(locationData.latitude),
-        longitude: Number(locationData.longitude),
-      }),
-    });
-    const data = await res.json().catch(() => null);
-    console.log("RESULT:", data);
+        body: JSON.stringify({
+          location: {
+            ...locationData,
+            latitude: Number(locationData.latitude),
+            longitude: Number(locationData.longitude),
+          }
+        }),
+      });
+    } catch {
+      alert("Network error. Please try again later.");
+    }
 
     if (!res.ok) {
-      alert(
-        typeof data === "string" ? data : data?.message || "Failed to create"
-      );
+      const data = await res.json();
+      const error = data.error;
+      let uiMessage = typeof error === "string" ? error : "Some error occured";
+      alert(uiMessage);
       return;
     }
 
-    // Close the sheet, tell the user, and refresh the table
     setIsCreating(false);
-    alert("Location created");
+    alert("Location successfully created");
     refresh();
   }
 
@@ -479,7 +489,6 @@ function CreateNewLocationSheet({ isCreating, onCancel, onCreate }) {
                 latitude: newLocationLatitude,
                 longitude: newLocationLongitude,
               };
-              //console.log(locationData)
               onCreate(locationData);
             }}
           >

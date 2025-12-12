@@ -1,6 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { getToken, getUser } from "@/lib/AuthHelpers";
+import { 
+  getToken,
+  getUser
+} from "@/lib/AuthHelpers";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState } from "react";

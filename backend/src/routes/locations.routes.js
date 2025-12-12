@@ -3,48 +3,29 @@ import Event from "../models/Event.js";
 import Favourite from "../models/Favourite.js";
 import Location from "../models/Location.js";
 import mongoose from "mongoose";
-import requireAdmin from "../middleware/require-admin.js";
 import requireAuth from "../middleware/require-auth.js";
 const router = express.Router();
 
 /* Create location */
-// router.post("/", requireAuth, requireAdmin, async (req, res, next) => {
-//   try {
-//     // Check input
-//     const { location } = req.body;
-//     if (
-//       !location.nameC ||
-//       !location.nameE ||
-//       !location.district ||
-//       !location.latitude ||
-//       !location.longitude
-//     ) {
-//       return res.status(400).json({ error: "Missing fields" });
-//     }
+router.post("/", requireAuth, async (req, res, next) => {
+  try {
+    // Check input
+    const { location } = req.body;
+    if (
+      !location.nameE ||
+      !location.latitude ||
+      !location.longitude ||
+      !location.district
+    ) {
+      return res.status(400).json({ error: "Missing fields" });
+    }
 
-//     // Check if location already exist
-//     const exists = await Location.findOne({ latitude, longitude });
-//     if (exists) return res.status(409).json({ error: "Location exists" });
-//     const u = await Location.create({
-//       nameE,
-//       district,
-//       num_events,
-//       latitude,
-//       longitude,
-//       isFavourite,
-//     });
-//     res.status(201).json({
-//       id: u._id,
-//       nameE: u.nameE,
-//       num_events: u.num_events,
-//       latitude: u.latitude,
-//       longitude: u.longitude,
-//       isFavourite: u.isFavourite,
-//     });
-//   } catch (e) {
-//     next(e);
-//   }
-// });
+    const createdLocation = await Location.create(location);
+    res.status(201).json(createdLocation);
+  } catch (e) {
+    next(e);
+  }
+});
 
 /* Read single location */
 router.get("/:id", requireAuth, async (req, res, next) => {
