@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -6,21 +5,31 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
-import { ModeToggle } from "@/components/mode-toggle"
 import { Input } from "@/components/ui/input"
-import { useAuth } from "./lib/AuthContext";
+import { ModeToggle } from "@/components/mode-toggle"
+import { useAuth } from "@/lib/AuthContext";
+import {
+  MessageTypes,
+  MessageTypeToColor,
+  useMessage
+} from "@/hooks/useMessage";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react"
 
 
-
-export function Auth({setIsAuthenticated}) {
-  const [mode, setMode] = useState("login") // "login" | "signup"
+export function Auth({ setIsAuthenticated }) {
+  const Status = Object.freeze({
+    LOGIN: 'LOGIN',
+    SIGNUP: 'SIGNUP',
+  });
+  const [mode, setMode] = useState(Status.LOGIN)
   const [loginData, setLoginData] = useState({ email: "", password: "" })
   const [signupData, setSignupData] = useState({
     username: "",
@@ -28,35 +37,40 @@ export function Auth({setIsAuthenticated}) {
     password: "",
     confirmPassword: "",
   })
-  
+
   return (
     <div className="flex min-h-svh flex-col">
+      {/* Top bar */}
       <div className="flex p-6">
+        {/* Logo */}
         <button
           type="button"
           className="font-medium cursor-pointer"
-          onClick={() => setMode("login")}
+          onClick={() => setMode(Status.LOGIN)}
         >
           Cultural HK
         </button>
 
+        {/* Dark mode toggle */}
         <div className="ml-auto">
           <ModeToggle />
         </div>
       </div>
+
+      {/* Main content */}
       <div className="flex flex-1 items-center justify-center">
-        {mode === "login" ? (
+        {mode === Status.LOGIN ? (
           <LoginForm
             data={loginData}
             onChange={setLoginData}
-            onSwitch={() => setMode("signup")}
+            onSwitch={() => setMode(Status.SIGNUP)}
             setIsAuthenticated={setIsAuthenticated}
           />
         ) : (
           <SignUpForm
             data={signupData}
             onChange={setSignupData}
-            onSwitch={() => setMode("login")}
+            onSwitch={() => setMode(Status.LOGIN)}
           />
         )}
       </div>
@@ -67,29 +81,60 @@ export function Auth({setIsAuthenticated}) {
 function LoginForm(props) {
   const { loginAs } = useAuth();
   const navigate = useNavigate();
-  async function handleLogin(e) {
+  const {
+    message,
+    isShowMessage,
+    messageType,
+    showMessage,
+    resetMessage,
+  } = useMessage();
+
+  const handleLogin = async (e) => {
     e.preventDefault();
+    resetMessage();
 
-    const res = await fetch("http://localhost:4000/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        email: props.data.email,
-        password: props.data.password,
-      }),
-    })
+    try {
+      showMessage("Waiting server response...", MessageTypes.NORMAL);
+      const res = await fetch("http://localhost:4000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: props.data.email,
+          password: props.data.password,
+        }),
+      })
 
-    const { token, user } = await res.json();
-    localStorage.setItem('authToken', token);
-    localStorage.setItem('user', JSON.stringify(user));
-    
-    
-    loginAs(user);
-    props.setIsAuthenticated(true);
-    navigate("/");
-  }
+      if (!res.ok) {
+        // Get error message
+        let uiMessage = "Login failed. Please try again.";
+        try {
+          const data = await res.json();
+          if (data?.error) {
+            uiMessage = data.error;
+          }
+        } catch {
+          // Do nothing
+        }
+
+        showMessage(uiMessage, MessageTypes.ERROR);
+        return;
+      }
+
+      showMessage("Success! You should be redirected soon...", MessageTypes.SPECIAL)
+      const { token, user } = await res.json();
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      loginAs(user);
+      props.setIsAuthenticated(true);
+      navigate("/");
+    } catch (err) {
+      showMessage("Network error, Please try again later.", MessageTypes.ERROR);
+    }
+  };
+
   return (
     <Card className="w-full max-w-sm">
       <CardContent>
@@ -98,6 +143,7 @@ function LoginForm(props) {
         </CardHeader>
         <form onSubmit={handleLogin}>
           <FieldGroup>
+            {/* Email */}
             <Field>
               <FieldLabel htmlFor="email">Email</FieldLabel>
               <Input
@@ -108,6 +154,8 @@ function LoginForm(props) {
                 onChange={e => props.onChange({ ...props.data, email: e.target.value })}
               />
             </Field>
+
+            {/* Password */}
             <Field>
               <FieldLabel htmlFor="password">Password</FieldLabel>
               <Input
@@ -118,9 +166,21 @@ function LoginForm(props) {
                 onChange={p => props.onChange({ ...props.data, password: p.target.value })}
               />
             </Field>
+
+            {/* Feedback message */}
+            <p
+              hidden={!isShowMessage}
+              className={cn("text-center", MessageTypeToColor[messageType])}
+            >
+              {message}
+            </p>
+
+            {/* Submit button */}
             <Field>
               <Button type="submit">Login</Button>
             </Field>
+
+            {/* Navigation to sign up */}
             <Field>
               <FieldDescription className="text-center">
                 Don&apos;t have an account?{" "}
@@ -141,40 +201,64 @@ function LoginForm(props) {
 }
 
 function SignUpForm(props) {
+  const {
+    message,
+    isShowMessage,
+    messageType,
+    showMessage,
+    resetMessage,
+  } = useMessage();
 
-  async function handleSignup(e) {
+  const handleSignup = async (e) => {
     e.preventDefault()
+    resetMessage();
 
     if (props.data.password !== props.data.confirmPassword) {
-      alert("Passwords do not match");
+      showMessage("Confirm password do not match the actual password. Please try again", MessageTypes.ERROR);
       return
     }
 
-    const res = await fetch("http://localhost:4000/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: props.data.username,
-        email: props.data.email,
-        password: props.data.password,
-      }),
-    })
-    const data = await res.text();
-    console.log("SIGNUP RESULT:", data);
+    try {
+      const res = await fetch("http://localhost:4000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: props.data.username,
+          email: props.data.email,
+          password: props.data.password,
+        }),
+      })
 
-    if (!res.ok) {
-      alert(data);
-      return
+      if (!res.ok) {
+        // Get error message
+        let uiMessage = "Login failed. Please try again.";
+        try {
+          const data = await res.json();
+          if (data?.error) {
+            uiMessage = data.error;
+          }
+        } catch {
+          // Do nothing
+        }
+
+        showMessage(uiMessage, MessageTypes.ERROR);
+        return;
+      }
+
+      showMessage("Account created! You will be redirected soon...", MessageTypes.SPECIAL);
+
+      // Reset input fields
+      props.onChange({
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+
+      setTimeout(props.onSwitch, 4000);
+    } catch (err) {
+      showMessage("Network error, Please try again later.", MessageTypes.ERROR);
     }
-
-    alert("Account created! Please login.")
-    props.onChange({
-      username: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    });
-    props.onSwitch();
   }
 
   return (
@@ -185,6 +269,7 @@ function SignUpForm(props) {
         </CardHeader>
         <form onSubmit={handleSignup}>
           <FieldGroup>
+            {/* Usernme */}
             <Field>
               <FieldLabel htmlFor="username">Username</FieldLabel>
               <Input
@@ -194,6 +279,8 @@ function SignUpForm(props) {
                 onChange={u => props.onChange({ ...props.data, username: u.target.value })}
               />
             </Field>
+
+            {/* Email */}
             <Field>
               <FieldLabel htmlFor="email">Email</FieldLabel>
               <Input
@@ -204,6 +291,8 @@ function SignUpForm(props) {
                 onChange={e => props.onChange({ ...props.data, email: e.target.value })}
               />
             </Field>
+
+            {/* Password */}
             <Field>
               <FieldLabel htmlFor="password">Password</FieldLabel>
               <Input
@@ -214,6 +303,8 @@ function SignUpForm(props) {
                 onChange={p => props.onChange({ ...props.data, password: p.target.value })}
               />
             </Field>
+
+            {/* Confirm password */}
             <Field>
               <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
               <Input
@@ -224,6 +315,16 @@ function SignUpForm(props) {
                 onChange={p => props.onChange({ ...props.data, confirmPassword: p.target.value })}
               />
             </Field>
+
+            {/* Feedback message */}
+            <p
+              hidden={!isShowMessage}
+              className={cn("text-center", MessageTypeToColor[messageType])}
+            >
+              {message}
+            </p>
+
+            {/* Submit button */}
             <Field>
               <Button type="submit">Create Account</Button>
             </Field>
