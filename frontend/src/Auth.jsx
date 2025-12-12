@@ -71,6 +71,7 @@ export function Auth({ setIsAuthenticated }) {
             data={signupData}
             onChange={setSignupData}
             onSwitch={() => setMode(Status.LOGIN)}
+            setLoginData={setLoginData}
           />
         )}
       </div>
@@ -78,7 +79,7 @@ export function Auth({ setIsAuthenticated }) {
   )
 }
 
-function LoginForm(props) {
+function LoginForm({ data, onChange, onSwitch, setIsAuthenticated }) {
   const { loginAs } = useAuth();
   const navigate = useNavigate();
   const {
@@ -101,14 +102,14 @@ function LoginForm(props) {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          email: props.data.email,
-          password: props.data.password,
+          email: data.email,
+          password: data.password,
         }),
       })
 
       if (!res.ok) {
         // Get error message
-        let uiMessage = "Login failed. Please try again.";
+        let uiMessage = "Unknown error. Please try again later.";
         try {
           const data = await res.json();
           if (data?.error) {
@@ -128,7 +129,7 @@ function LoginForm(props) {
       localStorage.setItem('user', JSON.stringify(user));
 
       loginAs(user);
-      props.setIsAuthenticated(true);
+      setIsAuthenticated(true);
       navigate("/");
     } catch (err) {
       showMessage("Network error, Please try again later.", MessageTypes.ERROR);
@@ -150,8 +151,8 @@ function LoginForm(props) {
                 id="email"
                 type="email"
                 required
-                value={props.data.email}
-                onChange={e => props.onChange({ ...props.data, email: e.target.value })}
+                value={data.email}
+                onChange={e => onChange({ ...data, email: e.target.value })}
               />
             </Field>
 
@@ -162,8 +163,8 @@ function LoginForm(props) {
                 id="password"
                 type="password"
                 required
-                value={props.data.password}
-                onChange={p => props.onChange({ ...props.data, password: p.target.value })}
+                value={data.password}
+                onChange={p => onChange({ ...data, password: p.target.value })}
               />
             </Field>
 
@@ -186,7 +187,7 @@ function LoginForm(props) {
                 Don&apos;t have an account?{" "}
                 <button
                   type="button"
-                  onClick={props.onSwitch}
+                  onClick={onSwitch}
                   className="underline underline-offset-4"
                 >
                   Sign up
@@ -200,7 +201,7 @@ function LoginForm(props) {
   )
 }
 
-function SignUpForm(props) {
+function SignUpForm({ data, onChange, onSwitch, setLoginData }) {
   const {
     message,
     isShowMessage,
@@ -213,7 +214,7 @@ function SignUpForm(props) {
     e.preventDefault()
     resetMessage();
 
-    if (props.data.password !== props.data.confirmPassword) {
+    if (data.password !== data.confirmPassword) {
       showMessage("Confirm password do not match the actual password. Please try again", MessageTypes.ERROR);
       return
     }
@@ -224,15 +225,15 @@ function SignUpForm(props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          username: props.data.username,
-          email: props.data.email,
-          password: props.data.password,
+          username: data.username,
+          email: data.email,
+          password: data.password,
         }),
       })
 
       if (!res.ok) {
         // Get error message
-        let uiMessage = "Login failed. Please try again.";
+        let uiMessage = "Unknown error. Please try again later.";
         try {
           const data = await res.json();
           if (data?.error) {
@@ -249,14 +250,19 @@ function SignUpForm(props) {
       showMessage("Account created! You will be redirected soon...", MessageTypes.SPECIAL);
 
       // Reset input fields
-      props.onChange({
+      onChange({
         username: "",
         email: "",
         password: "",
         confirmPassword: "",
       });
 
-      setTimeout(props.onSwitch, 4000);
+      // Set email for login
+      setLoginData({
+        email: data.email
+      });
+
+      setTimeout(onSwitch, 3000);
     } catch (err) {
       showMessage("Network error, Please try again later.", MessageTypes.ERROR);
     }
@@ -276,8 +282,8 @@ function SignUpForm(props) {
               <Input
                 id="username"
                 required
-                value={props.data.username}
-                onChange={u => props.onChange({ ...props.data, username: u.target.value })}
+                value={data.username}
+                onChange={u => onChange({ ...data, username: u.target.value })}
               />
             </Field>
 
@@ -288,8 +294,8 @@ function SignUpForm(props) {
                 id="email"
                 type="email"
                 required
-                value={props.data.email}
-                onChange={e => props.onChange({ ...props.data, email: e.target.value })}
+                value={data.email}
+                onChange={e => onChange({ ...data, email: e.target.value })}
               />
             </Field>
 
@@ -300,8 +306,8 @@ function SignUpForm(props) {
                 id="password"
                 type="password"
                 required
-                value={props.data.password}
-                onChange={p => props.onChange({ ...props.data, password: p.target.value })}
+                value={data.password}
+                onChange={p => onChange({ ...data, password: p.target.value })}
               />
             </Field>
 
@@ -312,8 +318,8 @@ function SignUpForm(props) {
                 id="confirmPassword"
                 type="password"
                 required
-                value={props.data.confirmPassword}
-                onChange={p => props.onChange({ ...props.data, confirmPassword: p.target.value })}
+                value={data.confirmPassword}
+                onChange={p => onChange({ ...data, confirmPassword: p.target.value })}
               />
             </Field>
 
@@ -334,7 +340,7 @@ function SignUpForm(props) {
                 Already have an account?{" "}
                 <button
                   type="button"
-                  onClick={props.onSwitch}
+                  onClick={onSwitch}
                   className="underline underline-offset-4"
                 >
                   Sign in
