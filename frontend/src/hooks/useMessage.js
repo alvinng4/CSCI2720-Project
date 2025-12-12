@@ -11,9 +11,9 @@ export const MessageTypes = Object.freeze({
 });
 
 export const MessageTypeToColor = Object.freeze({
-  [MessageTypes.NORMAL]: "text-foreground",   // normal text color
-  [MessageTypes.SPECIAL]: "text-primary",     // primary color
-  [MessageTypes.ERROR]: "text-destructive",   // error color
+  [MessageTypes.NORMAL]: "text-foreground", // normal text color
+  [MessageTypes.SPECIAL]: "text-primary", // primary color
+  [MessageTypes.ERROR]: "text-destructive", // error color
 });
 
 export function useMessage() {
@@ -31,7 +31,7 @@ export function useMessage() {
     setMessage("");
     setMessageType(MessageTypes.NORMAL);
     setIsShowMessage(false);
-  }
+  };
 
   return {
     message,

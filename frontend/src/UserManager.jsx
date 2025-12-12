@@ -1,15 +1,9 @@
-import { adminStore } from "@/lib/adminStore";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
-import { DataTable } from "@/components/ui/data-table"
-import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
-import { DataTableViewOptions }  from "@/components/ui/data-table-view-options"
-import { Input } from "@/components/ui/input"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { DataTable } from "@/components/ui/data-table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { DataTableViewOptions } from "@/components/ui/data-table-view-options";
+import { Input } from "@/components/ui/input";
 import { PageShell } from "@/components/page-shell";
 import {
   Select,
@@ -17,55 +11,38 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { 
-  useEffect,
-  createContext,
-  useContext,
-  useMemo,
-  useState
-} from "react";
+} from "@/components/ui/select";
+import { useEffect, createContext, useContext, useMemo, useState } from "react";
 
 const UserTableContext = createContext(null);
 
 export function UserManager() {
-  const token = localStorage.getItem('authToken');
-  //const [rows, setRows] = useState(() => adminStore.listUsers());
-  /*users: [
-      { id: "u1", name: "Admin Account", email: "admin@example.com", role: "admin" },
-    ], */
+  const token = localStorage.getItem("authToken");
   const [rows, setRows] = useState([]);
-  
 
   useEffect(() => {
-    fetch(`http://localhost:4000/api/users`,
-      {
-        method: "GET",
-        headers: { 
-          "authorization": `Bearer ${token}`
-        }
-      }
-      )
-      .then(res => res.json())
-      .then(data => {
-        const mappedData = data.map((users)=>({
+    fetch(`http://localhost:4000/api/users`, {
+      method: "GET",
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const mappedData = data.map((users) => ({
           id: users._id,
           name: users.username,
           email: users.email,
           role: users.role,
-        }))
+        }));
         setRows(mappedData);
       })
       .catch((err) => {
-        setRows([])
+        setRows([]);
         console.log(err);
-      })
+      });
   });
-  
 
-
-  
-  
   const [editingId, setEditingId] = useState(null);
   const [editingName, setEditingName] = useState(null);
   const [editingEmail, setEditingEmail] = useState(null);
@@ -73,40 +50,37 @@ export function UserManager() {
 
   /* Handlers */
   async function createUser(userData) {
-    //adminStore.createUser(userData);
-    //setRows(adminStore.listUsers());
-    let password = '';
+    let password = "";
     const array = new Uint32Array(10);
     self.crypto.getRandomValues(array);
-    for(const char of array){
+    for (const char of array) {
       password += char;
     }
     userData.password = password;
-    const token = localStorage.getItem('authToken');
-    console.log(userData)
-    const mappedData = [userData].map((user)=>({
+    const token = localStorage.getItem("authToken");
+    console.log(userData);
+    const mappedData = [userData].map((user) => ({
       username: user.name,
       email: user.email,
       role: user.role,
-      password: user.password
-    }))
-    console.log(mappedData)
+      password: user.password,
+    }));
+    console.log(mappedData);
     const res = await fetch(`http://localhost:4000/api/users/`, {
       method: "POST",
-      headers: { 
-        "Content-Type": "application/json", 
-        "authorization": `Bearer ${token}`
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
       },
-      
-      body: JSON.stringify(mappedData[0]),
 
-    })
+      body: JSON.stringify(mappedData[0]),
+    });
     const data = await res.text();
     console.log("RESULT:", data);
-    if(res.ok) alert("New user created, save your password:"+password);
+    if (res.ok) alert("New user created, save your password:" + password);
     if (!res.ok) {
       alert(data);
-      return
+      return;
     }
   }
 
@@ -140,31 +114,27 @@ export function UserManager() {
       return;
     }
 
-    //adminStore.updateUser(id, patch);
-    //setRows(adminStore.listUsers());
-
-    const token = localStorage.getItem('authToken');
-    console.log(id)
+    const token = localStorage.getItem("authToken");
+    console.log(id);
     if (!patch || !id) {
       alert("User data is invalid.");
       return;
     }
     const res = await fetch(`http://localhost:4000/api/users/${id}`, {
       method: "PUT",
-      headers: { 
-        "Content-Type": "application/json", 
-        "authorization": `Bearer ${token}`
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
       },
-      
-      body: JSON.stringify(patch),
 
-    })
+      body: JSON.stringify(patch),
+    });
     const data = await res.text();
     console.log("RESULT:", data);
-    
+
     if (!res.ok) {
       alert(data);
-      return
+      return;
     }
     stopEditing();
   }
@@ -172,60 +142,60 @@ export function UserManager() {
   async function handleDelete(id) {
     const userConsent = confirm("Delete this user?");
     if (userConsent) {
-      //adminStore.deleteUser(id);
-      //setRows(adminStore.listUsers());
-      const token = localStorage.getItem('authToken');
-      
+      const token = localStorage.getItem("authToken");
+
       //alert("This function is not implemented yet!");
       const res = await fetch(`http://localhost:4000/api/users/${id}`, {
         method: "DELETE",
-        headers: { 
-          "Content-Type": "application/json", 
-          "authorization": `Bearer ${token}`
-        }
-      })
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      });
       const data = await res.text();
       console.log("RESULT:", data);
-      
+
       if (!res.ok) {
         alert(data);
-        return
+        return;
       }
-
-
-
-
-
-
-
     }
   }
 
   /* Columns (created once only to prevent input issues) */
-  const columns = useMemo(() => [
-    {
-      accessorKey: "name",
-      title: "Name",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
-      cell: ({ row }) => <NameCell row={row} />,
-    },
-    {
-      accessorKey: "email",
-      title: "Email",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
-      cell: ({ row }) => <EmailCell row={row} />,
-    },
-    {
-      accessorKey: "role",
-      title: "Role",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
-      cell: ({ row }) => <RoleCell row={row} />,
-    },
-    {
-      id: "actions",
-      cell: ({ row }) => <ActionsCell row={row} />,
-    },
-  ], []);
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "name",
+        title: "Name",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Name" />
+        ),
+        cell: ({ row }) => <NameCell row={row} />,
+      },
+      {
+        accessorKey: "email",
+        title: "Email",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Email" />
+        ),
+        cell: ({ row }) => <EmailCell row={row} />,
+      },
+      {
+        accessorKey: "role",
+        title: "Role",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Role" />
+        ),
+        cell: ({ row }) => <RoleCell row={row} />,
+      },
+      {
+        id: "actions",
+        cell: ({ row }) => <ActionsCell row={row} />,
+      },
+    ],
+    []
+  );
 
   /* Context values for table */
   const contextValue = {
@@ -239,13 +209,18 @@ export function UserManager() {
     startEditing,
     stopEditing,
     saveEdit,
-    handleDelete
+    handleDelete,
   };
 
   return (
     <PageShell title="User Manager (Admin only)">
       <UserTableContext.Provider value={contextValue}>
-        <DataTable columns={columns} data={rows} renderSideMenu={() => CreateUserSideMenu({ onSubmit: createUser })} renderToolbar={toolBar}/>
+        <DataTable
+          columns={columns}
+          data={rows}
+          renderSideMenu={() => CreateUserSideMenu({ onSubmit: createUser })}
+          renderToolbar={toolBar}
+        />
       </UserTableContext.Provider>
     </PageShell>
   );
@@ -253,14 +228,15 @@ export function UserManager() {
 
 /* User table cell components */
 function NameCell({ row }) {
-  const { editingId, editingName, setEditingName } = useContext(UserTableContext);
-  const isEditing = (editingId === row.original.id);
+  const { editingId, editingName, setEditingName } =
+    useContext(UserTableContext);
+  const isEditing = editingId === row.original.id;
 
   if (isEditing) {
     return (
-      <Input 
-        value={editingName ?? ""} 
-        onChange={(e) => setEditingName(e.target.value)} 
+      <Input
+        value={editingName ?? ""}
+        onChange={(e) => setEditingName(e.target.value)}
         autoFocus
       />
     );
@@ -269,15 +245,16 @@ function NameCell({ row }) {
 }
 
 function EmailCell({ row }) {
-  const { editingId, editingEmail, setEditingEmail } = useContext(UserTableContext);
-  const isEditing = (editingId === row.original.id);
+  const { editingId, editingEmail, setEditingEmail } =
+    useContext(UserTableContext);
+  const isEditing = editingId === row.original.id;
 
   if (isEditing) {
     return (
-      <Input 
-        type="email" 
-        value={editingEmail ?? ""} 
-        onChange={(e) => setEditingEmail(e.target.value)} 
+      <Input
+        type="email"
+        value={editingEmail ?? ""}
+        onChange={(e) => setEditingEmail(e.target.value)}
       />
     );
   }
@@ -285,8 +262,9 @@ function EmailCell({ row }) {
 }
 
 function RoleCell({ row }) {
-  const { editingId, editingRole, setEditingRole } = useContext(UserTableContext);
-  const isEditing = (editingId === row.original.id);
+  const { editingId, editingRole, setEditingRole } =
+    useContext(UserTableContext);
+  const isEditing = editingId === row.original.id;
 
   if (isEditing) {
     return (
@@ -305,15 +283,10 @@ function RoleCell({ row }) {
 }
 
 function ActionsCell({ row }) {
-  const { 
-    editingId, 
-    stopEditing, 
-    saveEdit, 
-    startEditing, 
-    handleDelete 
-  } = useContext(UserTableContext);
-  
-  const isEditing = (editingId === row.original.id);
+  const { editingId, stopEditing, saveEdit, startEditing, handleDelete } =
+    useContext(UserTableContext);
+
+  const isEditing = editingId === row.original.id;
 
   if (isEditing) {
     return (
@@ -330,10 +303,18 @@ function ActionsCell({ row }) {
 
   return (
     <div className="flex justify-end gap-2">
-      <Button size="sm" variant="outline" onClick={() => startEditing(row.original.id)}>
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => startEditing(row.original.id)}
+      >
         Edit
       </Button>
-      <Button size="sm" variant="destructive" onClick={() => handleDelete(row.original.id)}>
+      <Button
+        size="sm"
+        variant="destructive"
+        onClick={() => handleDelete(row.original.id)}
+      >
         Delete
       </Button>
     </div>
@@ -345,7 +326,7 @@ function CreateUserSideMenu({ initial, onSubmit }) {
   const [name, setName] = useState(initial?.name ?? "");
   const [email, setEmail] = useState(initial?.email ?? "");
   const [role, setRole] = useState(initial?.role ?? "user");
-  
+
   return (
     <Card className="bg-transparent shadow-none gap-2 w-75">
       <CardHeader>
@@ -355,21 +336,29 @@ function CreateUserSideMenu({ initial, onSubmit }) {
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <form
-          onSubmit={(e) => { 
+          onSubmit={(e) => {
             e.preventDefault();
-            onSubmit({ name, email, role, });
+            onSubmit({ name, email, role });
             setName("");
             setEmail("");
             setRole("");
           }}
           className="flex flex-col gap-3"
         >
-          <Input placeholder="Username" value={name} onChange={(e) => setName(e.target.value)} required />
-          <Input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <Select
-            value={role}
-            onValueChange={(value) => setRole(value)}
-          >
+          <Input
+            placeholder="Username"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <Input
+            placeholder="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <Select value={role} onValueChange={(value) => setRole(value)}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Role" value={role} />
             </SelectTrigger>
@@ -379,9 +368,7 @@ function CreateUserSideMenu({ initial, onSubmit }) {
             </SelectContent>
           </Select>
 
-          <Button type="submit">
-            Create
-          </Button>
+          <Button type="submit">Create</Button>
         </form>
       </CardContent>
     </Card>
@@ -394,19 +381,19 @@ function toolBar(table) {
     <div className="flex items-end gap-x-2">
       <Input
         placeholder="Search by name"
-        value={(table.getColumn("name")?.getFilterValue()) ?? ""}
+        value={table.getColumn("name")?.getFilterValue() ?? ""}
         onChange={(event) =>
           table.getColumn("name")?.setFilterValue(event.target.value)
         }
       />
       <Input
         placeholder="Search by email"
-        value={(table.getColumn("email")?.getFilterValue()) ?? ""}
+        value={table.getColumn("email")?.getFilterValue() ?? ""}
         onChange={(event) =>
           table.getColumn("email")?.setFilterValue(event.target.value)
         }
       />
       <DataTableViewOptions table={table} />
     </div>
-  )
+  );
 }

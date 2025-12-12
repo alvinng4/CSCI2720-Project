@@ -2,13 +2,8 @@
  * Reusable side menu component for filtering location lists
  */
 
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -18,11 +13,14 @@ import {
   SelectTrigger,
   SelectValue,
   SelectSeparator,
-} from "@/components/ui/select"
-import { Slider } from "@/components/ui/slider"
+} from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 
-import { newTerritoriesDistricts, kowloonDistricts, hkIslandDistricts } from "@/constants/districts"
-
+import {
+  newTerritoriesDistricts,
+  kowloonDistricts,
+  hkIslandDistricts,
+} from "@/constants/districts";
 
 export function LocationSideMenu({
   getFilterName,
@@ -46,14 +44,12 @@ export function LocationSideMenu({
         <Input
           placeholder="Search by name"
           value={getFilterName()}
-          onChange={(event) =>
-            setFilterName(event.target.value)
-          }
+          onChange={(event) => setFilterName(event.target.value)}
         />
         <Select
           value={getFilterDistrict()}
           onValueChange={(value) =>
-            setFilterDistrict(value == "all" ? "" : (value || ""))
+            setFilterDistrict(value == "all" ? "" : value || "")
           }
         >
           <SelectTrigger className="w-full">
@@ -64,31 +60,39 @@ export function LocationSideMenu({
             <SelectSeparator />
             <SelectGroup>
               <SelectLabel>Hong Kong Island</SelectLabel>
-                {hkIslandDistricts.map((district) => (
-                  <SelectItem key={district} value={district}>{district}</SelectItem>
-                ))}
+              {hkIslandDistricts.map((district) => (
+                <SelectItem key={district} value={district}>
+                  {district}
+                </SelectItem>
+              ))}
             </SelectGroup>
             <SelectSeparator />
             <SelectGroup>
               <SelectLabel>Kowloon</SelectLabel>
-                {kowloonDistricts.map((district) => (
-                  <SelectItem key={district} value={district}>{district}</SelectItem>
-                ))}
+              {kowloonDistricts.map((district) => (
+                <SelectItem key={district} value={district}>
+                  {district}
+                </SelectItem>
+              ))}
             </SelectGroup>
             <SelectSeparator />
             <SelectGroup>
               <SelectLabel>New Territories</SelectLabel>
-                {newTerritoriesDistricts.map((district) => (
-                  <SelectItem key={district} value={district}>{district}</SelectItem>
-                ))}
+              {newTerritoriesDistricts.map((district) => (
+                <SelectItem key={district} value={district}>
+                  {district}
+                </SelectItem>
+              ))}
             </SelectGroup>
           </SelectContent>
         </Select>
         <div className="flex flex-col text-muted-foreground dark:bg-input/30 border-input w-full rounded-md border bg-transparent md:h-14 px-3 py-1 pb-3 gap-y-2 text-base shadow-xs md:text-sm">
-          <p>Distance Range ({distRange[0]} km - {distRange[1]} km)</p>
+          <p>
+            Distance Range ({distRange[0]} km - {distRange[1]} km)
+          </p>
           <Slider
             value={distRange}
-            onValueChange={newValue => setDistRange(newValue)}
+            onValueChange={(newValue) => setDistRange(newValue)}
             max={maxDist}
             step={0.01}
           />
@@ -96,5 +100,5 @@ export function LocationSideMenu({
         {extraComponents && extraComponents()}
       </CardContent>
     </Card>
-  )
+  );
 }

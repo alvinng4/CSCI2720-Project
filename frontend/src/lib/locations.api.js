@@ -5,8 +5,8 @@ export async function fetchLocations() {
   const res = await fetch(`${API_BASE}/locations`, {
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
-    }
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
   });
   if (!res.ok) throw new Error(`Failed to fetch locations (${res.status})`);
   return res.json(); // expect array of locations

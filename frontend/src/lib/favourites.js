@@ -4,7 +4,9 @@ function load() {
   try {
     const raw = localStorage.getItem(KEY);
     return raw ? JSON.parse(raw) : {};
-  } catch { return {}; }
+  } catch {
+    return {};
+  }
 }
 function save(map) {
   localStorage.setItem(KEY, JSON.stringify(map));
@@ -24,7 +26,7 @@ export function setFavourite(id, val) {
   if (!val) delete next[id];
   state = next;
   save(state);
-  listeners.forEach(fn => fn(state));
+  listeners.forEach((fn) => fn(state));
 }
 export function toggleFavourite(id) {
   setFavourite(id, !isFavourite(id));

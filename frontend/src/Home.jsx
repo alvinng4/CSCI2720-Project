@@ -9,13 +9,13 @@ import {
 import { Link } from "react-router-dom";
 import { PageShell } from "@/components/page-shell";
 import { Separator } from "@/components/ui/separator";
-import { useTheme } from "@/components/theme-provider"
+import { useTheme } from "@/components/theme-provider";
 
 export function Home() {
-  const { theme } = useTheme()
+  const { theme } = useTheme();
   return (
-    <>         
-    {/* Banner */}
+    <>
+      {/* Banner */}
       <div className="w-full">
         <img
           src={theme === "dark" ? "/home-pic-dark.jpg" : "/home-pic.jpg"}
@@ -23,19 +23,22 @@ export function Home() {
           className="block w-full h-48 md:h-64 lg:h-80 object-cover"
         />
       </div>
-      
+
       <PageShell>
         {/* HERO */}
         <div className="relative overflow-hidden rounded-3xl border dark:border-black bg-gradient-to-br from-indigo-50 via-white to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-600 p-8 shadow-sm">
           <div className="absolute inset-0 -z-10 opacity-60 [background:radial-gradient(800px_circle_at_0%_0%,rgba(99,102,241,0.18),transparent_40%),radial-gradient(700px_circle_at_100%_100%,rgba(236,72,153,0.18),transparent_40%)]" />
-          <p className="text-xs uppercase tracking-wider text-indigo-600 dark:text-indigo-300">HK Cultural Programmes</p>
+          <p className="text-xs uppercase tracking-wider text-indigo-600 dark:text-indigo-300">
+            HK Cultural Programmes
+          </p>
           <h1 className="mt-2 text-4xl font-bold leading-tight">
             <span className="bg-gradient-to-r from-indigo-600 to-pink-600 dark:from-indigo-300 dark:to-pink-200 bg-clip-text text-transparent">
               Find your favourite events!
             </span>
           </h1>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            Browse venues, see them on a map, save favourites, and view event details.
+            Browse venues, see them on a map, save favourites, and view event
+            details.
           </p>
         </div>
 
@@ -46,10 +49,14 @@ export function Home() {
           <Card className="rounded-2xl transition hover:-translate-y-0.5 hover:shadow-md">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-700">📋</span>
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-700">
+                  📋
+                </span>
                 Locations list
               </CardTitle>
-              <CardDescription>Sort & filter venues to quickly find what you want.</CardDescription>
+              <CardDescription>
+                Sort & filter venues to quickly find what you want.
+              </CardDescription>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
               <ul className="list-disc space-y-1 pl-5">
@@ -68,10 +75,14 @@ export function Home() {
           <Card className="rounded-2xl transition hover:-translate-y-0.5 hover:shadow-md">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-green-700">🗺️</span>
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-green-700">
+                  🗺️
+                </span>
                 Map view
               </CardTitle>
-              <CardDescription>See venues geographically and inspect details via markers.</CardDescription>
+              <CardDescription>
+                See venues geographically and inspect details via markers.
+              </CardDescription>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
               <ul className="list-disc space-y-1 pl-5">
@@ -90,10 +101,14 @@ export function Home() {
           <Card className="rounded-2xl transition hover:-translate-y-0.5 hover:shadow-md">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-pink-100 text-pink-700">⭐</span>
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-pink-100 text-pink-700">
+                  ⭐
+                </span>
                 Favourites + Suggestions
               </CardTitle>
-              <CardDescription>Save venues you like, or explore extra features.</CardDescription>
+              <CardDescription>
+                Save venues you like, or explore extra features.
+              </CardDescription>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
               <ul className="list-disc space-y-1 pl-5">

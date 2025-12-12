@@ -1,5 +1,5 @@
-import React from "react"
-import { DataTablePagination } from "@/components/ui/data-table-pagination"
+import React from "react";
+import { DataTablePagination } from "@/components/ui/data-table-pagination";
 import {
   flexRender,
   getCoreRowModel,
@@ -7,7 +7,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 import {
   Table,
   TableBody,
@@ -15,7 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 
 export function DataTable({
   columns,
@@ -24,9 +24,9 @@ export function DataTable({
   renderSideMenu,
   onRowClick,
 }) {
-  const [sorting, setSorting] = React.useState([])
-  const [columnFilters, setColumnFilters] = React.useState([])
-  const [columnVisibility, setColumnVisibility] = React.useState({})
+  const [sorting, setSorting] = React.useState([]);
+  const [columnFilters, setColumnFilters] = React.useState([]);
+  const [columnVisibility, setColumnVisibility] = React.useState({});
 
   const table = useReactTable({
     data,
@@ -43,7 +43,7 @@ export function DataTable({
       columnFilters,
       columnVisibility,
     },
-  })
+  });
 
   return (
     <div className="flex flex-col gap-4">
@@ -52,11 +52,7 @@ export function DataTable({
 
       <div className="flex flex-col gap-4 lg:flex-row justify-center">
         {/* Side Menu */}
-        {renderSideMenu && (
-          <aside>
-            {renderSideMenu(table)}
-          </aside>
-        )}
+        {renderSideMenu && <aside>{renderSideMenu(table)}</aside>}
 
         <div className="flex flex-col gap-2 flex-1 min-w-0">
           <div className="overflow-hidden rounded-md border">
@@ -74,7 +70,7 @@ export function DataTable({
                                 header.getContext()
                               )}
                         </TableHead>
-                      )
+                      );
                     })}
                   </TableRow>
                 ))}
@@ -85,18 +81,26 @@ export function DataTable({
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
-                      onClick={onRowClick ? () => onRowClick(row.original) : undefined}
+                      onClick={
+                        onRowClick ? () => onRowClick(row.original) : undefined
+                      }
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
                         </TableCell>
                       ))}
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center"
+                    >
                       No results.
                     </TableCell>
                   </TableRow>
@@ -109,5 +113,5 @@ export function DataTable({
         </div>
       </div>
     </div>
-  )
+  );
 }

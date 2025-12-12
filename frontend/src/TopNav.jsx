@@ -1,13 +1,5 @@
-import { 
-  LogOutIcon ,
-  TriangleAlert,
-  UserPenIcon,
-} from "lucide-react";
-import { 
-  Link,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { LogOutIcon, TriangleAlert, UserPenIcon } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -24,17 +16,12 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { useAuth, isAdmin } from "@/lib/AuthContext";
+import { getUser, clearAuth, isAdmin } from "@/lib/AuthHelpers";
 
-
-
-
-
-
-export function TopNav({setIsAuthenticated}) {
+export function TopNav({ setIsAuthenticated }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const user = getUser();
 
   // Nav bar links
   const navigationItems = [
@@ -70,16 +57,14 @@ export function TopNav({setIsAuthenticated}) {
 
   const listItems = [
     /* Admin only */
-    ...(
-      isAdmin(user)
+    ...(isAdmin(user)
       ? [{ icon: UserPenIcon, label: "User Manager", key: "users" }]
-      : []
-    ),
+      : []),
 
     /* Regular user */
     { icon: LogOutIcon, label: "Sign Out", key: "signout" },
   ];
-  
+
   return (
     <nav className="w-full">
       <div className="flex items-center w-full px-6 py-3">
@@ -88,7 +73,9 @@ export function TopNav({setIsAuthenticated}) {
           to="/"
           className="mr-6 text-primary hover:text-primary/90 transition-colors cursor-pointer"
         >
-          <span className="hidden font-bold text-xl sm:inline-block">Cultural HK</span>
+          <span className="hidden font-bold text-xl sm:inline-block">
+            Cultural HK
+          </span>
         </Link>
 
         {/* nav items */}
@@ -109,10 +96,10 @@ export function TopNav({setIsAuthenticated}) {
             username={displayName}
             email={email}
             role={roleLabel}
-            onSignOut={()=>{
-              logout();
+            onSignOut={() => {
+              clearAuth();
               setIsAuthenticated(false);
-              setTimeout(() => navigate('/', { replace: true }), 0);
+              setTimeout(() => navigate("/", { replace: true }), 0);
             }}
             onUsers={() => navigate("/users")}
             listItems={listItems}
@@ -126,7 +113,14 @@ export function TopNav({setIsAuthenticated}) {
   );
 }
 
-function DropdownMenuUserMenu({ username, email, role, onSignOut, onUsers, listItems }) {
+function DropdownMenuUserMenu({
+  username,
+  email,
+  role,
+  onSignOut,
+  onUsers,
+  listItems,
+}) {
   const initial = (username?.[0] ?? "?").toUpperCase();
   return (
     <DropdownMenu>
@@ -180,7 +174,7 @@ function DropdownMenuUserMenu({ username, email, role, onSignOut, onUsers, listI
                   </DropdownMenuItem>
                 );
             }
-        })}
+          })}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

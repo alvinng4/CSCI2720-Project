@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "format": "prettier \"**/*.{js,jsx,json}\" --write",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -26,6 +27,7 @@
     "leaflet": "^1.9.4",
     "lucide-react": "^0.555.0",
     "mongoose": "^8.20.1",
+    "prettier": "^3.7.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-leaflet": "^5.0.0",

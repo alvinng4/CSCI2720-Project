@@ -3,11 +3,11 @@
  */
 
 import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/ui/data-table"
-import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
-import { DataTableViewOptions }  from "@/components/ui/data-table-view-options"
+import { DataTable } from "@/components/ui/data-table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { DataTableViewOptions } from "@/components/ui/data-table-view-options";
 import { Input } from "@/components/ui/input";
-import { LoadingScreen } from "@/components/ui/loading-screen"
+import { LoadingScreen } from "@/components/ui/loading-screen";
 import { LocationSheet } from "@/LocationSheet";
 import { LocationSideMenu } from "@/components/location-side-menu";
 import { MapComponent } from "@/components/map-component";
@@ -20,26 +20,27 @@ import {
   SelectTrigger,
   SelectValue,
   SelectSeparator,
-} from "@/components/ui/select"
-import { 
+} from "@/components/ui/select";
+import {
   Sheet,
   SheetContent,
   SheetFooter,
   SheetHeader,
-  SheetTitle
+  SheetTitle,
 } from "@/components/ui/sheet";
 import { useLocationsWithDistance } from "@/hooks/use-locations-with-distance";
-import { useState } from "react"
-import { 
-  useAuth,
-  isAdmin 
-} from "@/lib/AuthContext";
+import { useState } from "react";
+import { getUser, isAdmin } from "@/lib/AuthHelpers";
 import { useFavourites } from "@/lib/favourites";
-import { Star } from "lucide-react"; // optional icon
-import { newTerritoriesDistricts, kowloonDistricts, hkIslandDistricts } from "@/constants/districts"
+import { Star } from "lucide-react";
+import {
+  newTerritoriesDistricts,
+  kowloonDistricts,
+  hkIslandDistricts,
+} from "@/constants/districts";
 
 export function LocationListTable({ isFavourite }) {
-  const { user } = useAuth();
+  const user = getUser();
   const admin = isAdmin(user);
 
   const [isCreating, setIsCreating] = useState(false);
@@ -56,45 +57,46 @@ export function LocationListTable({ isFavourite }) {
   }
 
   async function onCreateLocation(locationData) {
-    const token = localStorage.getItem('authToken');
-    console.log(locationData)
+    const token = localStorage.getItem("authToken");
+    console.log(locationData);
     const res = await fetch(`http://localhost:4000/api/locations/`, {
       method: "POST",
-      headers: { 
-        "Content-Type": "application/json", 
-        "authorization": `Bearer ${token}`
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
       },
-      
+
       body: JSON.stringify({
         ...locationData,
         // ensure numbers
         latitude: Number(locationData.latitude),
         longitude: Number(locationData.longitude),
-        }),
-
-    })
+      }),
+    });
     const data = await res.json().catch(() => null);
     console.log("RESULT:", data);
-    
+
     if (!res.ok) {
-      alert(typeof data === 'string' ? data : (data?.message || 'Failed to create'));
-      return
+      alert(
+        typeof data === "string" ? data : data?.message || "Failed to create"
+      );
+      return;
     }
 
     // Close the sheet, tell the user, and refresh the table
     setIsCreating(false);
-    alert('Location created');
+    alert("Location created");
     refresh();
   }
 
   function startEditing(id) {
     if (admin) {
       //console.log(id)
-      setEditingLocation(locations.find((loc) => (loc.id === id)));
+      setEditingLocation(locations.find((loc) => loc.id === id));
       setIsEditing(true);
-      if (!locations.find((loc) => (loc.id === id))) {
-        alert("Location not found");        
-      } 
+      if (!locations.find((loc) => loc.id === id)) {
+        alert("Location not found");
+      }
       //else console.log(locations.find((loc) => (loc.id === id)).id)
     }
   }
@@ -103,62 +105,60 @@ export function LocationListTable({ isFavourite }) {
     setIsEditing(false);
   }
 
-  async function onSaveEdit(id, locationData ) {
-    const token = localStorage.getItem('authToken');
-    console.log(id)
+  async function onSaveEdit(id, locationData) {
+    const token = localStorage.getItem("authToken");
+    console.log(id);
     if (!locationData || !id) {
       alert("Location data is invalid.");
       return;
     }
     const res = await fetch(`http://localhost:4000/api/locations/${id}`, {
       method: "PUT",
-      headers: { 
-        "Content-Type": "application/json", 
-        "authorization": `Bearer ${token}`
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
       },
-      
+
       body: JSON.stringify({
         ...locationData,
         latitude: Number(locationData.latitude),
         longitude: Number(locationData.longitude),
-        }),
-
-    })
+      }),
+    });
     const data = await res.json().catch(() => null);
     console.log("RESULT:", data);
-    
+
     if (!res.ok) {
       alert(data?.message || "Failed to update");
-      return
+      return;
     }
     stopEditing();
-    alert('Location updated');
+    alert("Location updated");
     refresh();
   }
 
   async function handleDelete(id) {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem("authToken");
     const userConsent = confirm("Delete this location?");
     if (!userConsent) {
-      return ;
+      return;
     }
     const res = await fetch(`http://localhost:4000/api/locations/${id}`, {
       method: "DELETE",
-      headers: { 
-        "Content-Type": "application/json", 
-        "authorization": `Bearer ${token}`
-      }
-    })
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+    });
     const data = await res.json().catch(() => null);
     console.log("RESULT:", data);
-    
+
     if (!res.ok) {
       alert(data?.message || "Delete failed");
-      return
+      return;
     }
-    alert('Location deleted');
+    alert("Location deleted");
     refresh();
-
   }
 
   const {
@@ -177,12 +177,18 @@ export function LocationListTable({ isFavourite }) {
   const getId = (r) => r?.id ?? r?.locId ?? r?._id;
   const displayLocations = isFavourite
     ? (locations || []).filter((r) => isFav(getId(r)))
-    : (locations || []);
+    : locations || [];
 
-  const columns = getColumns(isFavourite, haveUserCoords, admin, startEditing, handleDelete);
+  const columns = getColumns(
+    isFavourite,
+    haveUserCoords,
+    admin,
+    startEditing,
+    handleDelete
+  );
 
   if (loading) {
-    return <LoadingScreen />
+    return <LoadingScreen />;
   }
 
   return (
@@ -191,54 +197,68 @@ export function LocationListTable({ isFavourite }) {
         location={selectedLocation}
         setSelectedLocation={setSelectedLocation}
       />
-      { admin && isCreating &&
+      {admin && isCreating && (
         <CreateNewLocationSheet
           isCreating={isCreating}
           onCancel={stopCreating}
-          onCreate={onCreateLocation} 
+          onCreate={onCreateLocation}
         />
-      }
-      { admin && isEditing &&
+      )}
+      {admin && isEditing && (
         <EditLocationSheet
           isEditing={isEditing}
           location={editingLocation}
           onCancel={stopEditing}
-          onSave={onSaveEdit} 
+          onSave={onSaveEdit}
         />
-      }
+      )}
       <div className="text-red-500">{errorMsg}</div>
       <div className="flex flex-col gap-y-4">
         <DataTable
           columns={columns}
           data={displayLocations}
-          renderToolbar={() => 
+          renderToolbar={() =>
             admin ? <Toolbar startCreating={startCreating} /> : null
           }
           renderSideMenu={(table) => (
             <LocationSideMenu
-              getFilterName={() => table.getColumn("name")?.getFilterValue() ?? ""}
-              setFilterName={(value) => table.getColumn("name")?.setFilterValue(value)}
-              getFilterDistrict={() => table.getColumn("district")?.getFilterValue() ?? ""}
+              getFilterName={() =>
+                table.getColumn("name")?.getFilterValue() ?? ""
+              }
+              setFilterName={(value) =>
+                table.getColumn("name")?.setFilterValue(value)
+              }
+              getFilterDistrict={() =>
+                table.getColumn("district")?.getFilterValue() ?? ""
+              }
               setFilterDistrict={(value) =>
-                table.getColumn("district")?.setFilterValue(value === "all" ? "" : (value || ""))
+                table
+                  .getColumn("district")
+                  ?.setFilterValue(value === "all" ? "" : value || "")
               }
               maxDist={maxDist}
               getDistRange={() => distRange}
               setDistRange={(newValue) => {
-                setDistRange(newValue)
-                table.getColumn("distance")?.setFilterValue(newValue)
+                setDistRange(newValue);
+                table.getColumn("distance")?.setFilterValue(newValue);
               }}
               extraComponents={() => <DataTableViewOptions table={table} />}
             />
           )}
-          onRowClick={ (row) => setSelectedLocation(row) }
+          onRowClick={(row) => setSelectedLocation(row)}
         />
       </div>
     </>
-  )
+  );
 }
 
-function getColumns(isFavourite, haveUserCoords, isAdmin, startEditing, handleDelete) {
+function getColumns(
+  isFavourite,
+  haveUserCoords,
+  isAdmin,
+  startEditing,
+  handleDelete
+) {
   const columns = [
     {
       accessorKey: "name",
@@ -254,14 +274,14 @@ function getColumns(isFavourite, haveUserCoords, isAdmin, startEditing, handleDe
         <DataTableColumnHeader column={column} title="# Events" />
       ),
       sortingFn: (rowA, rowB, columnId) => {
-        const stringA = rowA.getValue(columnId)
-        const stringB = rowB.getValue(columnId)
-        const a = Number(stringA)
-        const b = Number(stringB)
+        const stringA = rowA.getValue(columnId);
+        const stringB = rowB.getValue(columnId);
+        const a = Number(stringA);
+        const b = Number(stringB);
         if (Number.isNaN(a) || Number.isNaN(b)) {
-          return stringA.localeCompare(stringB)
+          return stringA.localeCompare(stringB);
         }
-        return a - b
+        return a - b;
       },
     },
     {
@@ -271,7 +291,7 @@ function getColumns(isFavourite, haveUserCoords, isAdmin, startEditing, handleDe
         <DataTableColumnHeader column={column} title="District" />
       ),
     },
-  ]
+  ];
 
   if (haveUserCoords) {
     columns.push({
@@ -281,53 +301,62 @@ function getColumns(isFavourite, haveUserCoords, isAdmin, startEditing, handleDe
         <DataTableColumnHeader column={column} title="Distance (km)" />
       ),
       sortingFn: (rowA, rowB, columnId) => {
-        const stringA = rowA.getValue(columnId)
-        const stringB = rowB.getValue(columnId)
-        const a = Number(stringA)
-        const b = Number(stringB)
+        const stringA = rowA.getValue(columnId);
+        const stringB = rowB.getValue(columnId);
+        const a = Number(stringA);
+        const b = Number(stringB);
         if (Number.isNaN(a) || Number.isNaN(b)) {
-          return stringA.localeCompare(stringB)
+          return stringA.localeCompare(stringB);
         }
-        return a - b
+        return a - b;
       },
-    })
+    });
   }
 
-    // Favourite star column (always visible)
-    columns.push({
-      id: "favourite",
-      title: "Favourite",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Favourite" />
-      ),
-      cell: ({ row }) => {
-        const original = row.original || {};
-        const id = original.id ?? original.locId ?? original._id;
-        const fav = !!id && window.localStorage ? JSON.parse(localStorage.getItem("favourites/v1") || "{}")[id] : false;
-        // Prefer live state by using the store hook in the parent; but within column we don’t have it,
-        // so we call window event then let the table re-render when parent state flips.
-        const handleToggle = (e) => {
-          e.stopPropagation();
-          import("@/lib/favourites").then(mod => mod.toggleFavourite(id));
-        };
-        return (
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={handleToggle}
-              aria-label={fav ? "Unfavourite location" : "Favourite location"}
-              className="inline-flex items-center rounded-md border px-2 py-1 text-sm hover:bg-accent"
-              title={fav ? "Unfavourite" : "Favourite"}
-            >
-              <Star size={16} className={fav ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"} />
-              <span className="ml-2">{fav ? "Favourited" : "Favourite"}</span>
-            </button>
-          </div>
-        );
-      },
-      enableSorting: false,
-    });
-
+  // Favourite star column (always visible)
+  columns.push({
+    id: "favourite",
+    title: "Favourite",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Favourite" />
+    ),
+    cell: ({ row }) => {
+      const original = row.original || {};
+      const id = original.id ?? original.locId ?? original._id;
+      const fav =
+        !!id && window.localStorage
+          ? JSON.parse(localStorage.getItem("favourites/v1") || "{}")[id]
+          : false;
+      // Prefer live state by using the store hook in the parent; but within column we don’t have it,
+      // so we call window event then let the table re-render when parent state flips.
+      const handleToggle = (e) => {
+        e.stopPropagation();
+        import("@/lib/favourites").then((mod) => mod.toggleFavourite(id));
+      };
+      return (
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={handleToggle}
+            aria-label={fav ? "Unfavourite location" : "Favourite location"}
+            className="inline-flex items-center rounded-md border px-2 py-1 text-sm hover:bg-accent"
+            title={fav ? "Unfavourite" : "Favourite"}
+          >
+            <Star
+              size={16}
+              className={
+                fav
+                  ? "fill-yellow-400 text-yellow-400"
+                  : "text-muted-foreground"
+              }
+            />
+            <span className="ml-2">{fav ? "Favourited" : "Favourite"}</span>
+          </button>
+        </div>
+      );
+    },
+    enableSorting: false,
+  });
 
   if (isAdmin) {
     columns.push({
@@ -342,7 +371,8 @@ function getColumns(isFavourite, haveUserCoords, isAdmin, startEditing, handleDe
                 event.stopPropagation();
                 //console.log(row.original.id)
                 startEditing(row.original.id);
-              }}>
+              }}
+            >
               Edit
             </Button>
             <Button
@@ -350,26 +380,23 @@ function getColumns(isFavourite, haveUserCoords, isAdmin, startEditing, handleDe
               variant="destructive"
               onClick={(event) => {
                 event.stopPropagation();
-                handleDelete(row.original.id)
-              }}>
+                handleDelete(row.original.id);
+              }}
+            >
               Delete
             </Button>
           </div>
         );
       },
-    })
+    });
   }
 
-  return columns
+  return columns;
 }
 
 function Toolbar({ startCreating }) {
   return (
-    <Button
-      size="sm"
-      onClick={startCreating}
-      className="ml-auto h-8"
-    >
+    <Button size="sm" onClick={startCreating} className="ml-auto h-8">
       Create Location (Admin)
     </Button>
   );
@@ -380,36 +407,26 @@ function CreateNewLocationSheet({ isCreating, onCancel, onCreate }) {
   const [newLocationDistrict, setNewLocationDistrict] = useState("");
   const [newLocationLatitude, setNewLocationLatitude] = useState(22.3);
   const [newLocationLongitude, setNewLocationLongitude] = useState(114.2);
-  
+
   return (
-    <Sheet
-      open={isCreating}
-      onOpenChange={onCancel}
-    >
+    <Sheet open={isCreating} onOpenChange={onCancel}>
       <SheetContent side="left" className="w-200 flex flex-col">
         <SheetHeader className="px-4">
-          <SheetTitle>
-            Create Location (Admin)
-          </SheetTitle>
+          <SheetTitle>Create Location (Admin)</SheetTitle>
         </SheetHeader>
         <div className="flex-1 overflow-y-auto px-4 space-y-4">
-
           {/* Details */}
           <div>
-            {makeSubsectionTitle('Details')}
+            {makeSubsectionTitle("Details")}
             <div className="space-y-2">
               <Input
                 placeholder="Location name"
                 value={newLocationName}
-                onChange={(event) =>
-                  setNewLocationName(event.target.value)
-                }
+                onChange={(event) => setNewLocationName(event.target.value)}
               />
               <Select
                 value={newLocationDistrict}
-                onValueChange={(value) =>
-                  setNewLocationDistrict(value)
-                }
+                onValueChange={(value) => setNewLocationDistrict(value)}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a district" />
@@ -417,23 +434,29 @@ function CreateNewLocationSheet({ isCreating, onCancel, onCreate }) {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Hong Kong Island</SelectLabel>
-                      {hkIslandDistricts.map((district) => (
-                        <SelectItem key={district} value={district}>{district}</SelectItem>
-                      ))}
+                    {hkIslandDistricts.map((district) => (
+                      <SelectItem key={district} value={district}>
+                        {district}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                   <SelectSeparator />
                   <SelectGroup>
                     <SelectLabel>Kowloon</SelectLabel>
-                      {kowloonDistricts.map((district) => (
-                        <SelectItem key={district} value={district}>{district}</SelectItem>
-                      ))}
+                    {kowloonDistricts.map((district) => (
+                      <SelectItem key={district} value={district}>
+                        {district}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                   <SelectSeparator />
                   <SelectGroup>
                     <SelectLabel>New Territories</SelectLabel>
-                      {newTerritoriesDistricts.map((district) => (
-                        <SelectItem key={district} value={district}>{district}</SelectItem>
-                      ))}
+                    {newTerritoriesDistricts.map((district) => (
+                      <SelectItem key={district} value={district}>
+                        {district}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -441,9 +464,7 @@ function CreateNewLocationSheet({ isCreating, onCancel, onCreate }) {
                 placeholder="Latitude"
                 value={newLocationLatitude}
                 type="number"
-                onChange={(event) =>
-                  setNewLocationLatitude(event.target.value)
-                }
+                onChange={(event) => setNewLocationLatitude(event.target.value)}
               />
               <Input
                 placeholder="Longitude"
@@ -458,32 +479,38 @@ function CreateNewLocationSheet({ isCreating, onCancel, onCreate }) {
 
           {/* Map */}
           <div>
-            {makeSubsectionTitle('Map')}
+            {makeSubsectionTitle("Map")}
             <div className="px-3 py-3 border rounded-md bg-muted/40">
               <MapComponent
-                locations={[{
-                  id: 0,
-                  name: newLocationName,
-                  latitude: newLocationLatitude,
-                  longitude: newLocationLongitude
-                }]}
+                locations={[
+                  {
+                    id: 0,
+                    name: newLocationName,
+                    latitude: newLocationLatitude,
+                    longitude: newLocationLongitude,
+                  },
+                ]}
                 center={[newLocationLatitude, newLocationLongitude]}
-                style={{ height: "200px", width: "100%", zIndex: "1"}}
+                style={{ height: "200px", width: "100%", zIndex: "1" }}
               />
             </div>
           </div>
         </div>
         <SheetFooter>
-          <Button onClick={()=>{
-            const locationData = {
-              nameE: newLocationName,
-              district: newLocationDistrict,
-              latitude: newLocationLatitude,
-              longitude: newLocationLongitude,
-            };
-            //console.log(locationData)
-            onCreate(locationData);
-          }}>Create location</Button>
+          <Button
+            onClick={() => {
+              const locationData = {
+                nameE: newLocationName,
+                district: newLocationDistrict,
+                latitude: newLocationLatitude,
+                longitude: newLocationLongitude,
+              };
+              //console.log(locationData)
+              onCreate(locationData);
+            }}
+          >
+            Create location
+          </Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>
@@ -493,51 +520,46 @@ function CreateNewLocationSheet({ isCreating, onCancel, onCreate }) {
 function EditLocationSheet({ isEditing, location, onCancel, onSave }) {
   if (!location) {
     return (
-      <Sheet
-        open={isEditing}
-        onOpenChange={onCancel}
-      >
+      <Sheet open={isEditing} onOpenChange={onCancel}>
         <SheetContent side="left" className="w-200 flex flex-col">
           Error: Location data not found
         </SheetContent>
       </Sheet>
-    )
+    );
   }
 
-  const [editLocationName, setEditLocationName] = useState(location.name ?? location.nameE ?? "");
-  const [editLocationDistrict, setEditLocationDistrict] = useState(location.district);
-  const [editLocationLatitude, setEditLocationLatitude] = useState(location.latitude);
-  const [editLocationLongitude, setEditLocationLongitude] = useState(location.longitude);
+  const [editLocationName, setEditLocationName] = useState(
+    location.name ?? location.nameE ?? ""
+  );
+  const [editLocationDistrict, setEditLocationDistrict] = useState(
+    location.district
+  );
+  const [editLocationLatitude, setEditLocationLatitude] = useState(
+    location.latitude
+  );
+  const [editLocationLongitude, setEditLocationLongitude] = useState(
+    location.longitude
+  );
 
   return (
-    <Sheet
-      open={isEditing}
-      onOpenChange={onCancel}
-    >
+    <Sheet open={isEditing} onOpenChange={onCancel}>
       <SheetContent side="left" className="w-200 flex flex-col">
         <SheetHeader className="px-4">
-          <SheetTitle>
-            Edit Location (Admin)
-          </SheetTitle>
+          <SheetTitle>Edit Location (Admin)</SheetTitle>
         </SheetHeader>
         <div className="flex-1 overflow-y-auto px-4 space-y-4">
-
           {/* Details */}
           <div>
-            {makeSubsectionTitle('Details')}
+            {makeSubsectionTitle("Details")}
             <div className="space-y-2">
               <Input
                 placeholder="Location name"
                 value={editLocationName}
-                onChange={(event) =>
-                  setEditLocationName(event.target.value)
-                }
+                onChange={(event) => setEditLocationName(event.target.value)}
               />
               <Select
                 value={editLocationDistrict}
-                onValueChange={(value) =>
-                  setEditLocationDistrict(value)
-                }
+                onValueChange={(value) => setEditLocationDistrict(value)}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a district" />
@@ -545,23 +567,29 @@ function EditLocationSheet({ isEditing, location, onCancel, onSave }) {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Hong Kong Island</SelectLabel>
-                      {hkIslandDistricts.map((district) => (
-                        <SelectItem key={district} value={district}>{district}</SelectItem>
-                      ))}
+                    {hkIslandDistricts.map((district) => (
+                      <SelectItem key={district} value={district}>
+                        {district}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                   <SelectSeparator />
                   <SelectGroup>
                     <SelectLabel>Kowloon</SelectLabel>
-                      {kowloonDistricts.map((district) => (
-                        <SelectItem key={district} value={district}>{district}</SelectItem>
-                      ))}
+                    {kowloonDistricts.map((district) => (
+                      <SelectItem key={district} value={district}>
+                        {district}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                   <SelectSeparator />
                   <SelectGroup>
                     <SelectLabel>New Territories</SelectLabel>
-                      {newTerritoriesDistricts.map((district) => (
-                        <SelectItem key={district} value={district}>{district}</SelectItem>
-                      ))}
+                    {newTerritoriesDistricts.map((district) => (
+                      <SelectItem key={district} value={district}>
+                        {district}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -586,34 +614,39 @@ function EditLocationSheet({ isEditing, location, onCancel, onSave }) {
 
           {/* Map */}
           <div>
-            {makeSubsectionTitle('Map')}
+            {makeSubsectionTitle("Map")}
             <div className="px-3 py-3 border rounded-md bg-muted/40">
               <MapComponent
-                locations={[{
-                  id: location.id,
-                  name: editLocationName,
-                  district: editLocationDistrict,
-                  latitude: editLocationLatitude,
-                  longitude: editLocationLongitude
-                }]}
+                locations={[
+                  {
+                    id: location.id,
+                    name: editLocationName,
+                    district: editLocationDistrict,
+                    latitude: editLocationLatitude,
+                    longitude: editLocationLongitude,
+                  },
+                ]}
                 center={[editLocationLatitude, editLocationLongitude]}
-                style={{ height: "200px", width: "100%", zIndex: "1"}}
+                style={{ height: "200px", width: "100%", zIndex: "1" }}
               />
             </div>
           </div>
         </div>
         <SheetFooter>
-          <Button onClick={() => {
-            const locationData = {
-              nameE: editLocationName,
-              district: editLocationDistrict,
-              latitude: editLocationLatitude,
-              longitude: editLocationLongitude,
-            };
-            
-            onSave(location.id,locationData)
-          }
-          }>Save edit</Button>
+          <Button
+            onClick={() => {
+              const locationData = {
+                nameE: editLocationName,
+                district: editLocationDistrict,
+                latitude: editLocationLatitude,
+                longitude: editLocationLongitude,
+              };
+
+              onSave(location.id, locationData);
+            }}
+          >
+            Save edit
+          </Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>
@@ -621,7 +654,5 @@ function EditLocationSheet({ isEditing, location, onCancel, onSave }) {
 }
 
 function makeSubsectionTitle(title) {
-  return (
-    <h3 className="text-md font-semibold mb-2">{title}</h3>
-  );
+  return <h3 className="text-md font-semibold mb-2">{title}</h3>;
 }
