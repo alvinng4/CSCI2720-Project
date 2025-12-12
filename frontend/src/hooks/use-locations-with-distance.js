@@ -12,6 +12,7 @@ async function fetchAllLocations() {
       method: "GET",
       headers: {
         Authorization: `Bearer ${getToken()}`,
+        "x-user-id": `${getUser()?.id}`,
       },
       userId: `${getUser()?.id}`,
     });
@@ -36,7 +37,7 @@ async function fetchAllLocations() {
     num_events: loc.numEvents,
     latitude: Number(loc.latitude),
     longitude: Number(loc.longitude),
-    isFavourite: false, //!!loc.isFavourite,
+    isFavourite: loc?.isFavourite ?? false,
   }));
 }
 
@@ -47,8 +48,8 @@ async function fetchLocationById(id) {
       method: "GET",
       headers: {
         Authorization: `Bearer ${getToken()}`,
+        "x-user-id": `${getUser()?.id}`,
       },
-      userId: `${getUser()?.id}`,
     });
   } catch {
     throw new Error("Failed to fetch location data from database.");
@@ -71,7 +72,7 @@ async function fetchLocationById(id) {
     num_events: loc.numEvents,
     latitude: Number(loc.latitude),
     longitude: Number(loc.longitude),
-    isFavourite: false, //!!loc.isFavourite,
+    isFavourite: loc?.isFavourite ?? false,
   };
 }
 

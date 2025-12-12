@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 const locationSchema = new mongoose.Schema(
   {
-    nameC: { type: String, required: true, trim: true },
     nameE: { type: String, required: true, trim: true },
     latitude: { type: Number, required: true },
     longitude: { type: Number, required: true },

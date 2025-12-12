@@ -117,7 +117,6 @@ async function insertLocationData(venuesPath, venueIdToDistrict) {
   const rawLocationData = JSON.parse(fs.readFileSync(venuesPath, "utf8"));
   const locationData = rawLocationData.map((venue) => {
     return {
-      nameC: venue.venuec.trim(),
       nameE: venue.venuee.trim(),
       latitude: Number(venue.latitude),
       longitude: Number(venue.longitude),
@@ -151,28 +150,18 @@ async function insertEventData(eventsFile, locationIdMap) {
     }
 
     return {
-      titleC: event.titlec.trim(),
       titleE: event.titlee.trim(),
       location: locationObjectId,
-      preDateC: event.predateC?.trim(),
       preDateE: event.predateE?.trim(),
-      progTimeC: event.progtimec?.trim(),
       progTimeE: event.progtimee?.trim(),
-      ageLimitC: event.agelimitc?.trim(),
       ageLimitE: event.agelimite?.trim(),
-      priceC: event.pricec?.trim(),
       priceE: event.pricee?.trim(),
-      descC: event.descc?.trim(),
       descE: event.desce?.trim(),
-      urlC: event.urlC?.trim(),
       urlE: event.urlE?.trim(),
-      tAgentUrlC: event.tagenturlc?.trim(),
       tAgentUrlE: event.tagenturle?.trim(),
-      remarkC: event.remarkc?.trim(),
       remarkE: event.remarke?.trim(),
       enquiry: event.enquiry?.trim(),
       email: event.email?.trim(),
-      presenterOrgC: event.presenterorgc?.trim(),
       presenterOrgE: event.presenterorge?.trim(),
     };
   });

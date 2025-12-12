@@ -61,7 +61,7 @@ export function LocationSheet({ location, setSelectedLocation }) {
                       Favourite
                     </TableCell>
                     <TableCell>
-                      <ToggleFavourite isFavourite={location.isFavourite} />
+                      <ToggleFavourite location={location} />
                     </TableCell>
                   </TableRow>
                 </TableBody>

@@ -28,11 +28,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { ToggleFavourite } from "@/components/toggle-favourite";
 import { useLocationsWithDistance } from "@/hooks/use-locations-with-distance";
 import { useState } from "react";
 import { getUser, isAdmin } from "@/lib/AuthHelpers";
-import { useFavourites } from "@/lib/favourites";
-import { Star } from "lucide-react";
 import {
   newTerritoriesDistricts,
   kowloonDistricts,
@@ -170,14 +169,7 @@ export function LocationListTable({ isFavourite }) {
     distRange,
     setDistRange,
     refresh,
-  } = useLocationsWithDistance();
-
-  // favourites store
-  const { isFav, toggle } = useFavourites();
-  const getId = (r) => r?.id ?? r?.locId ?? r?._id;
-  const displayLocations = isFavourite
-    ? (locations || []).filter((r) => isFav(getId(r)))
-    : locations || [];
+  } = useLocationsWithDistance({ isFavouriteOnly: isFavourite });
 
   const columns = getColumns(
     isFavourite,
@@ -216,7 +208,7 @@ export function LocationListTable({ isFavourite }) {
       <div className="flex flex-col gap-y-4">
         <DataTable
           columns={columns}
-          data={displayLocations}
+          data={locations}
           renderToolbar={() =>
             admin ? <Toolbar startCreating={startCreating} /> : null
           }
@@ -313,50 +305,30 @@ function getColumns(
     });
   }
 
-  // Favourite star column (always visible)
-  columns.push({
-    id: "favourite",
-    title: "Favourite",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Favourite" />
-    ),
-    cell: ({ row }) => {
-      const original = row.original || {};
-      const id = original.id ?? original.locId ?? original._id;
-      const fav =
-        !!id && window.localStorage
-          ? JSON.parse(localStorage.getItem("favourites/v1") || "{}")[id]
-          : false;
-      // Prefer live state by using the store hook in the parent; but within column we don’t have it,
-      // so we call window event then let the table re-render when parent state flips.
-      const handleToggle = (e) => {
-        e.stopPropagation();
-        import("@/lib/favourites").then((mod) => mod.toggleFavourite(id));
-      };
-      return (
-        <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={handleToggle}
-            aria-label={fav ? "Unfavourite location" : "Favourite location"}
-            className="inline-flex items-center rounded-md border px-2 py-1 text-sm hover:bg-accent"
-            title={fav ? "Unfavourite" : "Favourite"}
-          >
-            <Star
-              size={16}
-              className={
-                fav
-                  ? "fill-yellow-400 text-yellow-400"
-                  : "text-muted-foreground"
-              }
-            />
-            <span className="ml-2">{fav ? "Favourited" : "Favourite"}</span>
-          </button>
-        </div>
-      );
-    },
-    enableSorting: false,
-  });
+  /**
+   * On location list, user needs to know this is "favourites" column and be sortable.
+   * On Favourite list however, it is on the rightmost edge, so its obvious that its
+   * "favourites". Also, as all rows are favourited, so it doesn't need to be sortable.
+   */
+  if (isFavourite) {
+    columns.push({
+      id: "favouriteActions",
+      cell: ({ row }) => {
+        return <ToggleFavourite location={row.original} />;
+      },
+    });
+  } else {
+    columns.push({
+      accessorKey: "isFavourite",
+      title: "Favourite",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Favourite" />
+      ),
+      cell: ({ row }) => {
+        return <ToggleFavourite location={row.original} />;
+      },
+    });
+  }
 
   if (isAdmin) {
     columns.push({

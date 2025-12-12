@@ -55,9 +55,7 @@ export function LocationDetail() {
                           Favourite
                         </TableCell>
                         <TableCell>
-                          <ToggleFavourite
-                            isFavourite={location?.isFavourite}
-                          />
+                          <ToggleFavourite location={location} />
                         </TableCell>
                       </TableRow>
                     </TableBody>
