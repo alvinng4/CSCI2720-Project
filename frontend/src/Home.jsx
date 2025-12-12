@@ -140,6 +140,15 @@ export function Home() {
             </div>
           </Link>
           <Link
+            to="/eventList"
+            className="group rounded-xl border p-4 transition hover:-translate-y-0.5 hover:shadow-sm"
+          >
+            <div className="text-sm font-medium">Events</div>
+            <div className="text-xs text-muted-foreground">
+              See all the events available.
+            </div>
+          </Link>
+          <Link
             to="/map"
             className="group rounded-xl border p-4 transition hover:-translate-y-0.5 hover:shadow-sm"
           >
@@ -155,15 +164,6 @@ export function Home() {
             <div className="text-sm font-medium">Favourites</div>
             <div className="text-xs text-muted-foreground">
               Quickly access saved venues.
-            </div>
-          </Link>
-          <Link
-            to="/auth"
-            className="group rounded-xl border p-4 transition hover:-translate-y-0.5 hover:shadow-sm"
-          >
-            <div className="text-sm font-medium">Login</div>
-            <div className="text-xs text-muted-foreground">
-              Admin & user sign-in.
             </div>
           </Link>
         </div>
