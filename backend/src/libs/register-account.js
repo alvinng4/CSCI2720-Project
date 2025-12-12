@@ -31,7 +31,7 @@ export default async (username, email, password, role) => {
     username,
     email,
     password: hashedPassword,
-    role: "user",
+    role: role,
   });
   return {
     code: 201,

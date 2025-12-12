@@ -8,7 +8,11 @@ import mongoose from "mongoose";
 
 import EventModel from "./src/models/Event.js";
 import LocationModel from "./src/models/Location.js";
-import UserModel from "./src/models/User.js";
+import registerAccount from "./src/libs/register-account.js";
+
+const ADMIN_USERNAME = "Admin";
+const ADMIN_EMAIL = "admin@example.com";
+const ADMIN_PASSWORD = "admin_csci2720";
 
 const DEFAULT_PORT = "27017";
 const DEFAULT_DB_NAME = "culturalApp";
@@ -84,12 +88,19 @@ async function main() {
 
 async function insertAdminAccounts() {
   console.log("\nInserting admin accounts onto database");
-  // await UserModel.insert({
-  //   email: "admin@example.com",
-  //   password:
-  // });
-  console.log("Skipped: not implemented yet.");
-  // console.log(`Inserted 1 admin account.`);
+  const response = await registerAccount(
+    ADMIN_USERNAME,
+    ADMIN_EMAIL,
+    ADMIN_PASSWORD,
+    "admin"
+  );
+  if (response.code === 201) {
+    console.log(`Inserted 1 admin account.`);
+  } else {
+    throw new Error(
+      `Some error occured. HTML code: ${response.code}, message: ${response.body.error}`
+    );
+  }
 }
 
 async function insertLocationData(venuesPath, venueIdToDistrict) {
