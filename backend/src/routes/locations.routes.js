@@ -1,9 +1,10 @@
 import express from "express";
 import Event from "../models/Event.js";
+import Favourite from "../models/Favourite.js";
 import Location from "../models/Location.js";
+import mongoose from "mongoose";
 import requireAdmin from "../middleware/require-admin.js";
 import requireAuth from "../middleware/require-auth.js";
-
 const router = express.Router();
 
 /* Create location */
@@ -55,8 +56,16 @@ router.get("/:id", requireAuth, async (req, res, next) => {
         .status(404)
         .json({ error: `Location with id ${req.params.id} not found.` });
     }
+
     const numEvents = await Event.countDocuments({ location: loc._id });
     loc["numEvents"] = numEvents;
+
+    const isFavourite = await Favourite.exists({
+      location: loc._id,
+      user: req.header("x-user-id"),
+    });
+    loc["isFavourite"] = !!isFavourite;
+
     res.json({ location: loc });
   } catch (e) {
     next(e);
@@ -90,7 +99,12 @@ router.get("/", requireAuth, async (req, res, next) => {
                 $expr: {
                   $and: [
                     { $eq: ["$location", "$$location"] },
-                    { $eq: ["$user", req.userId] },
+                    {
+                      $eq: [
+                        "$user",
+                        new mongoose.Types.ObjectId(req.header("x-user-id")),
+                      ],
+                    },
                   ],
                 },
               },
@@ -112,7 +126,8 @@ router.get("/", requireAuth, async (req, res, next) => {
       },
       { $sort: { nameE: 1 } },
     ]);
-    res.status(200).json(locations);
+
+    return res.status(200).json(locations);
   } catch (e) {
     next(e);
   }

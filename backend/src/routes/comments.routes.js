@@ -14,12 +14,10 @@ router.post("/", requireAuth, async (req, res, next) => {
     const actualLocation = await Location.findById(location);
 
     if (!actualUser || !actualLocation) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "Failed to find matching user / location data for comment in database",
-        });
+      return res.status(400).json({
+        error:
+          "Failed to find matching user / location data for comment in database",
+      });
     }
 
     const comment = new Comment({
