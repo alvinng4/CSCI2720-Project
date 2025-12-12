@@ -197,8 +197,8 @@ async function insertComments() {
   }
 
   const comments = locations.map((loc) => ({
-    userId: adminUser._id,
-    locationId: loc._id,
+    user: adminUser._id,
+    location: loc._id,
     content: `Cool! (This comment is for ${loc.nameE})`,
   }));
 

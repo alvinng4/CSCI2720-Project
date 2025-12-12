@@ -68,7 +68,10 @@ export function Map() {
           <div className="w-full">
             <MapComponent
               locations={filteredLocations}
-              center={[locations[0]?.latitude ?? 22.3, locations[0]?.longitude ?? 114.2]}
+              center={[
+                locations[0]?.latitude ?? 22.3,
+                locations[0]?.longitude ?? 114.2,
+              ]}
               onClick={(loc) => setSelectedLocation(loc)}
               style={{ height: "700px", width: "100%", zIndex: "1" }}
             />
