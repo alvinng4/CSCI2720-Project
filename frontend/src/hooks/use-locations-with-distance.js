@@ -9,7 +9,7 @@ async function fetchAllLocations() {
   let res = null;
   try
   {
-    const res = await fetch(`${API_BASE}/locations/`, {
+    res = await fetch(`${API_BASE}/locations/`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${getToken()}`,
