@@ -3,6 +3,15 @@ This is a group project for CSCI2720.
 
 ## Quick Start
 
+### Backend
+To run the backend, run the following commands:
+```
+cd backend
+npm install
+npm run init-db // Once only
+npm run dev
+```
+
 ### Frontend
 To run the frontend, run the following commands:
 ```
