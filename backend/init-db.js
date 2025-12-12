@@ -7,7 +7,9 @@ import fs from "fs";
 import mongoose from "mongoose";
 
 import EventModel from "./src/models/Event.js";
+import CommentModel from "./src/models/Comment.js";
 import LocationModel from "./src/models/Location.js";
+import UserModel from "./src/models/User.js";
 import registerAccount from "./src/libs/register-account.js";
 
 const ADMIN_USERNAME = "Admin";
@@ -73,6 +75,9 @@ async function main() {
 
     /* Insert Event data */
     await insertEventData(EVENTS_PATH, locationIdMap);
+
+    /* Insert comments made by admin account */
+    await insertComments();
 
     /* Close connection */
     console.log("\nInitialization completed. Closing connection...");
@@ -176,6 +181,29 @@ async function insertEventData(eventsFile, locationIdMap) {
   console.log("Inserting event data onto database");
   await EventModel.insertMany(eventData);
   console.log(`Inserted ${eventData.length} events.`);
+}
+
+async function insertComments() {
+  console.log("\nInserting comments for each venue (location)");
+
+  const adminUser = await UserModel.findOne({ email: ADMIN_EMAIL });
+  if (!adminUser) {
+    throw new Error(`Admin account not found for email: ${ADMIN_EMAIL}`);
+  }
+
+  const locations = await LocationModel.find().lean();
+  if (!locations || locations.length === 0) {
+    throw new Error("No locations found.");
+  }
+
+  const comments = locations.map((loc) => ({
+    userId: adminUser._id,
+    locationId: loc._id,
+    content: `Cool! (This comment is for ${loc.nameE})`,
+  }));
+
+  await CommentModel.insertMany(comments);
+  console.log(`Inserted ${comments.length} comments.`);
 }
 
 main();
