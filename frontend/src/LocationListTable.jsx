@@ -148,9 +148,9 @@ export function LocationListTable({ isFavourite }) {
         authorization: `Bearer ${getToken()}`,
       },
     });
-    const data = await res.json().catch(() => null);
 
     if (!res.ok) {
+      const data = await res.json().catch(() => null);
       alert(data?.message || "Delete failed");
       return;
     }

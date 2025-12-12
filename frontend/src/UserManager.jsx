@@ -13,18 +13,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useEffect, createContext, useContext, useMemo, useState } from "react";
+import { getToken, isAdmin } from "@/lib/AuthHelpers";
 
 const UserTableContext = createContext(null);
 
 export function UserManager() {
-  const token = localStorage.getItem("authToken");
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
     fetch(`http://localhost:4000/api/users`, {
       method: "GET",
       headers: {
-        authorization: `Bearer ${token}`,
+        authorization: `Bearer ${getToken()}`,
       },
     })
       .then((res) => res.json())
@@ -56,32 +56,32 @@ export function UserManager() {
     for (const char of array) {
       password += char;
     }
-    userData.password = password;
-    const token = localStorage.getItem("authToken");
-    console.log(userData);
+    userData.password = password.slice(15);
+
     const mappedData = [userData].map((user) => ({
       username: user.name,
       email: user.email,
       role: user.role,
       password: user.password,
     }));
-    console.log(mappedData);
+
     const res = await fetch(`http://localhost:4000/api/users/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        authorization: `Bearer ${token}`,
+        authorization: `Bearer ${getToken()}`,
       },
 
       body: JSON.stringify(mappedData[0]),
     });
-    const data = await res.text();
-    console.log("RESULT:", data);
-    if (res.ok) alert("New user created, save your password:" + password);
+
     if (!res.ok) {
-      alert(data);
+      const data = await res.json().catch(() => null);
+      alert(data?.message || "Some error occured");
       return;
     }
+
+    alert("New user created. Password: " + user.data.password);
   }
 
   function startEditing(id) {
@@ -114,7 +114,6 @@ export function UserManager() {
       return;
     }
 
-    const token = localStorage.getItem("authToken");
     console.log(id);
     if (!patch || !id) {
       alert("User data is invalid.");
@@ -124,7 +123,7 @@ export function UserManager() {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        authorization: `Bearer ${token}`,
+        authorization: `Bearer ${getToken()}`,
       },
 
       body: JSON.stringify(patch),
@@ -142,14 +141,11 @@ export function UserManager() {
   async function handleDelete(id) {
     const userConsent = confirm("Delete this user?");
     if (userConsent) {
-      const token = localStorage.getItem("authToken");
-
-      //alert("This function is not implemented yet!");
       const res = await fetch(`http://localhost:4000/api/users/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
+          authorization: `Bearer ${getToken()}`,
         },
       });
       const data = await res.text();
@@ -214,14 +210,16 @@ export function UserManager() {
 
   return (
     <PageShell title="User Manager (Admin only)">
-      <UserTableContext.Provider value={contextValue}>
-        <DataTable
-          columns={columns}
-          data={rows}
-          renderSideMenu={() => CreateUserSideMenu({ onSubmit: createUser })}
-          renderToolbar={toolBar}
-        />
-      </UserTableContext.Provider>
+      {isAdmin &&
+        <UserTableContext.Provider value={contextValue}>
+          <DataTable
+            columns={columns}
+            data={rows}
+            renderSideMenu={() => CreateUserSideMenu({ onSubmit: createUser })}
+            renderToolbar={toolBar}
+          />
+        </UserTableContext.Provider>
+      }
     </PageShell>
   );
 }
@@ -341,7 +339,6 @@ function CreateUserSideMenu({ initial, onSubmit }) {
             onSubmit({ name, email, role });
             setName("");
             setEmail("");
-            setRole("");
           }}
           className="flex flex-col gap-3"
         >
