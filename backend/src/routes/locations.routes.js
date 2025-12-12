@@ -1,4 +1,5 @@
 import express from "express";
+import Event from "../models/Event.js";
 import Location from "../models/Location.js";
 import requireAdmin from "../middleware/require-admin.js";
 import requireAuth from "../middleware/require-auth.js";
@@ -48,6 +49,7 @@ const router = express.Router();
 router.get("/:id", requireAuth, async (req, res, next) => {
   try {
     const loc = await Location.findById(req.params.id).lean();
+
     if (!loc) {
       return res
         .status(404)

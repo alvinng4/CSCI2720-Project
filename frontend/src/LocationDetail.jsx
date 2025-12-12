@@ -11,102 +11,101 @@ import { getUser } from "@/lib/AuthHelpers";
 
 export function LocationDetail() {
   const { id } = useParams();
-  const { haveUserCoords, location, loading, errorMsg } =
-    useLocationWithDistance(id);
+  const { location, loading, errorMsg } = useLocationWithDistance(id);
   const [comments, setComments] = useState([]);
   const user = getUser();
   const token = localStorage.getItem("authToken");
+
   useEffect(() => {
     if (!location) return;
 
-    fetch(`http://localhost:4000/api/locations/${location.id}/comments`, {
-      method: "GET",
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        const mappedData = data.map((com) => ({
-          id: com._id,
-          user: { username: com.userId.username },
-          content: com.text,
-          timestamps: com.createdAt,
-        }));
-        console.log(mappedData);
-        setComments(mappedData);
-        console.log(comments);
-        console.log("Updated comments state:", mappedData);
-      })
-      .catch((err) => {
-        setComments([]);
-        console.log(err);
-      });
+    // fetch(`http://localhost:4000/api/locations/${location.id}/comments`, {
+    //   method: "GET",
+    //   headers: {
+    //     authorization: `Bearer ${token}`,
+    //   },
+    // })
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     const mappedData = data.map((com) => ({
+    //       id: com._id,
+    //       user: { username: com.userId.username },
+    //       content: com.text,
+    //       timestamps: com.createdAt,
+    //     }));
+    //     console.log(mappedData);
+    //     setComments(mappedData);
+    //     console.log(comments);
+    //     console.log("Updated comments state:", mappedData);
+    //   })
+    //   .catch((err) => {
+    //     setComments([]);
+    //     console.log(err);
+    //   });
   }, [location]);
-
-  if (!location) return null;
 
   if (loading) {
     return <LoadingScreen />;
   }
 
   const info = [
-    { label: "District", value: location.district },
-    { label: "Latitude", value: location.latitude },
-    { label: "Longitude", value: location.longitude },
+    { label: "District", value: location?.district },
+    { label: "Latitude", value: location?.latitude },
+    { label: "Longitude", value: location?.longitude },
     {
       label: "Distance",
-      value: location.distance != null ? `${location.distance} km` : "N/A",
+      value: location?.distance != null ? `${location?.distance} km` : "N/A",
     },
-    { label: "# Events", value: location.num_events },
+    { label: "# Events", value: location?.num_events },
   ];
 
-  async function handleAddComment(userInput) {
-    console.log(userInput);
-    console.log(location.id);
-    console.log(user.id);
-    console.log(token);
-    if (!token) {
-      alert("Please log in to leave a comment.");
-      return;
-    }
+  // async function handleAddComment(userInput) {
+  //   console.log(userInput);
+  //   console.log(location.id);
+  //   console.log(user.id);
+  //   console.log(token);
+  //   if (!token) {
+  //     alert("Please log in to leave a comment.");
+  //     return;
+  //   }
 
-    const newComment = {
-      user: { username: user.username },
-      content: userInput,
-      timestamps: new Date().toISOString(),
-    };
-    setComments((prevComments) => [newComment, ...prevComments]);
+  //   const newComment = {
+  //     user: { username: user.username },
+  //     content: userInput,
+  //     timestamps: new Date().toISOString(),
+  //   };
+  //   setComments((prevComments) => [newComment, ...prevComments]);
 
-    const res = await fetch(
-      `http://localhost:4000/api/locations/${location.id}/comments`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
+  //   const res = await fetch(
+  //     `http://localhost:4000/api/locations/${location.id}/comments`,
+  //     {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         authorization: `Bearer ${token}`,
+  //       },
 
-        body: JSON.stringify({
-          userId: user.id,
-          locationId: location.id,
-          text: userInput,
-        }),
-      }
-    );
-    const data = await res.text();
-    console.log("RESULT:", data);
+  //       body: JSON.stringify({
+  //         userId: user.id,
+  //         locationId: location.id,
+  //         text: userInput,
+  //       }),
+  //     }
+  //   );
+  //   const data = await res.text();
+  //   console.log("RESULT:", data);
 
-    if (!res.ok) {
-      alert(data);
-      return;
-    }
-  }
+  //   if (!res.ok) {
+  //     alert(data);
+  //     return;
+  //   }
+  // }
 
   return (
     <>
       <PageShell title={location?.name}>
         <div className="text-red-500">{errorMsg}</div>
+        {location &&
         <div className="px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left column */}
           <div className="space-y-6">
@@ -129,7 +128,7 @@ export function LocationDetail() {
                         Favourite
                       </TableCell>
                       <TableCell>
-                        <ToggleFavourite isFavourite={location.isFavourite} />
+                        <ToggleFavourite isFavourite={location?.isFavourite} />
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -141,11 +140,13 @@ export function LocationDetail() {
             <div>
               {makeSubsectionTitle("Map")}
               <div className="px-3 py-3 border rounded-md bg-muted/40">
-                <MapComponent
-                  locations={[location]}
-                  center={[location?.latitude, location?.longitude]}
-                  style={{ height: "500px", width: "100%", zIndex: "1" }}
-                />
+                {!!location && !!(location?.latitude) && !!(location?.longitude) &&
+                  <MapComponent
+                    locations={[location]}
+                    center={[location?.latitude, location?.longitude]}
+                    style={{ height: "500px", width: "100%", zIndex: "1" }}
+                  />
+                }
               </div>
             </div>
           </div>
@@ -154,16 +155,17 @@ export function LocationDetail() {
           <div>
             {/* Comments */}
             <div>
-              {makeSubsectionTitle(`Comments (${comments.length})`)}
-              <CommentsList
+              {/* {makeSubsectionTitle(`Comments (${comments.length})`)} */}
+              {/* <CommentsList
                 comments={comments}
                 className="px-3 py-3 border rounded-md bg-muted/40"
                 location={location}
                 onSubmit={handleAddComment}
-              />
+              /> */}
             </div>
           </div>
         </div>
+        }
       </PageShell>
     </>
   );
