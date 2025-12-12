@@ -2,8 +2,6 @@ import mongoose from "mongoose";
 
 const eventSchema = new mongoose.Schema(
   {
-    sourceId: { type: Number, required: true, unique: true },
-
     titleC: { type: String, required: true, trim: true },
     titleE: { type: String, required: true, trim: true },
 
