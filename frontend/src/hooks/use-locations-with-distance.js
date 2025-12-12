@@ -7,117 +7,50 @@ import {
   useState
 } from "react"
 
-/* Fake data 
-const fakeLocationsData = [
-  {
-    id: "22512700",
-    name: "Hong Kong Heritage Museum (Thematic Galleries 1 & 2)",
-    district: "Sha Tin",
-    num_events: 3,
-    latitude: 22.31368,
-    longitude: 114.18556,
-    isFavourite: true,
-  },
-  {
-    id: "3110267",
-    name: "North District Town Hall (Function Room (2))",
-    district: "Sha Tin",
-    num_events: 3,
-    latitude: 22.2818,
-    longitude: 114.222501,
-    isFavourite: true,
-  },
-  {
-    id: "35510044",
-    name: "Tai Po Civic Centre (Black Box Theatre)",
-    district: "Sha Tin",
-    num_events: 3,
-    latitude: 22.32427,
-    longitude: 114.21494,
-    isFavourite: false,
-  },
-  {
-    id: "35517396",
-    name: "Tai Po Civic Centre (Function Room (2))",
-    district: "Sha Tin",
-    num_events: 3,
-    latitude: 22.356656,
-    longitude: 114.12623,
-    isFavourite: false,
-  },
-  {
-    id: "826817417",
-    name: "East Kowloon Cultural Centre (The Hall)",
-    district: "Sha Tin",
-    num_events: 3,
-    latitude: 22.31368,
-    longitude: 114.18556,
-    isFavourite: false,
-  },
-  {
-    id: "87110023",
-    name: "Kwai Tsing Theatre (Auditorium)",
-    district: "Sha Tin",
-    num_events: 3,
-    latitude: 22.334583,
-    longitude: 114.208766,
-    isFavourite: false,
-  },
-  {
-    id: "87310051",
-    name: "Yuen Long Theatre (Auditorium)",
-    district: "Sha Tin",
-    num_events: 3,
-    latitude: 22.282279,
-    longitude: 114.161545,
-    isFavourite: false,
-  },
-  {
-    id: "87410030",
-    name: "Ngau Chi Wan Civic Centre (Theatre)",
-    district: "Sha Tin",
-    num_events: 7,
-    latitude: 22.44152,
-    longitude: 114.02289,
-    isFavourite: false,
-  },
-  {
-    id: "87510494",
-    name: "Hong Kong City Hall (Exhibition Gallery)",
-    district: "Sha Tin",
-    num_events: 8,
-    latitude: 22.501639,
-    longitude: 114.128911,
-    isFavourite: false,
-  },
-  {
-    id: "87616551",
-    name: "Ko Shan Theatre (New Wing Auditorium)",
-    district: "Wan Chai",
-    num_events: 4,
-    latitude: 22.28602,
-    longitude: 114.14967,
-    isFavourite: false,
-  },
-]
-*/
-const res = await fetch("http://localhost:4000/api/locations/", {
-  method: "GET",
-})
-const data = await res.json();
-if (!res.ok) {
-  alert(data.error)
+const API_BASE =
+  (import.meta?.env?.VITE_API_BASE ?? "http://localhost:4000") + "/api";
+
+async function fetchAllLocations() {
+  const res = await fetch(`${API_BASE}/locations/`, { method: "GET" });
+  const maybeJson = await res.json().catch(() => null);
+  if (!res.ok) {
+    const msg =
+      (maybeJson && (maybeJson.error || maybeJson.message)) ||
+      "Failed to load locations";
+    throw new Error(msg);
+  }
+  const list = Array.isArray(maybeJson?.data) ? maybeJson.data : (maybeJson || []);
+  return list.map((loc) => ({
+    id: String(loc._id ?? loc.id ?? ""),
+    name: loc.nameE ?? loc.name ?? "",
+    district: loc.district ?? "",
+    num_events: loc.num_events ?? 0,
+    latitude: Number(loc.latitude) || 0,
+    longitude: Number(loc.longitude) || 0,
+    isFavourite: !!loc.isFavourite,
+  }));
 }
 
-const fakeLocationsData = data.map(loc=>({
-  id: loc._id.toString(),        
-  name: loc.nameE || "",           
-  district: loc.district || "",    
-  num_events: loc.num_events || 0,
-  latitude: loc.latitude || 0,  
-  longitude: loc.longitude || 0,
-  isFavourite: loc.isFavourite || false,
-}));
+async function fetchLocationById(id) {
+  const res = await fetch(`${API_BASE}/locations/${id}`, { method: "GET" });
+  const maybeJson = await res.json().catch(() => null);
+  if (!res.ok) {
+    const msg =
+      (maybeJson && (maybeJson.error || maybeJson.message)) ||
+      "Failed to load location";
+    throw new Error(msg);
+  }
+  const loc = Array.isArray(maybeJson?.data) ? maybeJson.data[0] : (maybeJson || {});
+  return {
+    id: String(loc._id ?? loc.id ?? ""),
+    name: loc.nameE ?? loc.name ?? "",
+    district: loc.district ?? "",
+    num_events: loc.num_events ?? 0,
+    latitude: Number(loc.latitude) || 0,
+    longitude: Number(loc.longitude) || 0,
+    isFavourite: !!loc.isFavourite,
+  };
+}
 
 export function useLocationsWithDistance({ isFavouriteOnly = false } = {}) {
   const [haveUserCoords, setHaveUserCoords] = useState(false);
@@ -127,65 +60,62 @@ export function useLocationsWithDistance({ isFavouriteOnly = false } = {}) {
   const [maxDist, setMaxDist] = useState(0);
   const [distRange, setDistRange] = useState([0, 0]);
 
+  const [reloadKey, setReloadKey] = useState(0);
+  const refresh = () => setReloadKey((k) => k + 1);
+
   useEffect(() => {
-    let isCancelled = false
-    async function fetchData() {
+    let cancelled = false;
+    (async () => {
       setLoading(true);
+      setErrorMsg("");
       try {
         let userCoords = null;
-
         try {
           userCoords = await getUserLocation();
           setHaveUserCoords(true);
         } catch {
-          if (!isCancelled) {
-            setErrorMsg("Failed to get user location. Showing data without distance.")
+          if (!cancelled) {
+            setErrorMsg("Failed to get user location. Showing data without distance.");
           }
         }
 
-        await loadLocationsData(
-          (data) => {
-            if (isCancelled) return;
-            const filtered = isFavouriteOnly
-              ? data.filter((loc) => loc.isFavourite)
-              : data;
+        const base = await fetchAllLocations();
+        const filtered = isFavouriteOnly ? base.filter((x) => x.isFavourite) : base;
 
-            if (!userCoords) {
-              setLocations(filtered);
-              return;
-            }
+        const withDistance =
+          userCoords
+            ? filtered.map((loc) => ({
+                ...loc,
+                distance: haversineDistance(
+                  userCoords.latitude,
+                  userCoords.longitude,
+                  loc.latitude,
+                  loc.longitude
+                ),
+              }))
+            : filtered;
 
-            const dataWithDistance = filtered.map((loc) => ({
-              ...loc,
-              distance: haversineDistance(
-                userCoords.latitude,
-                userCoords.longitude,
-                loc.latitude,
-                loc.longitude,
-              ),
-            }));
-            setLocations(dataWithDistance);
-          },
-        );
+        if (!cancelled) setLocations(withDistance);
+      } catch (err) {
+        if (!cancelled) setErrorMsg(err.message || "Failed to load locations");
       } finally {
-        if (!isCancelled) setLoading(false);
+        if (!cancelled) setLoading(false);
       }
-    }
-
-    fetchData();
-    return () => { isCancelled = true; };
-  }, [isFavouriteOnly]);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isFavouriteOnly, reloadKey]);
 
   useEffect(() => {
     if (!haveUserCoords) return;
     const distances = locations
-      .map((item) => item.distance)
+      .map((x) => x.distance)
       .filter((d) => typeof d === "number" && !Number.isNaN(d));
-
-    if (distances.length > 0) {
-      const newMax = Math.max(...distances);
-      setMaxDist(newMax);
-      setDistRange(([min]) => [min, newMax]);
+    if (distances.length) {
+      const m = Math.max(...distances);
+      setMaxDist(m);
+      setDistRange(([min]) => [min, m]);
     }
   }, [locations, haveUserCoords]);
 
@@ -197,6 +127,7 @@ export function useLocationsWithDistance({ isFavouriteOnly = false } = {}) {
     maxDist,
     distRange,
     setDistRange,
+    refresh,
   };
 }
 
@@ -205,76 +136,57 @@ export function useLocationWithDistance(id) {
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
+  const [reloadKey, setReloadKey] = useState(0);
+  const refresh = () => setReloadKey((k) => k + 1);
 
   useEffect(() => {
-    if (!id) {
-      return;
-    }
-    let isCancelled = false;
-
-    async function fetchData() {
+    if (!id) return;
+    let cancelled = false;
+    (async () => {
       setLoading(true);
+      setErrorMsg("");
       try {
         let userCoords = null;
         try {
           userCoords = await getUserLocation();
           setHaveUserCoords(true);
         } catch {
-          if (!isCancelled) {
-            setErrorMsg("Failed to get user location. Showing data without distance.");
-          }
+          if (!cancelled) setErrorMsg("Failed to get user location. Showing data without distance.");
         }
 
-        const baseLoc = await loadLocationData(id);
+        const baseLoc = await fetchLocationById(id);
+        const withDistance =
+          userCoords
+            ? {
+                ...baseLoc,
+                distance: haversineDistance(
+                  userCoords.latitude,
+                  userCoords.longitude,
+                  baseLoc.latitude,
+                  baseLoc.longitude
+                ),
+              }
+            : baseLoc;
 
-        if (!baseLoc) {
-          if (!isCancelled) {
-            setLocation(null);
-            setErrorMsg("Location not found.");
-          }
-          return;
-        }
-
-        if (!userCoords) {
-          return setLocation(baseLoc);
-        }
-
-        const locWithDistance = {
-          ...baseLoc,
-          distance: haversineDistance(
-            userCoords.latitude,
-            userCoords.longitude,
-            baseLoc.latitude,
-            baseLoc.longitude,
-          ),
-        };
-
-        if (!isCancelled) {
-          setLocation(locWithDistance);
-        }
+        if (!cancelled) setLocation(withDistance);
+      } catch (err) {
+        if (!cancelled) setErrorMsg(err.message || "Failed to load location");
       } finally {
-        if (!isCancelled) {
-          setLoading(false);
-        }
+        if (!cancelled) setLoading(false);
       }
-    }
+    })();
+    return () => { cancelled = true; };
+  }, [id, reloadKey]);
 
-    fetchData();
-    return () => { isCancelled = true; };
-  }, [id]);
-
-  return { 
-    haveUserCoords,
-    location,
-    loading,
-    errorMsg,
-  };
+  return { haveUserCoords, location, loading, errorMsg, refresh };
 }
 
-async function loadLocationsData(setLocations) {
-  setLocations(fakeLocationsData);
+
+async function loadLocationsData(setter) {
+  const rows = await fetchAllLocations();
+  setter(rows);
 }
 
 async function loadLocationData(id) {
-  return fakeLocationsData.find((item) => item.id === id) || null;
+  return fetchLocationById(id);
 }

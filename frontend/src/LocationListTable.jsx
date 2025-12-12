@@ -56,7 +56,6 @@ export function LocationListTable({ isFavourite }) {
   }
 
   async function onCreateLocation(locationData) {
-    //alert("This function is not implemented yet!");
     const token = localStorage.getItem('authToken');
     console.log(locationData)
     const res = await fetch(`http://localhost:4000/api/locations/`, {
@@ -66,18 +65,26 @@ export function LocationListTable({ isFavourite }) {
         "authorization": `Bearer ${token}`
       },
       
-      body: JSON.stringify(locationData),
+      body: JSON.stringify({
+        ...locationData,
+        // ensure numbers
+        latitude: Number(locationData.latitude),
+        longitude: Number(locationData.longitude),
+        }),
 
     })
-    const data = await res.text();
+    const data = await res.json().catch(() => null);
     console.log("RESULT:", data);
     
     if (!res.ok) {
-      alert(data);
+      alert(typeof data === 'string' ? data : (data?.message || 'Failed to create'));
       return
     }
-    
-  
+
+    // Close the sheet, tell the user, and refresh the table
+    setIsCreating(false);
+    alert('Location created');
+    refresh();
   }
 
   function startEditing(id) {
@@ -97,7 +104,6 @@ export function LocationListTable({ isFavourite }) {
   }
 
   async function onSaveEdit(id, locationData ) {
-    //alert("This function is not implemented yet!");
     const token = localStorage.getItem('authToken');
     console.log(id)
     if (!locationData || !id) {
@@ -111,17 +117,23 @@ export function LocationListTable({ isFavourite }) {
         "authorization": `Bearer ${token}`
       },
       
-      body: JSON.stringify(locationData),
+      body: JSON.stringify({
+        ...locationData,
+        latitude: Number(locationData.latitude),
+        longitude: Number(locationData.longitude),
+        }),
 
     })
-    const data = await res.text();
+    const data = await res.json().catch(() => null);
     console.log("RESULT:", data);
     
     if (!res.ok) {
-      alert(data);
+      alert(data?.message || "Failed to update");
       return
     }
     stopEditing();
+    alert('Location updated');
+    refresh();
   }
 
   async function handleDelete(id) {
@@ -130,7 +142,6 @@ export function LocationListTable({ isFavourite }) {
     if (!userConsent) {
       return ;
     }
-    //alert("This function is not implemented yet!");
     const res = await fetch(`http://localhost:4000/api/locations/${id}`, {
       method: "DELETE",
       headers: { 
@@ -138,13 +149,15 @@ export function LocationListTable({ isFavourite }) {
         "authorization": `Bearer ${token}`
       }
     })
-    const data = await res.text();
+    const data = await res.json().catch(() => null);
     console.log("RESULT:", data);
     
     if (!res.ok) {
-      alert(data);
+      alert(data?.message || "Delete failed");
       return
     }
+    alert('Location deleted');
+    refresh();
 
   }
 
@@ -156,6 +169,7 @@ export function LocationListTable({ isFavourite }) {
     maxDist,
     distRange,
     setDistRange,
+    refresh,
   } = useLocationsWithDistance();
 
   // favourites store
@@ -490,7 +504,7 @@ function EditLocationSheet({ isEditing, location, onCancel, onSave }) {
     )
   }
 
-  const [editLocationName, setEditLocationName] = useState(location.title);
+  const [editLocationName, setEditLocationName] = useState(location.name ?? location.nameE ?? "");
   const [editLocationDistrict, setEditLocationDistrict] = useState(location.district);
   const [editLocationLatitude, setEditLocationLatitude] = useState(location.latitude);
   const [editLocationLongitude, setEditLocationLongitude] = useState(location.longitude);

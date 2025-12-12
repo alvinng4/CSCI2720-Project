@@ -64,7 +64,7 @@ export function TopNav({setIsAuthenticated}) {
     );
   }
 
-  const username = user?.name ?? "guest";
+  const displayName = user?.username ?? user?.name ?? "guest";
   const email = user?.email ?? "";
   const roleLabel = user?.role ? user.role.toUpperCase() : "";
 
@@ -106,7 +106,7 @@ export function TopNav({setIsAuthenticated}) {
 
           {/* user menu */}
           <DropdownMenuUserMenu
-            username={username}
+            username={displayName}
             email={email}
             role={roleLabel}
             onSignOut={()=>{
