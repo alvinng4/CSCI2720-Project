@@ -6,15 +6,7 @@ import { useState } from "react";
 export function CommentsList({ comments, className, onSubmit, location }) {
   const [isLeavingComment, setIsLeavingComment] = useState(false);
   const [userInput, setUserInput] = useState("");
-  /* 
-  if (!comments || comments.length === 0) {
-    return (
-      <div className={className}>
-        <p className="text-sm text-muted-foreground">No comments yet.</p>
-      </div>
-    );
-  }
-*/
+
   return (
     <div className={cn(className, "space-y-3 w-full")}>
       {isLeavingComment ? (
@@ -56,7 +48,7 @@ export function CommentsList({ comments, className, onSubmit, location }) {
         </Button>
       )}
       {(!comments || comments.length === 0) && (
-        <div className={className}>
+        <div>
           <p className="text-sm text-muted-foreground">No comments yet.</p>
         </div>
       )}
