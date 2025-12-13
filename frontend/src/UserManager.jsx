@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useEffect, createContext, useContext, useMemo, useState } from "react";
-import { getToken, isAdmin } from "@/lib/AuthHelpers";
+import { getToken, getUser, isAdmin } from "@/lib/AuthHelpers";
 
 const UserTableContext = createContext(null);
 
@@ -181,6 +181,12 @@ export function UserManager() {
   }
 
   async function handleDelete(id) {
+    const currentUser = getUser();
+    if (currentUser && currentUser.id === id) {
+      showMessage("You cannot delete your own account.", MessageTypes.ERROR);
+      return;
+    }
+
     const userConsent = confirm("Delete this user?");
     if (userConsent) {
       let res = null;
