@@ -234,7 +234,7 @@ function getColumns(isAdmin, startEditing, handleDelete) {
       cell: ({ row }) => {
         const value = row.original.presenterOrgE;
         return value ? (
-          <span className="inline-block bg-green-100 text-green-800 px-2 py-1 rounded">
+          <span className="inline-block bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300 px-2 py-1 rounded">
             {value}
           </span>
         ) : (
