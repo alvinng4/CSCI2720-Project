@@ -8,7 +8,7 @@ To run the backend, run the following commands:
 ```
 cd backend
 npm install
-npm run init-db // Once only
+npm run init-db // This will drop existing database with the name "culturalApp"
 npm run dev
 ```
 
