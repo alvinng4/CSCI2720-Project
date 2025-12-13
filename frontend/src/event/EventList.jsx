@@ -76,6 +76,7 @@ export function EventList() {
     loading,
     errorMsg,
     setErrorMsg,
+    lastSyncTime,
     refresh,
   } = useFetchEvents();
 
@@ -113,9 +114,15 @@ export function EventList() {
         <DataTable
           columns={columns}
           data={events}
-          renderToolbar={() =>
-            admin ? <Toolbar startCreating={startCreating} /> : null
-          }
+          renderToolbar={() => (
+            <div className="ml-auto flex items-center gap-3">
+              <span className="text-sm text-muted-foreground whitespace-nowrap">
+                Last Updated on{" "}
+                {lastSyncTime ? new Date(lastSyncTime).toLocaleString() : ""}
+              </span>
+              {admin && <Toolbar startCreating={startCreating} />}
+            </div>
+          )}
           renderSideMenu={(table) => (
             <EventSideMenu table={table} refresh={refresh} />
           )}
