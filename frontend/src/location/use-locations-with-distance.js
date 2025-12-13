@@ -151,6 +151,7 @@ export function useLocationsWithDistance({ isFavouriteOnly = false } = {}) {
     locations,
     loading,
     errorMsg,
+    setErrorMsg,
     maxDist,
     distRange,
     setDistRange,
