@@ -61,8 +61,8 @@ export function Home() {
             <CardContent className="text-sm text-muted-foreground">
               <ul className="list-disc space-y-1 pl-5">
                 <li>Sort by name, distance, and #events</li>
-                <li>Filter by keyword / area / distance</li>
-                <li>Open a venue to see events & comments</li>
+                <li>Filter by keyword / district / distance</li>
+                <li>Open a venue to see details & comments</li>
               </ul>
               <div className="mt-4">
                 <Button variant="outline" asChild>
