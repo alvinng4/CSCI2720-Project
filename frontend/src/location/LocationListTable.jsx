@@ -160,9 +160,7 @@ export function LocationListTable({ isFavourite }) {
 
   function onIsFavouriteUpdate(id, isFavourite) {
     setLocations(
-      locations.map((loc) =>
-        loc.id === id ? { ...loc, isFavourite } : loc
-      )
+      locations.map((loc) => (loc.id === id ? { ...loc, isFavourite } : loc))
     );
   }
 
@@ -186,7 +184,7 @@ export function LocationListTable({ isFavourite }) {
     admin,
     startEditing,
     handleDelete,
-    onIsFavouriteUpdate,
+    onIsFavouriteUpdate
   );
 
   if (loading) {
@@ -248,11 +246,7 @@ export function LocationListTable({ isFavourite }) {
               extraComponents={() => {
                 return (
                   <div className="flex gap-2 justify-end">
-                    <Button 
-                      size="sm"
-                      className="h-8"
-                      onClick={refresh}
-                    >
+                    <Button size="sm" className="h-8" onClick={refresh}>
                       Refresh
                     </Button>
                     <DataTableViewOptions table={table} className="!ml-0" />
@@ -333,13 +327,15 @@ function getColumns(
     accessorKey: "isFavourite",
     title: "Favourite",
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Favourite"
-      />
+      <DataTableColumnHeader column={column} title="Favourite" />
     ),
     cell: ({ row }) => {
-      return <ToggleFavourite location={row.original} onUpdate={onIsFavouriteUpdate} />;
+      return (
+        <ToggleFavourite
+          location={row.original}
+          onUpdate={onIsFavouriteUpdate}
+        />
+      );
     },
   });
 

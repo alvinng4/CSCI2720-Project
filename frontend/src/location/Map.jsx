@@ -12,8 +12,16 @@ export function Map() {
   const [filterDistrict, setFilterDistrict] = useState("");
   const [selectedLocation, setSelectedLocation] = useState(null);
 
-  const { _, locations, loading, errorMsg, maxDist, distRange, setDistRange, refresh } =
-    useLocationsWithDistance();
+  const {
+    _,
+    locations,
+    loading,
+    errorMsg,
+    maxDist,
+    distRange,
+    setDistRange,
+    refresh,
+  } = useLocationsWithDistance();
 
   const filteredLocations = locations.filter((loc) => {
     const [minDistVal, maxDistVal] = distRange;
@@ -66,11 +74,7 @@ export function Map() {
               setDistRange={setDistRange}
               extraComponents={() => {
                 return (
-                  <Button 
-                    size="sm"
-                    className="ml-auto h-8"
-                    onClick={refresh}
-                  >
+                  <Button size="sm" className="ml-auto h-8" onClick={refresh}>
                     Refresh
                   </Button>
                 );

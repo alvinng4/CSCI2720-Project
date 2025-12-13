@@ -13,11 +13,13 @@ import { Table, TableBody, TableRow, TableCell } from "@/components/ui/table";
 import { ToggleFavourite } from "@/components/toggle-favourite";
 import { useLocationWithDistance } from "@/hooks/use-locations-with-distance";
 import { useNavigate } from "react-router-dom";
-import {
-  useState
-} from "react";
+import { useState } from "react";
 
-export function LocationSheet({ locationId, setSelectedLocation, onIsFavouriteUpdate }) {
+export function LocationSheet({
+  locationId,
+  setSelectedLocation,
+  onIsFavouriteUpdate,
+}) {
   const navigate = useNavigate();
   const [commentLength, setCommentLength] = useState(null);
   const { location, loading, errorMsg } = useLocationWithDistance(locationId);
@@ -41,8 +43,9 @@ export function LocationSheet({ locationId, setSelectedLocation, onIsFavouriteUp
       }}
     >
       <SheetContent side="left" className="w-200 flex flex-col">
-        { loading ?
-          <LoadingScreen /> :
+        {loading ? (
+          <LoadingScreen />
+        ) : (
           <>
             <SheetHeader className="px-4">
               <SheetTitle>{location?.name}</SheetTitle>
@@ -68,7 +71,10 @@ export function LocationSheet({ locationId, setSelectedLocation, onIsFavouriteUp
                           Favourite
                         </TableCell>
                         <TableCell>
-                          <ToggleFavourite location={location} onUpdate={onIsFavouriteUpdate} />
+                          <ToggleFavourite
+                            location={location}
+                            onUpdate={onIsFavouriteUpdate}
+                          />
                         </TableCell>
                       </TableRow>
                     </TableBody>
@@ -104,7 +110,7 @@ export function LocationSheet({ locationId, setSelectedLocation, onIsFavouriteUp
               </Button>
             </SheetFooter>
           </>
-        }
+        )}
       </SheetContent>
     </Sheet>
   );

@@ -7,8 +7,8 @@ const API_BASE =
   (import.meta?.env?.VITE_API_BASE ?? "http://localhost:4000") + "/api";
 
 export function ToggleFavourite({ location, onUpdate, className }) {
-  const filledClassName = "fill-yellow-400 stroke-yellow-400"
-  const unfilledClassName = "fill-none stroke-gray-400"
+  const filledClassName = "fill-yellow-400 stroke-yellow-400";
+  const unfilledClassName = "fill-none stroke-gray-400";
   const [isFavourite, setIsFavourite] = useState(location.isFavourite);
   const [justClicked, setJustClicked] = useState(false);
 

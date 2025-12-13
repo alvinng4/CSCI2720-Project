@@ -4,6 +4,11 @@ import { DataTable } from "@/components/ui/data-table";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { DataTableViewOptions } from "@/components/ui/data-table-view-options";
 import { Input } from "@/components/ui/input";
+import {
+  MessageTypes,
+  MessageTypeToColor,
+  useMessage,
+} from "@/hooks/use-message";
 import { PageShell } from "@/components/page-shell";
 import {
   Select,
@@ -19,29 +24,38 @@ const UserTableContext = createContext(null);
 
 export function UserManager() {
   const [rows, setRows] = useState([]);
+  const { message, isShowMessage, messageType, showMessage, resetMessage } =
+    useMessage();
+
+  async function fetchUsers() {
+    let res = null;
+    try {
+      res = await fetch(`http://localhost:4000/api/users`, {
+        method: "GET",
+        headers: {
+          authorization: `Bearer ${getToken()}`,
+        },
+      });
+    } catch {
+      showMessage(
+        "Network error when fetching user data. Please try again later.",
+        MessageTypes.ERROR
+      );
+    }
+
+    const data = await res.json();
+    const mappedData = data.map((users) => ({
+      id: users._id,
+      name: users.username,
+      email: users.email,
+      role: users.role,
+    }));
+    setRows(mappedData);
+  }
 
   useEffect(() => {
-    fetch(`http://localhost:4000/api/users`, {
-      method: "GET",
-      headers: {
-        authorization: `Bearer ${getToken()}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        const mappedData = data.map((users) => ({
-          id: users._id,
-          name: users.username,
-          email: users.email,
-          role: users.role,
-        }));
-        setRows(mappedData);
-      })
-      .catch((err) => {
-        setRows([]);
-        console.log(err);
-      });
-  });
+    fetchUsers();
+  }, []);
 
   const [editingId, setEditingId] = useState(null);
   const [editingName, setEditingName] = useState(null);
@@ -50,13 +64,15 @@ export function UserManager() {
 
   /* Handlers */
   async function createUser(userData) {
+    resetMessage();
+
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let password = "";
-    const array = new Uint32Array(10);
-    self.crypto.getRandomValues(array);
-    for (const char of array) {
-      password += char;
+    for (let i = 0; i < 25; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    userData.password = password.slice(15);
+    userData.password = password;
 
     const mappedData = [userData].map((user) => ({
       username: user.name,
@@ -65,23 +81,33 @@ export function UserManager() {
       password: user.password,
     }));
 
-    const res = await fetch(`http://localhost:4000/api/users/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${getToken()}`,
-      },
+    let res = null;
+    try {
+      res = await fetch(`http://localhost:4000/api/users/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${getToken()}`,
+        },
 
-      body: JSON.stringify(mappedData[0]),
-    });
+        body: JSON.stringify(mappedData[0]),
+      });
+    } catch {
+      showMessage("Network error. Please try again later", MessageTypes.ERROR);
+    }
 
     if (!res.ok) {
       const data = await res.json().catch(() => null);
-      alert(data?.message || "Some error occured");
+      showMessage(data?.message || "Some error occured", MessageTypes.ERROR);
       return;
     }
 
-    alert("New user created. Password: " + userData.password);
+    showMessage(
+      "New user created. Password: " + userData.password,
+      MessageTypes.SPECIAL
+    );
+    fetchUsers();
+    return true;
   }
 
   function startEditing(id) {
@@ -104,55 +130,87 @@ export function UserManager() {
   async function saveEdit(id) {
     const patch = { name: editingName, email: editingEmail, role: editingRole };
 
-    if (!patch.name?.trim()) return alert("Name is required");
-    if (!patch.email?.trim()) return alert("Email is required");
-    if (!patch.role?.trim()) return alert("Role is required");
+    if (!patch.name?.trim()) {
+      showMessage("Name is required", MessageTypes.ERROR);
+      return;
+    }
+    if (!patch.email?.trim()) {
+      showMessage("Email is required", MessageTypes.ERROR);
+      return;
+    }
+    if (!patch.role?.trim()) {
+      showMessage("Role is required", MessageTypes.ERROR);
+      return;
+    }
 
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailPattern = /^[^\s@]+@[^\s@]+$/;
     if (!emailPattern.test(patch.email)) {
-      alert("Please enter a valid email address");
+      showMessage("Please enter a valid email address", MessageTypes.ERROR);
       return;
     }
 
     if (!patch || !id) {
-      alert("User data is invalid.");
+      showMessage("User data is invalid.", MessageTypes.ERROR);
       return;
     }
-    const res = await fetch(`http://localhost:4000/api/users/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${getToken()}`,
-      },
 
-      body: JSON.stringify(patch),
-    });
-    const data = await res.text();
+    let res = null;
+    try {
+      res = await fetch(`http://localhost:4000/api/users/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${getToken()}`,
+        },
+        body: JSON.stringify(patch),
+      });
+    } catch {
+      showMessage("Network error. Please try again later", MessageTypes.ERROR);
+      return;
+    }
 
     if (!res.ok) {
-      alert(data);
+      const data = await res.text();
+      showMessage(data, MessageTypes.ERROR);
       return;
     }
+
     stopEditing();
+    resetMessage();
+    fetchUsers();
   }
 
   async function handleDelete(id) {
     const userConsent = confirm("Delete this user?");
     if (userConsent) {
-      const res = await fetch(`http://localhost:4000/api/users/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${getToken()}`,
-        },
-      });
-      const data = await res.text();
+      let res = null;
+      try {
+        res = await fetch(`http://localhost:4000/api/users/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${getToken()}`,
+          },
+        });
+      } catch {
+        showMessage(
+          "Network error. Please try again later.",
+          MessageTypes.ERROR
+        );
+        return;
+      }
 
       if (!res.ok) {
-        alert(data);
+        const data = await res.text();
+        showMessage(data, MessageTypes.ERROR);
         return;
       }
     }
+    showMessage(
+      `User with id ${id} is successfully deleted.`,
+      MessageTypes.SPECIAL
+    );
+    fetchUsers();
   }
 
   /* Columns (created once only to prevent input issues) */
@@ -207,6 +265,10 @@ export function UserManager() {
 
   return (
     <PageShell title="User Manager (Admin only)">
+      {/* Feedback message */}
+      <p hidden={!isShowMessage} className={MessageTypeToColor[messageType]}>
+        {message}
+      </p>
       {isAdmin && (
         <UserTableContext.Provider value={contextValue}>
           <DataTable
@@ -331,11 +393,13 @@ function CreateUserSideMenu({ initial, onSubmit }) {
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            onSubmit({ name, email, role });
-            setName("");
-            setEmail("");
+            const result = await onSubmit({ name, email, role });
+            if (result) {
+              setName("");
+              setEmail("");
+            }
           }}
           className="flex flex-col gap-3"
         >
