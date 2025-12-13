@@ -78,6 +78,7 @@ export function useFetchEvents() {
     events,
     loading,
     errorMsg,
+    setErrorMsg,
     refresh,
   };
 }

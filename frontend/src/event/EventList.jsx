@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { DataTableViewOptions } from "@/components/ui/data-table-view-options";
+import { deleteEvent } from "@/event/event.api";
 import { Input } from "@/components/ui/input";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { PageShell } from "@/components/page-shell";
@@ -99,30 +100,11 @@ export function EventList() {
     // refresh();
   }
 
-  async function handleDelete(id) {
-    // const userConsent = confirm("Delete this location?");
-    // if (!userConsent) {
-    //   return;
-    // }
-    // const res = await fetch(`${API_BASE}/locations/${id}`, {
-    //   method: "DELETE",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     authorization: `Bearer ${getToken()}`,
-    //   },
-    // });
-    // if (!res.ok) {
-    //   const data = await res.json().catch(() => null);
-    //   alert(data?.message || "Delete failed");
-    //   return;
-    // }
-    // refresh();
-  }
-
   const {
     events: fetchedEvents,
     loading,
     errorMsg,
+    setErrorMsg,
     refresh,
   } = useFetchEvents();
 
@@ -130,7 +112,9 @@ export function EventList() {
     setEvents(fetchedEvents);
   }, [fetchedEvents]);
 
-  const columns = getColumns(admin, startEditing, handleDelete);
+  const columns = getColumns(admin, startEditing, (id) =>
+    deleteEvent(id, setErrorMsg, refresh)
+  );
 
   if (loading) {
     return <LoadingScreen />;
