@@ -184,6 +184,7 @@ export function LocationListTable({ isFavourite }) {
     admin,
     startEditing,
     handleDelete,
+    isFavourite,
     onIsFavouriteUpdate
   );
 
@@ -267,6 +268,7 @@ function getColumns(
   isAdmin,
   startEditing,
   handleDelete,
+  isFavourite,
   onIsFavouriteUpdate
 ) {
   const columns = [
@@ -337,6 +339,7 @@ function getColumns(
         />
       );
     },
+    enableSorting: !isFavourite
   });
 
   if (isAdmin) {
