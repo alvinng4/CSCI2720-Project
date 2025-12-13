@@ -52,7 +52,7 @@ const router = express.Router();
 // });
 
 /* Read events */
-router.get("/", requireAuth, async (req, res, next) => {
+router.get("/", requireAuth, async (_req, res, next) => {
   try {
     const events = await Event.find().populate("location");
     return res.status(200).json(events);
@@ -77,14 +77,14 @@ router.get("/", requireAuth, async (req, res, next) => {
 //   }
 // });
 
-/* Delete Location */
-// router.delete("/:id", requireAuth, async (req, res, next) => {
-//   try {
-//     await Location.findByIdAndDelete(req.params.id);
-//     res.json({ ok: true });
-//   } catch (e) {
-//     next(e);
-//   }
-// });
+/* Delete event */
+router.delete("/:id", requireAuth, async (req, res, next) => {
+  try {
+    await Event.findByIdAndDelete(req.params.id);
+    res.json({ ok: true });
+  } catch (e) {
+    next(e);
+  }
+});
 
 export default router;
