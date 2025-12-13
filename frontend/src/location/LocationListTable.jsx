@@ -245,7 +245,20 @@ export function LocationListTable({ isFavourite }) {
                 setDistRange(newValue);
                 table.getColumn("distance")?.setFilterValue(newValue);
               }}
-              extraComponents={() => <DataTableViewOptions table={table} />}
+              extraComponents={() => {
+                return (
+                  <div className="flex gap-2 justify-end">
+                    <Button 
+                      size="sm"
+                      className="h-8"
+                      onClick={refresh}
+                    >
+                      Refresh
+                    </Button>
+                    <DataTableViewOptions table={table} className="!ml-0" />
+                  </div>
+                );
+              }}
             />
           )}
           onRowClick={(row) => setSelectedLocation(row)}

@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { LocationSheet } from "@/location/LocationSheet";
 import { LocationSideMenu } from "@/location/location-side-menu";
@@ -11,7 +12,7 @@ export function Map() {
   const [filterDistrict, setFilterDistrict] = useState("");
   const [selectedLocation, setSelectedLocation] = useState(null);
 
-  const { _, locations, loading, errorMsg, maxDist, distRange, setDistRange } =
+  const { _, locations, loading, errorMsg, maxDist, distRange, setDistRange, refresh } =
     useLocationsWithDistance();
 
   const filteredLocations = locations.filter((loc) => {
@@ -63,6 +64,17 @@ export function Map() {
               maxDist={maxDist}
               getDistRange={() => distRange}
               setDistRange={setDistRange}
+              extraComponents={() => {
+                return (
+                  <Button 
+                    size="sm"
+                    className="ml-auto h-8"
+                    onClick={refresh}
+                  >
+                    Refresh
+                  </Button>
+                );
+              }}
             />
           </aside>
           <div className="w-full">
