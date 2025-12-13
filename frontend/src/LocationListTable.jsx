@@ -304,34 +304,20 @@ function getColumns(
     });
   }
 
-  /**
-   * On location list, user needs to know this is "favourites" column and be sortable.
-   * On Favourite list however, it is on the rightmost edge, so its obvious that its
-   * "favourites". Also, as all rows are favourited, so it doesn't need to be sortable.
-   */
-  if (isFavourite) {
-    columns.push({
-      id: "favouriteActions",
-      cell: ({ row }) => {
-        return <ToggleFavourite location={row.original} />;
-      },
-    });
-  } else {
-    columns.push({
-      accessorKey: "isFavourite",
-      title: "Favourite",
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title="Favourite"
-          onUpdate={refresh}
-        />
-      ),
-      cell: ({ row }) => {
-        return <ToggleFavourite location={row.original} onUpdate={refresh} />;
-      },
-    });
-  }
+  columns.push({
+    accessorKey: "isFavourite",
+    title: "Favourite",
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Favourite"
+        onUpdate={refresh}
+      />
+    ),
+    cell: ({ row }) => {
+      return <ToggleFavourite location={row.original} onUpdate={refresh} />;
+    },
+  });
 
   if (isAdmin) {
     columns.push({
@@ -344,7 +330,6 @@ function getColumns(
               variant="outline"
               onClick={(event) => {
                 event.stopPropagation();
-                //console.log(row.original.id)
                 startEditing(row.original.id);
               }}
             >
