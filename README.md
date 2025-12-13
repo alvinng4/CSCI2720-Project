@@ -12,7 +12,7 @@ npm run init-db // This will drop existing database with the name "culturalApp"
 npm run dev
 ```
 
-> [!Danger]\
+> [!IMPORTANT]\
 > If you re-initialized the database after login, please logout your account on browser to prevent keeping the incorrect token ID.
 
 ### Frontend
@@ -47,18 +47,22 @@ CSCI2720-Project/
 │     ├─ index.css
 │     ├─ TopNav.jsx
 │     ├─ Other core components...
+│     ├─ event/                           # Event-related files
+│     ├─ location/                        # Location-related files
 │     ├─ constants/                       # Reuseable constants
-│     ├─ hooks/
+│     ├─ hooks/                           # Reuseable hooks
 │     ├─ public/
-│     ├─ lib/
+│     ├─ lib/                             # Helper functions
 │     └─ components/                      # Reuseable components
-│        ├─ comments-list.jsx
-│        ├─ location-side-menu.jsx
-│        ├─ map-component.jsx
-│        ├─ toggle-favourite.jsx
+│        ├─ toggle-favourite.jsx          # Button to toggle favourite
 │        ├─ page-shell.jsx
 │        ├─ mode-toggle.jsx               # Shadcn dark mode toggle
 │        ├─ theme-provider.jsx            # Shadcn dark mode theme provider
 │        └─ ui/                           # Shadcn UI components
-└─ backend/                               # Backend
+└─ backend/
+    ├─ .env                               # Environment files storing secret keys
+    ├─ init-db.js                         # Script for initializing database
+    ├─ other config files...
+    └─ src/                               # Source files for backend
+    
 ```

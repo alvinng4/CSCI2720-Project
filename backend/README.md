@@ -19,8 +19,8 @@ Run the following command to initialize the database.
 npm run init-db
 ```
 
-> [!Warning]\
+> [!WARNING]\
 > The program will drop existing database named "culturalApp"
 
-> [!Danger]\
-> If you re-initialize the database, please logout your account on browser to prevent keeping the incorrect token ID.
+> [!IMPORTANT]\
+> If you re-initialized the database after login, please logout your account on browser to prevent keeping the incorrect token ID.
