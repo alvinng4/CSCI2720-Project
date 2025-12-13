@@ -16,8 +16,11 @@ We aim to initialize the following data:
 
 Run the following command to initialize the database.
 ```
-node init_db.js [dbName] [port]
+npm run init-db
 ```
 
-> [!Warning]\
+> [!WARNING]\
 > The program will drop existing database named "culturalApp"
+
+> [!IMPORTANT]\
+> If you re-initialized the database after login, please logout your account on browser to prevent keeping the incorrect token ID.
