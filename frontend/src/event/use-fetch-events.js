@@ -8,6 +8,7 @@ export function useFetchEvents() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
+  const [lastSyncTime, setLastSyncTime] = useState(null);
 
   const [reloadKey, setReloadKey] = useState(0);
   const refresh = () => setReloadKey((k) => k + 1);
@@ -58,6 +59,7 @@ export function useFetchEvents() {
         const events = await fetchAllEvents();
         if (!cancelled) {
           setEvents(events);
+          setLastSyncTime(new Date());
         }
       } catch (err) {
         if (!cancelled) {
@@ -79,6 +81,7 @@ export function useFetchEvents() {
     loading,
     errorMsg,
     setErrorMsg,
+    lastSyncTime,
     refresh,
   };
 }

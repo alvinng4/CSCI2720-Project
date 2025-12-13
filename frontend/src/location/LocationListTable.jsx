@@ -68,6 +68,7 @@ export function LocationListTable({ isFavourite }) {
     maxDist,
     distRange,
     setDistRange,
+    lastSyncTime,
     refresh,
   } = useLocationsWithDistance({ isFavouriteOnly: isFavourite });
 
@@ -125,9 +126,15 @@ export function LocationListTable({ isFavourite }) {
         <DataTable
           columns={columns}
           data={locations}
-          renderToolbar={() =>
-            admin ? <Toolbar startCreating={startCreating} /> : null
-          }
+          renderToolbar={() => (
+            <div className="ml-auto flex items-center gap-3">
+              <span className="text-sm text-muted-foreground whitespace-nowrap">
+                Last Updated on{" "}
+                {lastSyncTime ? new Date(lastSyncTime).toLocaleString() : ""}
+              </span>
+              {admin && <Toolbar startCreating={startCreating} />}
+            </div>
+          )}
           renderSideMenu={(table) => (
             <LocationSideMenu
               getFilterName={() =>

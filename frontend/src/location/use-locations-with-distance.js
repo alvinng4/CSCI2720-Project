@@ -83,6 +83,7 @@ export function useLocationsWithDistance({ isFavouriteOnly = false } = {}) {
   const [errorMsg, setErrorMsg] = useState("");
   const [maxDist, setMaxDist] = useState(0);
   const [distRange, setDistRange] = useState([0, 0]);
+  const [lastSyncTime, setLastSyncTime] = useState(null);
 
   const [reloadKey, setReloadKey] = useState(0);
   const refresh = () => setReloadKey((k) => k + 1);
@@ -122,11 +123,18 @@ export function useLocationsWithDistance({ isFavouriteOnly = false } = {}) {
             }))
           : filtered;
 
-        if (!cancelled) setLocations(withDistance);
+        if (!cancelled) {
+          setLocations(withDistance);
+          setLastSyncTime(new Date());
+        }
       } catch (err) {
-        if (!cancelled) setErrorMsg(err.message || "Failed to load locations");
+        if (!cancelled) {
+          setErrorMsg(err.message || "Failed to load locations");
+        }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     })();
     return () => {
@@ -155,6 +163,7 @@ export function useLocationsWithDistance({ isFavouriteOnly = false } = {}) {
     maxDist,
     distRange,
     setDistRange,
+    lastSyncTime,
     refresh,
   };
 }
