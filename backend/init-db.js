@@ -67,6 +67,9 @@ async function main() {
     /* Insert admin accounts */
     await insertAdminAccounts();
 
+    /* Insert test user accounts */
+    await insertTestUserAccounts();
+
     /* Insert locations data */
     const locationIdMap = await insertLocationData(
       VENUES_PATH,
@@ -96,6 +99,12 @@ async function main() {
 
 async function insertAdminAccounts() {
   console.log("\nInserting admin accounts onto database");
+  const existingAdmin = await UserModel.exists({ email: ADMIN_EMAIL });
+  if (existingAdmin) {
+    console.log("Admin account already exists. Skipping.");
+    return;
+  }
+
   const response = await registerAccount(
     ADMIN_USERNAME,
     ADMIN_EMAIL,
@@ -109,6 +118,32 @@ async function insertAdminAccounts() {
       `Some error occured. HTML code: ${response.code}, message: ${response.body.error}`
     );
   }
+}
+
+async function insertTestUserAccounts() {
+  console.log("\nInserting test user accounts onto database");
+  const users = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
+  let inserted = 0;
+  for (const u of users) {
+    const email = `${u}@email.com`;
+    const username = u;
+    const password = u;
+
+    const existingUser = await UserModel.exists({ email: email });
+    if (existingUser) {
+      console.log(`User account with email ${email} already exists. Skipping.`);
+      continue;
+    }
+
+    const response = await registerAccount(username, email, password, "user");
+    if (response.code === 201) {
+      inserted++;
+      console.log(`Inserted user: ${username} (${email})`);
+    } else {
+      console.error(`Failed to insert ${email}: ${response.body.error}`);
+    }
+  }
+  console.log(`Inserted ${inserted} test user accounts.`);
 }
 
 async function insertLocationData(venuesPath, venueIdToDistrict) {
@@ -154,14 +189,8 @@ async function insertEventData(eventsFile, locationIdMap) {
       location: locationObjectId,
       preDateE: event.predateE?.trim(),
       progTimeE: event.progtimee?.trim(),
-      ageLimitE: event.agelimite?.trim(),
       priceE: event.pricee?.trim(),
       descE: event.desce?.trim(),
-      urlE: event.urlE?.trim(),
-      tAgentUrlE: event.tagenturle?.trim(),
-      remarkE: event.remarke?.trim(),
-      enquiry: event.enquiry?.trim(),
-      email: event.email?.trim(),
       presenterOrgE: event.presenterorge?.trim(),
     };
   });

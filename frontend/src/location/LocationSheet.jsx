@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import { Table, TableBody, TableRow, TableCell } from "@/components/ui/table";
 import { ToggleFavourite } from "@/components/toggle-favourite";
-import { useLocationWithDistance } from "@/hooks/use-locations-with-distance";
+import { useLocationWithDistance } from "@/location/use-locations-with-distance";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 

@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { Auth } from "@/Auth";
 import { Home } from "@/Home";
 import { LocationList } from "@/location/LocationList";
-import { EventList } from "@/EventList"; // this component shows admin UI if isAdmin(user)
+import { EventList } from "@/event/EventList";
 import { Map } from "@/location/Map";
 import { FavouriteList } from "@/location/FavouriteList";
 import { Suggestions } from "@/Suggestions";

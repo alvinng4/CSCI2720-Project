@@ -29,7 +29,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { ToggleFavourite } from "@/components/toggle-favourite";
-import { useLocationsWithDistance } from "@/hooks/use-locations-with-distance";
+import { useLocationsWithDistance } from "@/location/use-locations-with-distance";
 import { useEffect, useState } from "react";
 import { getToken, getUser, isAdmin } from "@/lib/AuthHelpers";
 import {
@@ -339,7 +339,7 @@ function getColumns(
         />
       );
     },
-    enableSorting: !isFavourite
+    enableSorting: !isFavourite,
   });
 
   if (isAdmin) {

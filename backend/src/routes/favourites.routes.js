@@ -22,7 +22,9 @@ router.post("/toggle", requireAuth, async (req, res, next) => {
     const actualLocation = await Location.findById(location);
 
     if (!actualUser || !actualLocation) {
-      console.log("Failed to find matching user / location data for favourite in database");
+      console.log(
+        "Failed to find matching user / location data for favourite in database"
+      );
       return res.status(400).json({
         error:
           "Failed to find matching user / location data for favourite in database",

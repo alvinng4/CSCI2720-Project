@@ -179,7 +179,10 @@ function LoginForm({ data, onChange, onSwitch, setIsAuthenticated }) {
                 sitekey="6LfqNiosAAAAAB7JO71byBvTGdPOgk4g5l-hWyYB" // Public key
                 onChange={setRecaptchaToken}
                 onErrored={() =>
-                  showMessage("(Recaptcha) Network error. Please try again later.", MessageTypes.ERROR)
+                  showMessage(
+                    "(Recaptcha) Network error. Please try again later.",
+                    MessageTypes.ERROR
+                  )
                 }
               />
             </Field>
@@ -374,7 +377,10 @@ function SignUpForm({ data, onChange, onSwitch, setLoginData }) {
                 sitekey="6LfqNiosAAAAAB7JO71byBvTGdPOgk4g5l-hWyYB" // Public key
                 onChange={setRecaptchaToken}
                 onErrored={() =>
-                  showMessage("(Recaptcha) Network error. Please try again later.", MessageTypes.ERROR)
+                  showMessage(
+                    "(Recaptcha) Network error. Please try again later.",
+                    MessageTypes.ERROR
+                  )
                 }
               />
             </Field>

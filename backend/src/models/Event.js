@@ -12,14 +12,8 @@ const eventSchema = new mongoose.Schema(
 
     preDateE: { type: String, trim: true },
     progTimeE: { type: String, trim: true },
-    ageLimitE: { type: String, trim: true },
     priceE: { type: String, trim: true },
     descE: { type: String, trim: true },
-    urlE: { type: String, trim: true },
-    tAgentUrlE: { type: String, trim: true },
-    remarkE: { type: String, trim: true },
-    enquiry: { type: String, trim: true },
-    email: { type: String, trim: true },
     presenterOrgE: { type: String, trim: true },
   },
   { timestamps: true }
