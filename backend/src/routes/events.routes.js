@@ -1,29 +1,41 @@
 import express from "express";
 import Event from "../models/Event.js";
 import mongoose from "mongoose";
+import Location from "../models/Location.js";
 import requireAuth from "../middleware/require-auth.js";
 const router = express.Router();
 
-/* Create location */
-// router.post("/", requireAuth, async (req, res, next) => {
-//   try {
-//     // Check input
-//     const { location } = req.body;
-//     if (
-//       !location.nameE ||
-//       !location.latitude ||
-//       !location.longitude ||
-//       !location.district
-//     ) {
-//       return res.status(400).json({ error: "Missing fields" });
-//     }
+/* Create Event */
+router.post("/", requireAuth, async (req, res, next) => {
+  try {
+    // Check input
+    const { event } = req.body;
+    if (!event.titleE || !event.location) {
+      return res.status(400).json({ error: "Missing fields" });
+    }
 
-//     const createdLocation = await Location.create(location);
-//     res.status(201).json(createdLocation);
-//   } catch (e) {
-//     next(e);
-//   }
-// });
+    // Validate location ObjectId
+    if (!mongoose.Types.ObjectId.isValid(event.location)) {
+      return res.status(400).json({ error: "Invalid location ID" });
+    }
+
+    // Check if location exists
+    const locationExists = await Location.findById(event.location);
+    if (!locationExists) {
+      return res.status(404).json({ error: "Location not found" });
+    }
+
+    // Convert location to ObjectId
+    event.location = mongoose.Types.ObjectId.createFromHexString(
+      event.location
+    );
+
+    const createdEvent = await Event.create(event);
+    res.status(201).json(createdEvent);
+  } catch (e) {
+    next(e);
+  }
+});
 
 /* Read single location */
 // router.get("/:id", requireAuth, async (req, res, next) => {

@@ -1,7 +1,61 @@
-import { getToken, getUser } from "@/lib/AuthHelpers";
+import { getToken } from "@/lib/AuthHelpers";
+import { MessageTypes } from "@/hooks/use-message";
 
 const API_BASE =
   (import.meta?.env?.VITE_API_BASE ?? "http://localhost:4000") + "/api";
+
+export async function createEvent(
+  eventData,
+  showMessage,
+  resetMessage,
+  onSuccess
+) {
+  resetMessage();
+
+  if (!(eventData.titleE?.trim() && eventData.location?.trim())) {
+    showMessage(
+      "Missing fields. You must provide title and location for new events",
+      MessageTypes.ERROR
+    );
+    return;
+  }
+
+  let res = null;
+  try {
+    res = await fetch(`${API_BASE}/events/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${getToken()}`,
+      },
+
+      body: JSON.stringify({
+        event: eventData,
+      }),
+    });
+  } catch {
+    showMessage(
+      `Network error. Failed to create location, Please try again later.`,
+      MessageTypes.ERROR
+    );
+    return;
+  }
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => null);
+    showMessage(
+      "Create location failed. " + (data?.message || "Some error occurred."),
+      MessageTypes.ERROR
+    );
+    return;
+  }
+
+  showMessage(
+    "Success! Event is created. Refresh to see updates.",
+    MessageTypes.SPECIAL
+  );
+  onSuccess();
+}
 
 export async function deleteEvent(id, setErrorMsg, refresh) {
   const userConsent = confirm("Delete this event?");
@@ -19,7 +73,9 @@ export async function deleteEvent(id, setErrorMsg, refresh) {
       },
     });
   } catch {
-    setErrorMsg("Network error. Please try again later.");
+    setErrorMsg(
+      `Network error. Failed to delete event id ${id}, Please try again later.`
+    );
     return;
   }
 

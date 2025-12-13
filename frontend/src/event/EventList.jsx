@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { CreateNewEventSheet } from "./CreateNewEventSheet";
 import { DataTable } from "@/components/ui/data-table";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { DataTableViewOptions } from "@/components/ui/data-table-view-options";
@@ -7,7 +8,7 @@ import { deleteEvent } from "@/event/event.api";
 import { Input } from "@/components/ui/input";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { PageShell } from "@/components/page-shell";
-import { useFetchEvents } from "@/event/use-fetch-events";
+import { useFetchEvents } from "./use-fetch-events";
 import { Fragment, useEffect, useState } from "react";
 import { getUser, isAdmin } from "@/lib/AuthHelpers";
 
@@ -27,36 +28,6 @@ export function EventList() {
 
   function stopCreating() {
     setIsCreating(false);
-  }
-
-  async function onCreateEvent(eventData) {
-    // let res = null;
-    // try {
-    //   res = await fetch(`${API_BASE}/locations/`, {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       authorization: `Bearer ${getToken()}`,
-    //     },
-    //     body: JSON.stringify({
-    //       location: {
-    //         ...locationData,
-    //         latitude: Number(locationData.latitude),
-    //         longitude: Number(locationData.longitude),
-    //       },
-    //     }),
-    //   });
-    // } catch {
-    //   alert("Network error. Please try again later.");
-    // }
-    // if (!res.ok) {
-    //   const data = await res.json().catch(() => null);
-    //   alert(data?.message || "Some error occured");
-    //   return;
-    // }
-    // setIsCreating(false);
-    // alert("Location successfully created");
-    // refresh();
   }
 
   function startEditing(id) {
@@ -122,19 +93,14 @@ export function EventList() {
 
   return (
     <PageShell title="Event List">
-      {/* <LocationSheet
-        locationId={selectedLocation?.id}
-        setSelectedLocation={setSelectedLocation}
-        onIsFavouriteUpdate={onIsFavouriteUpdate}
-      />
       {admin && isCreating && (
-        <CreateNewLocationSheet
+        <CreateNewEventSheet
           isCreating={isCreating}
           onCancel={stopCreating}
-          onCreate={onCreateLocation}
+          refresh={refresh}
         />
       )}
-      {admin && isEditing && (
+      {/*admin && isEditing && (
         <EditLocationSheet
           isEditing={isEditing}
           location={editingLocation}
