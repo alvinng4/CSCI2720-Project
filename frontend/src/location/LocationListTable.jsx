@@ -8,9 +8,9 @@ import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
 import { DataTableViewOptions } from "@/components/ui/data-table-view-options";
 import { Input } from "@/components/ui/input";
 import { LoadingScreen } from "@/components/ui/loading-screen";
-import { LocationSheet } from "@/LocationSheet";
-import { LocationSideMenu } from "@/components/location-side-menu";
-import { MapComponent } from "@/components/map-component";
+import { LocationSheet } from "@/location/LocationSheet";
+import { LocationSideMenu } from "@/location/location-side-menu";
+import { MapComponent } from "@/location/map-component";
 import {
   Select,
   SelectContent,
@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/sheet";
 import { ToggleFavourite } from "@/components/toggle-favourite";
 import { useLocationsWithDistance } from "@/hooks/use-locations-with-distance";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getToken, getUser, isAdmin } from "@/lib/AuthHelpers";
 import {
   newTerritoriesDistricts,
@@ -45,6 +45,7 @@ export function LocationListTable({ isFavourite }) {
   const user = getUser();
   const admin = isAdmin(user);
 
+  const [locations, setLocations] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingLocation, setEditingLocation] = useState(null);
@@ -157,9 +158,17 @@ export function LocationListTable({ isFavourite }) {
     refresh();
   }
 
+  function onIsFavouriteUpdate(id, isFavourite) {
+    setLocations(
+      locations.map((loc) =>
+        loc.id === id ? { ...loc, isFavourite } : loc
+      )
+    );
+  }
+
   const {
     haveUserCoords,
-    locations,
+    locations: fetchedLocations,
     loading,
     errorMsg,
     maxDist,
@@ -168,13 +177,16 @@ export function LocationListTable({ isFavourite }) {
     refresh,
   } = useLocationsWithDistance({ isFavouriteOnly: isFavourite });
 
+  useEffect(() => {
+    setLocations(fetchedLocations);
+  }, [fetchedLocations]);
+
   const columns = getColumns(
-    isFavourite,
     haveUserCoords,
     admin,
     startEditing,
     handleDelete,
-    refresh
+    onIsFavouriteUpdate,
   );
 
   if (loading) {
@@ -184,8 +196,9 @@ export function LocationListTable({ isFavourite }) {
   return (
     <>
       <LocationSheet
-        location={selectedLocation}
+        locationId={selectedLocation?.id}
         setSelectedLocation={setSelectedLocation}
+        onIsFavouriteUpdate={onIsFavouriteUpdate}
       />
       {admin && isCreating && (
         <CreateNewLocationSheet
@@ -243,12 +256,11 @@ export function LocationListTable({ isFavourite }) {
 }
 
 function getColumns(
-  isFavourite,
   haveUserCoords,
   isAdmin,
   startEditing,
   handleDelete,
-  refresh
+  onIsFavouriteUpdate
 ) {
   const columns = [
     {
@@ -311,11 +323,10 @@ function getColumns(
       <DataTableColumnHeader
         column={column}
         title="Favourite"
-        onUpdate={refresh}
       />
     ),
     cell: ({ row }) => {
-      return <ToggleFavourite location={row.original} onUpdate={refresh} />;
+      return <ToggleFavourite location={row.original} onUpdate={onIsFavouriteUpdate} />;
     },
   });
 

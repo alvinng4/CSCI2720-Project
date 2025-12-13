@@ -1,4 +1,4 @@
-import { LocationListTable } from "@/LocationListTable";
+import { LocationListTable } from "@/location/LocationListTable";
 import { PageShell } from "@/components/page-shell";
 
 export function FavouriteList() {

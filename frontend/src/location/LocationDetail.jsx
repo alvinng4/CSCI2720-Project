@@ -1,6 +1,6 @@
-import { CommentsList } from "@/components/comments-list";
+import { CommentsList } from "@/location/comments-list";
 import { LoadingScreen } from "@/components/ui/loading-screen";
-import { MapComponent } from "@/components/map-component";
+import { MapComponent } from "@/location/map-component";
 import { PageShell } from "@/components/page-shell";
 import { Table, TableBody, TableRow, TableCell } from "@/components/ui/table";
 import { ToggleFavourite } from "@/components/toggle-favourite";

@@ -1,15 +1,14 @@
-// src/App.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import { Auth } from "@/Auth";
 import { Home } from "@/Home";
-import { LocationList } from "@/LocationList";
+import { LocationList } from "@/location/LocationList";
 import { EventList } from "@/EventList"; // this component shows admin UI if isAdmin(user)
-import { Map } from "@/Map";
-import { FavouriteList } from "@/FavouriteList";
+import { Map } from "@/location/Map";
+import { FavouriteList } from "@/location/FavouriteList";
 import { Suggestions } from "@/Suggestions";
 import { TopNav } from "@/TopNav";
-import { LocationDetail } from "@/LocationDetail";
+import { LocationDetail } from "@/location/LocationDetail";
 
 import { UserManager } from "@/UserManager"; // admin-only page
 import { RequireAdmin } from "@/lib/RequireAdmin";

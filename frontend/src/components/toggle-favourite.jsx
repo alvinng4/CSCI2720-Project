@@ -7,7 +7,11 @@ const API_BASE =
   (import.meta?.env?.VITE_API_BASE ?? "http://localhost:4000") + "/api";
 
 export function ToggleFavourite({ location, onUpdate, className }) {
+  const filledClassName = "fill-yellow-400 stroke-yellow-400"
+  const unfilledClassName = "fill-none stroke-gray-400"
   const [isFavourite, setIsFavourite] = useState(location.isFavourite);
+  const [justClicked, setJustClicked] = useState(false);
+
   const toggleFavourite = async (event) => {
     event.stopPropagation();
     let res = null;
@@ -36,19 +40,22 @@ export function ToggleFavourite({ location, onUpdate, className }) {
 
     const data = await res.json();
     setIsFavourite(data.isFavourite);
-    onUpdate();
+    onUpdate(location?.id, data.isFavourite);
+    setJustClicked(true);
+  };
+
+  const handleMouseOut = () => {
+    setJustClicked(false);
   };
 
   return (
     <Star
       onClick={(event) => toggleFavourite(event)}
+      onMouseOut={handleMouseOut}
       className={cn(
         className,
-        `cursor-pointer transition-colors ${
-          isFavourite
-            ? "fill-yellow-400 stroke-yellow-400 hover:fill-none hover:stroke-yellow-400"
-            : "fill-none stroke-gray-400 hover:stroke-yellow-400"
-        }`
+        "cursor-pointer transition-colors",
+        isFavourite ? filledClassName : unfilledClassName
       )}
     />
   );
