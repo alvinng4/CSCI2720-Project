@@ -64,6 +64,11 @@ async function main() {
     await mongoose.connect(link);
     console.log("Connection is open...");
 
+    /* Drop database before initialization */
+    console.log("Dropping existing database...");
+    await mongoose.connection.dropDatabase();
+    console.log("Database dropped.");
+
     /* Insert admin accounts */
     await insertAdminAccounts();
 

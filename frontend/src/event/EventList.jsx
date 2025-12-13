@@ -195,6 +195,11 @@ function getColumns(isAdmin, startEditing, handleDelete) {
         const desc = row.original.descE || "N/A";
         return desc.length > 150 ? desc.slice(0, 150) + "..." : desc;
       },
+      filterFn: (row, _columnId, filterValue) => {
+        const desc = row.original.descE || "N/A";
+        const display = desc.length > 150 ? desc.slice(0, 150) + "..." : desc;
+        return display.toLowerCase().includes(filterValue.toLowerCase());
+      },
     },
     {
       accessorKey: "location",
@@ -204,9 +209,13 @@ function getColumns(isAdmin, startEditing, handleDelete) {
       ),
       cell: ({ row }) => {
         const loc = row.original.location;
-        if (loc && typeof loc === "object") {
-          return loc.nameE || "N/A";
-        }
+        return loc && typeof loc === "object" ? loc.nameE || "N/A" : "N/A";
+      },
+      filterFn: (row, _columnId, filterValue) => {
+        const loc = row.original.location;
+        const name =
+          loc && typeof loc === "object" ? loc.nameE || "N/A" : "N/A";
+        return name.toLowerCase().includes(filterValue.toLowerCase());
       },
     },
     {
@@ -232,6 +241,11 @@ function getColumns(isAdmin, startEditing, handleDelete) {
           </span>
         );
       },
+      filterFn: (row, _columnId, filterValue) => {
+        const value = row.original.preDateE || "N/A";
+        const joined = value.split(/;+/).filter(Boolean).join(" ");
+        return joined.toLowerCase().includes(filterValue.toLowerCase());
+      },
     },
     {
       accessorKey: "progTimeE",
@@ -249,6 +263,10 @@ function getColumns(isAdmin, startEditing, handleDelete) {
       cell: ({ row }) => {
         return row.original.priceE || "N/A";
       },
+      filterFn: (row, _columnId, filterValue) => {
+        const value = row.original.priceE || "N/A";
+        return value.toLowerCase().includes(filterValue.toLowerCase());
+      },
     },
     {
       accessorKey: "presenterOrgE",
@@ -265,6 +283,10 @@ function getColumns(isAdmin, startEditing, handleDelete) {
         ) : (
           "N/A"
         );
+      },
+      filterFn: (row, _columnId, filterValue) => {
+        const value = row.original.presenterOrgE || "N/A";
+        return value.toLowerCase().includes(filterValue.toLowerCase());
       },
     },
   ];

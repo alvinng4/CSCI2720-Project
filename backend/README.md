@@ -20,5 +20,4 @@ node init_db.js [dbName] [port]
 ```
 
 > [!Warning]\
-> The program will not overwrite your database. Instead, it will insert new data.
-> If you want to have a fresh start, be sure to delete your database first.
+> The program will drop existing database named "culturalApp"
