@@ -12,6 +12,9 @@ npm run init-db // This will drop existing database with the name "culturalApp"
 npm run dev
 ```
 
+> [!Danger]\
+> If you re-initialized the database after login, please logout your account on browser to prevent keeping the incorrect token ID.
+
 ### Frontend
 To run the frontend, run the following commands:
 ```
