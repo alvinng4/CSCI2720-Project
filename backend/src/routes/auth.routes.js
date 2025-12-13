@@ -19,7 +19,7 @@ router.post("/register", requireRecaptcha, async (req, res, next) => {
 });
 
 /* Login */
-router.post("/login", async (req, res, next) => {
+router.post("/login", requireRecaptcha, async (req, res, next) => {
   try {
     // Get fields from request body
     const { email, password } = req.body || {};

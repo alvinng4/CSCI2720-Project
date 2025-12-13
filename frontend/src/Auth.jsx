@@ -78,10 +78,20 @@ function LoginForm({ data, onChange, onSwitch, setIsAuthenticated }) {
   const navigate = useNavigate();
   const { message, isShowMessage, messageType, showMessage, resetMessage } =
     useMessage();
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
+  const recaptchaRef = useRef();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     resetMessage();
+
+    if (!recaptchaToken) {
+      showMessage(
+        "To proceed, please complete reCaptcha first.",
+        MessageTypes.ERROR
+      );
+      return;
+    }
 
     try {
       showMessage("Waiting server response...", MessageTypes.NORMAL);
@@ -93,6 +103,7 @@ function LoginForm({ data, onChange, onSwitch, setIsAuthenticated }) {
         body: JSON.stringify({
           email: data.email,
           password: data.password,
+          recaptchaToken: recaptchaToken,
         }),
       });
 
@@ -157,6 +168,18 @@ function LoginForm({ data, onChange, onSwitch, setIsAuthenticated }) {
                 value={data.password}
                 onChange={(p) =>
                   onChange({ ...data, password: p.target.value })
+                }
+              />
+            </Field>
+
+            {/* Recaptcha */}
+            <Field>
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey="6LfqNiosAAAAAB7JO71byBvTGdPOgk4g5l-hWyYB" // Public key
+                onChange={setRecaptchaToken}
+                onErrored={() =>
+                  showMessage("(Recaptcha) Network error. Please try again later.", MessageTypes.ERROR)
                 }
               />
             </Field>
