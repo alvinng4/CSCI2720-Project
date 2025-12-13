@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { ModeToggle } from "@/components/mode-toggle";
+import ReCAPTCHA from "react-google-recaptcha";
 import { setAuth } from "@/lib/AuthHelpers";
 import {
   MessageTypes,
@@ -16,7 +17,7 @@ import {
   useMessage,
 } from "@/hooks/use-message";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export function Auth({ setIsAuthenticated }) {
   const Status = Object.freeze({
@@ -196,6 +197,8 @@ function LoginForm({ data, onChange, onSwitch, setIsAuthenticated }) {
 function SignUpForm({ data, onChange, onSwitch, setLoginData }) {
   const { message, isShowMessage, messageType, showMessage, resetMessage } =
     useMessage();
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
+  const recaptchaRef = useRef();
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -204,6 +207,14 @@ function SignUpForm({ data, onChange, onSwitch, setLoginData }) {
     if (data.password !== data.confirmPassword) {
       showMessage(
         "Confirm password do not match the actual password. Please try again",
+        MessageTypes.ERROR
+      );
+      return;
+    }
+
+    if (!recaptchaToken) {
+      showMessage(
+        "To proceed, please complete reCaptcha first.",
         MessageTypes.ERROR
       );
       return;
@@ -218,6 +229,7 @@ function SignUpForm({ data, onChange, onSwitch, setLoginData }) {
           username: data.username,
           email: data.email,
           password: data.password,
+          recaptchaToken: recaptchaToken,
         }),
       });
 
@@ -331,6 +343,18 @@ function SignUpForm({ data, onChange, onSwitch, setLoginData }) {
             >
               {message}
             </p>
+
+            {/* Recaptcha */}
+            <Field>
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey="6LfqNiosAAAAAB7JO71byBvTGdPOgk4g5l-hWyYB" // Public key
+                onChange={setRecaptchaToken}
+                onErrored={() =>
+                  showMessage("(Recaptcha) Network error. Please try again later.", MessageTypes.ERROR)
+                }
+              />
+            </Field>
 
             {/* Submit button */}
             <Field>

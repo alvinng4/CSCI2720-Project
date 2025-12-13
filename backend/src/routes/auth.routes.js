@@ -2,12 +2,13 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import express from "express";
 import registerAccount from "../libs/register-account.js";
+import requireRecaptcha from "../middleware/require-recaptcha.js";
 import User from "../models/User.js";
 
 const router = express.Router();
 
 /* Register */
-router.post("/register", async (req, res, next) => {
+router.post("/register", requireRecaptcha, async (req, res, next) => {
   const { username, email, password } = req.body || {};
   try {
     const result = await registerAccount(username, email, password, "user");
