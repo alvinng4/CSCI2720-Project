@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CreateNewEventSheet } from "./CreateNewEventSheet";
-import { EditEventSheet } from "./EditEventSheet";   
+import { EditEventSheet } from "./EditEventSheet";
 import { DataTable } from "@/components/ui/data-table";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { DataTableViewOptions } from "@/components/ui/data-table-view-options";

@@ -17,7 +17,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetDescription
+  SheetDescription,
 } from "@/components/ui/sheet";
 import { useFetchLocations } from "./use-fetch-locations";
 import { useEffect, useState } from "react";
@@ -37,10 +37,12 @@ export function EditEventSheet({ isEditing, event, onCancel, refresh }) {
   const [presenters, setPresenters] = useState("");
 
   useEffect(() => {
-    if (!event) return;
+    if (!event) {
+      return;
+    }
     setTitle(event?.title ?? event?.titleE ?? "");
     setDescription(event?.descE ?? "");
-    setLocation(event?.location ?? "");
+    setLocation(event?.location?._id ?? "");
     setDate(event?.preDateE ?? "");
     setDuration(event?.progTimeE ?? "");
     setPrice(event?.priceE ?? "");
@@ -69,10 +71,10 @@ export function EditEventSheet({ isEditing, event, onCancel, refresh }) {
     <Sheet open={isEditing} onOpenChange={onCancel}>
       <SheetContent side="left" className="w-200 flex flex-col">
         <SheetHeader className="px-4">
-            <SheetTitle>Edit Event (Admin)</SheetTitle>
-            <SheetDescription id="edit-event-desc">
-                Edit the selected event details.
-            </SheetDescription>
+          <SheetTitle>Edit Event (Admin)</SheetTitle>
+          <SheetDescription id="edit-event-desc">
+            Edit the selected event details.
+          </SheetDescription>
         </SheetHeader>
 
         {loading ? (
@@ -81,7 +83,10 @@ export function EditEventSheet({ isEditing, event, onCancel, refresh }) {
           <>
             <div className="flex-1 overflow-y-auto px-4 space-y-4">
               {/* Feedback */}
-              <p hidden={!isShowMessage} className={MessageTypeToColor[messageType]}>
+              <p
+                hidden={!isShowMessage}
+                className={MessageTypeToColor[messageType]}
+              >
                 {message}
               </p>
 
@@ -89,9 +94,20 @@ export function EditEventSheet({ isEditing, event, onCancel, refresh }) {
               <div>
                 {makeSubsectionTitle("Details")}
                 <div className="space-y-2">
-                  <Input placeholder="Event title" value={title} onChange={(e) => setTitle(e.target.value)} />
-                  <Input placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
-                  <Select value={location} onValueChange={(v) => setLocation(v)}>
+                  <Input
+                    placeholder="Event title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
+                  <Input
+                    placeholder="Description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                  <Select
+                    value={location}
+                    onValueChange={(v) => setLocation(v)}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select a location" />
                     </SelectTrigger>
@@ -105,10 +121,26 @@ export function EditEventSheet({ isEditing, event, onCancel, refresh }) {
                       </SelectGroup>
                     </SelectContent>
                   </Select>
-                  <Input placeholder="Date" value={date} onChange={(e) => setDate(e.target.value)} />
-                  <Input placeholder="Duration" value={duration} onChange={(e) => setDuration(e.target.value)} />
-                  <Input placeholder="Price" value={price} onChange={(e) => setPrice(e.target.value)} />
-                  <Input placeholder="Presenters" value={presenters} onChange={(e) => setPresenters(e.target.value)} />
+                  <Input
+                    placeholder="Date"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                  />
+                  <Input
+                    placeholder="Duration"
+                    value={duration}
+                    onChange={(e) => setDuration(e.target.value)}
+                  />
+                  <Input
+                    placeholder="Price"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                  />
+                  <Input
+                    placeholder="Presenters"
+                    value={presenters}
+                    onChange={(e) => setPresenters(e.target.value)}
+                  />
                 </div>
               </div>
 
@@ -148,7 +180,13 @@ export function EditEventSheet({ isEditing, event, onCancel, refresh }) {
                     descE: description,
                     presenterOrgE: presenters,
                   };
-                  updateEvent(event.id, eventData, showMessage, resetMessage, onSuccess);
+                  updateEvent(
+                    event.id,
+                    eventData,
+                    showMessage,
+                    resetMessage,
+                    onSuccess
+                  );
                 }}
               >
                 Save changes

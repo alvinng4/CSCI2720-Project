@@ -88,10 +88,10 @@ export async function deleteEvent(id, setErrorMsg, refresh) {
 }
 
 export async function updateEvent(
-  id, 
-  eventData, 
-  showMessage, 
-  resetMessage, 
+  id,
+  eventData,
+  showMessage,
+  resetMessage,
   onSuccess
 ) {
   resetMessage();
@@ -112,17 +112,22 @@ export async function updateEvent(
       body: JSON.stringify({ event: eventData }),
     });
   } catch {
-    showMessage("Network error. Failed to update event, please try again later.", MessageTypes.ERROR);
+    showMessage(
+      "Network error. Failed to update event, please try again later.",
+      MessageTypes.ERROR
+    );
     return;
   }
 
   if (!res.ok) {
     const data = await res.json().catch(() => null);
-    showMessage("Update failed. " + (data?.message || "Some error occurred."), MessageTypes.ERROR);
+    showMessage(
+      "Update failed. " + (data?.message || "Some error occurred."),
+      MessageTypes.ERROR
+    );
     return;
   }
 
   showMessage("Success! Event updated.", MessageTypes.SPECIAL);
   onSuccess();
 }
-
