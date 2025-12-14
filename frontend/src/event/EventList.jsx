@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CreateNewEventSheet } from "./CreateNewEventSheet";
+import { EditEventSheet } from "./EditEventSheet";   
 import { DataTable } from "@/components/ui/data-table";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { DataTableViewOptions } from "@/components/ui/data-table-view-options";
@@ -31,17 +32,18 @@ export function EventList() {
   }
 
   function startEditing(id) {
-    if (admin) {
-      setEditingLocation(locations.find((loc) => loc.id === id));
-      setIsEditing(true);
-      if (!locations.find((loc) => loc.id === id)) {
-        alert("Location not found");
-      }
+    const found = (events || []).find((e) => e.id === id);
+    if (!found) {
+      alert("Event not found");
+      return;
     }
+    setEditingEvent(found);
+    setIsEditing(true);
   }
 
   function stopEditing() {
     setIsEditing(false);
+    setEditingEvent(null);
   }
 
   async function onSaveEdit(id, locationData) {
@@ -101,14 +103,14 @@ export function EventList() {
           refresh={refresh}
         />
       )}
-      {/*admin && isEditing && (
-        <EditLocationSheet
+      {admin && isEditing && (
+        <EditEventSheet
           isEditing={isEditing}
-          location={editingLocation}
+          event={editingEvent}
           onCancel={stopEditing}
-          onSave={onSaveEdit}
+          refresh={refresh}
         />
-      )} */}
+      )}
       <div className="text-red-500">{errorMsg}</div>
       <div className="flex flex-col gap-y-4">
         <DataTable

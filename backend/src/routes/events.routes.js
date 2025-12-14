@@ -99,4 +99,28 @@ router.delete("/:id", requireAuth, async (req, res, next) => {
   }
 });
 
+/* Update event */
+router.put("/:id", requireAuth, async (req, res) => {
+  try {
+    const id = req.params.id;
+    // Frontend sends { event: { ...fields } }
+    const payload = req.body?.event ?? req.body ?? {};
+    if (!id) return res.status(400).json({ message: "Missing event id" });
+
+    const updated = await Event.findByIdAndUpdate(id, payload, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updated) return res.status(404).json({ message: "Event not found" });
+    res.json(updated);
+  } catch (e) {
+    console.error("Update event failed:", e);
+    res.status(500).json({ message: "Server error updating event" });
+  }
+});
+
+
+
 export default router;
+

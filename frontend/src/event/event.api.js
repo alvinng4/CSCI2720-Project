@@ -86,3 +86,43 @@ export async function deleteEvent(id, setErrorMsg, refresh) {
   }
   refresh();
 }
+
+export async function updateEvent(
+  id, 
+  eventData, 
+  showMessage, 
+  resetMessage, 
+  onSuccess
+) {
+  resetMessage();
+
+  if (!id) {
+    showMessage("Missing event id.", MessageTypes.ERROR);
+    return;
+  }
+
+  let res = null;
+  try {
+    res = await fetch(`${API_BASE}/events/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify({ event: eventData }),
+    });
+  } catch {
+    showMessage("Network error. Failed to update event, please try again later.", MessageTypes.ERROR);
+    return;
+  }
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => null);
+    showMessage("Update failed. " + (data?.message || "Some error occurred."), MessageTypes.ERROR);
+    return;
+  }
+
+  showMessage("Success! Event updated.", MessageTypes.SPECIAL);
+  onSuccess();
+}
+
