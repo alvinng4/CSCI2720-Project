@@ -145,7 +145,7 @@ export function Home() {
           >
             <div className="text-sm font-medium">Events</div>
             <div className="text-xs text-muted-foreground">
-              See all the events available.
+              See all the upcoming events.
             </div>
           </Link>
           <Link

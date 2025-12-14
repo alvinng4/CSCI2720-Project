@@ -52,8 +52,8 @@ export function TopNav({ setIsAuthenticated }) {
   }
 
   const displayName = user?.username ?? user?.name ?? "guest";
-  const email = user?.email ?? "";
-  const roleLabel = user?.role ? user.role.toUpperCase() : "";
+  const email = user?.email ?? "Error";
+  const roleLabel = user?.role ?? "Error";
 
   const listItems = [
     /* Admin only */

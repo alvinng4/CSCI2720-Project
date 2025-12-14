@@ -10,7 +10,6 @@ We assume the preprocessed data is available at `../data/` folder. Required data
 We aim to initialize the following data:
 * Events
 * Locations
-* Districts
 * Admin account
 * Comments
 

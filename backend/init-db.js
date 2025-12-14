@@ -130,7 +130,7 @@ async function insertTestUserAccounts() {
   const users = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
   let inserted = 0;
   for (const u of users) {
-    const email = `${u}@email.com`;
+    const email = `${u}@example.com`;
     const username = u;
     const password = u;
 

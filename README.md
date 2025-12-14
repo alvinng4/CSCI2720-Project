@@ -22,14 +22,18 @@ cd frontend
 npm install
 npm run dev
 ```
+Then, you may register a new account, or use the provided accounts:
+* Admin: 
+    - email: `admin@example.com`
+    - password: `admin_csci2720`
+* User:
+    - email: `a@example.com`    
+    - password: `a`
 
 ## Contributing
-It is recommended to use linter and formatter. For linting:
+It is recommended to use linter and formatter. Simply use the following commands:
 ```
 npm run lint
-```
-For formatting:
-```
 npm run format
 ```
 
