@@ -70,7 +70,7 @@ export function CommentsList({ className, location, setCommentLength }) {
       setCommentLength(comments?.length ?? 0);
       setIsLoading(false);
     })();
-  }, [location]);
+  }, [location, resetMessage, setCommentLength, showMessage]);
 
   /* Submit comment */
   const submitComment = async (content) => {

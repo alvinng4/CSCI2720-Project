@@ -30,16 +30,6 @@ function makeSubsectionTitle(title) {
 }
 
 export function EditLocationSheet({ isEditing, location, onCancel, onSave }) {
-  if (!location) {
-    return (
-      <Sheet open={isEditing} onOpenChange={onCancel}>
-        <SheetContent side="left" className="w-200 flex flex-col">
-          Error: Location data not found
-        </SheetContent>
-      </Sheet>
-    );
-  }
-
   const [editLocationName, setEditLocationName] = useState(
     location.name ?? location.nameE ?? ""
   );
@@ -52,6 +42,16 @@ export function EditLocationSheet({ isEditing, location, onCancel, onSave }) {
   const [editLocationLongitude, setEditLocationLongitude] = useState(
     location.longitude
   );
+
+  if (!location) {
+    return (
+      <Sheet open={isEditing} onOpenChange={onCancel}>
+        <SheetContent side="left" className="w-200 flex flex-col">
+          Error: Location data not found
+        </SheetContent>
+      </Sheet>
+    );
+  }
 
   return (
     <Sheet open={isEditing} onOpenChange={onCancel}>

@@ -56,7 +56,7 @@ export function ThemeProvider({
     return () => {
       media.removeEventListener("change", applySystemTheme);
     };
-  }, [theme]);
+  }, [mode, theme]);
 
   const value = {
     mode,

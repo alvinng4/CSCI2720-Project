@@ -76,7 +76,7 @@ export function useFetchLocations() {
     return () => {
       cancelled = true;
     };
-  }, [reloadKey]);
+  }, [reloadKey, resetMessage, showMessage]);
 
   return {
     locations,

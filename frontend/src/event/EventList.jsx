@@ -22,6 +22,7 @@ export function EventList() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [_selectedEvent, setSelectedEvent] = useState(null);
 
   function startCreating() {
     setIsCreating(true);
