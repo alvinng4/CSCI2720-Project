@@ -16,6 +16,7 @@ import {
   MessageTypeToColor,
   useMessage,
 } from "@/hooks/use-message";
+import { requestToBackend } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { useState, useRef } from "react";
 
@@ -93,47 +94,34 @@ function LoginForm({ data, onChange, onSwitch, setIsAuthenticated }) {
       return;
     }
 
-    try {
-      showMessage("Waiting server response...", MessageTypes.NORMAL);
-      const res = await fetch("http://localhost:4000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-          recaptchaToken: recaptchaToken,
-        }),
-      });
+    showMessage("Waiting server response...", MessageTypes.NORMAL);
+    const result = await requestToBackend("POST", "auth/login", {
+      email: data.email,
+      password: data.password,
+      recaptchaToken: recaptchaToken,
+    });
 
-      if (!res.ok) {
-        // Get error message
-        let uiMessage = "Unknown error. Please try again later.";
-        try {
-          const data = await res.json();
-          if (data?.error) {
-            uiMessage = data.error;
-          }
-        } catch {
-          // Do nothing
-        }
-
-        showMessage(uiMessage, MessageTypes.ERROR);
-        return;
-      }
-
-      showMessage(
-        "Success! You should be redirected soon...",
-        MessageTypes.SPECIAL
-      );
-      const { token, user } = await res.json();
-      setAuth({ token, user });
-      setIsAuthenticated(true);
-      navigate("/");
-    } catch (err) {
-      showMessage("Network error, Please try again later.", MessageTypes.ERROR);
+    if (
+      !result.ok ||
+      !result?.data ||
+      !result?.data?.token ||
+      !result?.data?.user
+    ) {
+      const errMsg =
+        (result?.error || "Error: Something went wrong.") +
+        " Please try again.";
+      showMessage(errMsg, MessageTypes.ERROR);
+      return;
     }
+
+    showMessage(
+      "Success! You should be redirected soon...",
+      MessageTypes.SPECIAL
+    );
+    const { token, user } = result.data;
+    setAuth({ token, user });
+    setIsAuthenticated(true);
+    navigate("/");
   };
 
   return (
@@ -246,57 +234,41 @@ function SignUpForm({ data, onChange, onSwitch, setLoginData }) {
       return;
     }
 
-    try {
-      showMessage("Waiting server response...", MessageTypes.NORMAL);
-      const res = await fetch("http://localhost:4000/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: data.username,
-          email: data.email,
-          password: data.password,
-          recaptchaToken: recaptchaToken,
-        }),
-      });
+    showMessage("Waiting server response...", MessageTypes.NORMAL);
+    const result = await requestToBackend("POST", "auth/register", {
+      username: data.username,
+      email: data.email,
+      password: data.password,
+      recaptchaToken: recaptchaToken,
+    });
 
-      if (!res.ok) {
-        // Get error message
-        let uiMessage = "Unknown error. Please try again later.";
-        try {
-          const data = await res.json();
-          if (data?.error) {
-            uiMessage = data.error;
-          }
-        } catch {
-          // Do nothing
-        }
-
-        showMessage(uiMessage, MessageTypes.ERROR);
-        return;
-      }
-
-      showMessage(
-        "Account created! You will be redirected soon...",
-        MessageTypes.SPECIAL
-      );
-
-      // Reset input fields
-      onChange({
-        username: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-      });
-
-      // Set email for login
-      setLoginData({
-        email: data.email,
-      });
-
-      setTimeout(onSwitch, 3000);
-    } catch (err) {
-      showMessage("Network error, Please try again later.", MessageTypes.ERROR);
+    if (!result.ok || !result?.data) {
+      const errMsg =
+        (result?.error || "Error: Something went wrong.") +
+        " Please try again.";
+      showMessage(errMsg, MessageTypes.ERROR);
+      return;
     }
+
+    showMessage(
+      "Account created! You will be redirected soon...",
+      MessageTypes.SPECIAL
+    );
+
+    // Reset input fields
+    onChange({
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
+
+    // Set email for login
+    setLoginData({
+      email: data.email,
+    });
+
+    setTimeout(onSwitch, 3000);
   };
 
   return (
