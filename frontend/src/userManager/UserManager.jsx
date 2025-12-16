@@ -60,12 +60,9 @@ export function UserManager() {
       stopLoading();
       return;
     }
-
-    const mappedData = result.data.map((users) => ({
-      id: users._id,
-      name: users.username,
-      email: users.email,
-      role: users.role,
+    const mappedData = result.data.map((user) => ({
+      ...user,
+      id: user._id,
     }));
     setUsers(mappedData);
     stopLoading();
@@ -85,7 +82,7 @@ export function UserManager() {
     const editingUser = users.find((user) => user.id === id);
     if (editingUser) {
       setEditingId(id);
-      setEditingName(editingUser.name);
+      setEditingName(editingUser.username);
       setEditingEmail(editingUser.email);
       setEditingRole(editingUser.role);
     }
@@ -141,7 +138,7 @@ export function UserManager() {
     }
 
     // Check if the new data is same as old data
-    const oldUsername = originalUserData?.name;
+    const oldUsername = originalUserData?.username;
     const oldEmail = originalUserData?.email;
     const oldRole = originalUserData?.role;
 
@@ -270,7 +267,7 @@ export function UserManager() {
 function getColumns() {
   return [
     {
-      accessorKey: "name",
+      accessorKey: "username",
       title: "Name",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Name" />
@@ -314,7 +311,7 @@ function getColumns() {
         />
       );
     }
-    return row.original.name;
+    return row.original.username;
   }
 
   function EmailCell({ row }) {
