@@ -9,7 +9,7 @@ import { deleteEvent } from "@/event/event.api";
 import { Input } from "@/components/ui/input";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { PageShell } from "@/components/page-shell";
-import { useFetchEvents } from "./use-fetch-events";
+import { useFetchEvents } from "./event.api";
 import { Fragment, useEffect, useState } from "react";
 import { getUser, isAdmin } from "@/lib/AuthHelpers";
 
@@ -34,7 +34,7 @@ export function EventList() {
   function startEditing(id) {
     const found = (events || []).find((e) => e.id === id);
     if (!found) {
-      alert("Event not found");
+      setErrorMsg("Error: Event not found");
       return;
     }
     setEditingEvent(found);
@@ -44,33 +44,6 @@ export function EventList() {
   function stopEditing() {
     setIsEditing(false);
     setEditingEvent(null);
-  }
-
-  async function onSaveEdit(id, locationData) {
-    // if (!locationData || !id) {
-    //   alert("Location data is invalid.");
-    //   return;
-    // }
-    // const res = await fetch(`${API_BASE}/locations/${id}`, {
-    //   method: "PUT",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     authorization: `Bearer ${getToken()}`,
-    //   },
-    //   body: JSON.stringify({
-    //     ...locationData,
-    //     latitude: Number(locationData.latitude),
-    //     longitude: Number(locationData.longitude),
-    //   }),
-    // });
-    // const data = await res.json().catch(() => null);
-    // if (!res.ok) {
-    //   alert(data?.message || "Failed to update");
-    //   return;
-    // }
-    // stopEditing();
-    // alert("Location successfully updated");
-    // refresh();
   }
 
   const {
