@@ -51,13 +51,16 @@ router.put("/:id", requireAuth, async (req, res, next) => {
     if (email) update.email = email;
     if (role) update.role = role;
     if (password) {
-      const bcrypt = require("bcrypt");
       update.password = await bcrypt.hash(password, 12);
     }
-    const u = await User.findByIdAndUpdate(req.params.id, update, {
-      new: true,
+    const updated = await User.findByIdAndUpdate(req.params.id, update, {
+      runValidators: true,
     }).select("-password");
-    res.json(u);
+    if (!updated) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({ message: "User successfully updated" });
   } catch (e) {
     next(e);
   }
@@ -66,8 +69,11 @@ router.put("/:id", requireAuth, async (req, res, next) => {
 /* Delete users */
 router.delete("/:id", requireAuth, async (req, res, next) => {
   try {
-    await User.findByIdAndDelete(req.params.id);
-    res.json({ ok: true });
+    const deleted = await User.findByIdAndDelete(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.json({ message: "User successfully deleted" });
   } catch (e) {
     next(e);
   }

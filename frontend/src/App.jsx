@@ -10,7 +10,7 @@ import { Suggestions } from "@/Suggestions";
 import { TopNav } from "@/TopNav";
 import { LocationDetail } from "@/location/LocationDetail";
 
-import { UserManager } from "@/UserManager"; // admin-only page
+import { UserManager } from "@/UserManager/UserManager"; // admin-only page
 import { RequireAdmin } from "@/lib/RequireAdmin";
 import { useState } from "react";
 import { isAuthenticated as hasAuth } from "@/lib/AuthHelpers";

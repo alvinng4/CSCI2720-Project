@@ -40,9 +40,9 @@ export async function requestToBackend(method, endPoint, jsonData = null) {
     }
 
     if (!res.ok) {
-      let errorMsg = "Error: Something went wrong.";
+      let errorMsg = "Something went wrong.";
       if (data?.error) {
-        errorMsg = `Error: ${data?.error}`;
+        errorMsg = `${data?.error}`;
       }
       return { ok: res.ok, error: errorMsg };
     }

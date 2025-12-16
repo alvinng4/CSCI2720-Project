@@ -14,6 +14,19 @@ import errorMiddleware from "./middleware/error.js";
 
 const app = express();
 
+/* Middleware delay for testing slow internet */
+// app.use((_req, _res, next) => {
+//   setTimeout(next, 1000);
+// });
+
+/* Middleware for logging */
+app.use((req, _res, next) => {
+  console.log(
+    `[${new Date().toISOString()}] ${req.method} ${req.originalUrl} from ${req.ip}`
+  );
+  next();
+});
+
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
