@@ -3,11 +3,6 @@ import { DataTable } from "@/components/ui/data-table";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { Input } from "@/components/ui/input";
 import {
-  MessageTypes,
-  MessageTypeToColor,
-  useMessage,
-} from "@/hooks/use-message";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -25,8 +20,14 @@ import {
 } from "react";
 
 import CommonTableToolBar from "@/components/common-table-toolbar";
+import CreateUserSheet from "./CreateUserSheet";
 import { getUser, isAdmin } from "@/lib/AuthHelpers";
 import { LoadingScreen } from "@/components/ui/loading-screen";
+import {
+  MessageTypes,
+  MessageTypeToColor,
+  useMessage,
+} from "@/hooks/use-message";
 import { PageShell } from "@/components/page-shell";
 import { requestToBackend } from "@/lib/utils";
 import UserManagerSideMenu from "./UserManagerSideMenu";
@@ -91,9 +92,8 @@ export function UserManager() {
     }));
     setUsers(mappedData);
     setLastSyncTime(new Date());
-    resetMessage();
     stopLoading();
-  }, [showMessage, resetMessage]);
+  }, [showMessage]);
 
   useEffect(() => {
     fetchUsers();
@@ -105,41 +105,6 @@ export function UserManager() {
   const [editingRole, setEditingRole] = useState(null);
 
   /* Handlers */
-  async function createUser(userData) {
-    resetMessage();
-
-    const chars =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let password = "";
-    for (let i = 0; i < 25; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    userData.password = password;
-
-    const mappedData = {
-      username: userData.name,
-      email: userData.email,
-      role: userData.role,
-      password: userData.password,
-    };
-
-    let result = await requestToBackend("POST", "users", mappedData);
-    if (!result.ok || !result?.data) {
-      const errMsg =
-        "Error occurred when creating user: " +
-        (result?.error || "Unknown error");
-      showMessage(errMsg, MessageTypes.ERROR);
-      return false;
-    }
-
-    showMessage(
-      "New user created. Password: " + userData.password,
-      MessageTypes.SPECIAL
-    );
-    fetchUsers();
-    return true;
-  }
-
   function startEditing(id) {
     const editingUser = users.find((user) => user.id === id);
     if (editingUser) {
@@ -193,6 +158,26 @@ export function UserManager() {
       return;
     }
 
+    const originalUserData = users.find((user) => user?.id === id);
+    if (!originalUserData) {
+      showMessage("Error: Original user data not found", MessageTypes.ERROR);
+      return;
+    }
+
+    // Check if the new data is same as old data
+    const oldUsername = originalUserData?.name;
+    const oldEmail = originalUserData?.email;
+    const oldRole = originalUserData?.role;
+
+    if (
+      oldUsername === patch.username &&
+      oldEmail === patch.email &&
+      oldRole === patch.role
+    ) {
+      stopEditing();
+      return;
+    }
+
     let result = await requestToBackend("PUT", `users/${id}`, patch);
     if (!result.ok || !result?.data) {
       const errMsg =
@@ -238,6 +223,11 @@ export function UserManager() {
     fetchUsers();
   }
 
+  const refresh = () => {
+    fetchUsers();
+    resetMessage();
+  };
+
   /* Columns (created once only to prevent input issues) */
   const columns = useMemo(getColumns, []);
 
@@ -257,40 +247,47 @@ export function UserManager() {
   };
 
   return (
-    <PageShell title="User Manager (Admin only)">
-      {showLoading ? (
-        <LoadingScreen />
-      ) : (
-        <>
-          {/* Feedback message */}
-          <p
-            hidden={!isShowMessage}
-            className={MessageTypeToColor[messageType]}
-          >
-            {message}
-          </p>
-          {isAdmin && (
-            <UserTableContext.Provider value={contextValue}>
-              <DataTable
-                columns={columns}
-                data={users}
-                renderSideMenu={(table) =>
-                  UserManagerSideMenu({ table: table, refresh: fetchUsers })
-                }
-                renderToolbar={() => (
-                  <CommonTableToolBar
-                    lastSyncTime={lastSyncTime}
-                    admin={isAdmin}
-                    caption={"Create User"}
-                    onClick={startCreating}
-                  />
-                )}
-              />
-            </UserTableContext.Provider>
-          )}
-        </>
-      )}
-    </PageShell>
+    <>
+      <CreateUserSheet
+        isCreating={isCreating}
+        stopCreating={stopCreating}
+        refresh={refresh}
+      />
+      <PageShell title="User Manager (Admin only)">
+        {showLoading ? (
+          <LoadingScreen />
+        ) : (
+          <>
+            {/* Feedback message */}
+            <p
+              hidden={!isShowMessage}
+              className={MessageTypeToColor[messageType]}
+            >
+              {message}
+            </p>
+            {isAdmin && (
+              <UserTableContext.Provider value={contextValue}>
+                <DataTable
+                  columns={columns}
+                  data={users}
+                  renderSideMenu={(table) =>
+                    UserManagerSideMenu({ table: table, refresh: refresh })
+                  }
+                  renderToolbar={() => (
+                    <CommonTableToolBar
+                      lastSyncTime={lastSyncTime}
+                      admin={isAdmin}
+                      caption={"Create User"}
+                      onClick={startCreating}
+                    />
+                  )}
+                />
+              </UserTableContext.Provider>
+            )}
+          </>
+        )}
+      </PageShell>
+    </>
   );
 }
 
@@ -421,60 +418,3 @@ function getColumns() {
     );
   }
 }
-
-/* Create user side menu */
-
-// /* Create user side menu */
-// function CreateUserSideMenu({ initial, onSubmit }) {
-//   const [name, setName] = useState(initial?.name ?? "");
-//   const [email, setEmail] = useState(initial?.email ?? "");
-//   const [role, setRole] = useState(initial?.role ?? "user");
-
-//   return (
-//     <Card className="bg-transparent shadow-none gap-2 w-75">
-//       <CardHeader>
-//         <CardTitle>
-//           <span>Create User</span>
-//         </CardTitle>
-//       </CardHeader>
-//       <CardContent className="flex flex-col gap-3">
-//         <form
-//           onSubmit={async (e) => {
-//             e.preventDefault();
-//             const result = await onSubmit({ name, email, role });
-//             if (result) {
-//               setName("");
-//               setEmail("");
-//             }
-//           }}
-//           className="flex flex-col gap-3"
-//         >
-//           <Input
-//             placeholder="Username"
-//             value={name}
-//             onChange={(e) => setName(e.target.value)}
-//             required
-//           />
-//           <Input
-//             placeholder="Email"
-//             type="email"
-//             value={email}
-//             onChange={(e) => setEmail(e.target.value)}
-//             required
-//           />
-//           <Select value={role} onValueChange={(value) => setRole(value)}>
-//             <SelectTrigger className="w-full">
-//               <SelectValue placeholder="Role" value={role} />
-//             </SelectTrigger>
-//             <SelectContent>
-//               <SelectItem value="user">User</SelectItem>
-//               <SelectItem value="admin">Admin</SelectItem>
-//             </SelectContent>
-//           </Select>
-
-//           <Button type="submit">Create</Button>
-//         </form>
-//       </CardContent>
-//     </Card>
-//   );
-// }
