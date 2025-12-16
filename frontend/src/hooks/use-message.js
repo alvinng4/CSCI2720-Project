@@ -2,7 +2,7 @@
  * Simple message hooks for displaying messages (e.g. in authentication)
  */
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export const MessageTypes = Object.freeze({
   NORMAL: "normal",
@@ -21,17 +21,17 @@ export function useMessage() {
   const [messageType, setMessageType] = useState(MessageTypes.NORMAL);
   const [isShowMessage, setIsShowMessage] = useState(false);
 
-  const showMessage = (text, type) => {
+  const showMessage = useCallback((text, type) => {
     setMessage(text);
     setMessageType(type);
     setIsShowMessage(true);
-  };
+  }, []);
 
-  const resetMessage = () => {
+  const resetMessage = useCallback(() => {
     setMessage("");
     setMessageType(MessageTypes.NORMAL);
     setIsShowMessage(false);
-  };
+  }, []);
 
   return {
     message,
