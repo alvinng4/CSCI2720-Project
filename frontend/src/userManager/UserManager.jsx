@@ -15,7 +15,6 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 
@@ -30,18 +29,17 @@ import {
 } from "@/hooks/use-message";
 import { PageShell } from "@/components/page-shell";
 import { requestToBackend } from "@/lib/utils";
+import useAsync from "@/hooks/use-async";
 import UserManagerSideMenu from "./UserManagerSideMenu";
 
 const UserTableContext = createContext(null);
 
 export function UserManager() {
-  const [showLoading, setShowLoading] = useState(true);
-  const timeoutRef = useRef(null);
-  const [isCreating, setIsCreating] = useState(false);
-  const [lastSyncTime, setLastSyncTime] = useState(null);
   const [users, setUsers] = useState([]);
+  const [isCreating, setIsCreating] = useState(false);
   const { message, isShowMessage, messageType, showMessage, resetMessage } =
     useMessage();
+  const { showLoading, lastSyncTime, startLoading, stopLoading } = useAsync();
 
   function startCreating() {
     setIsCreating(true);
@@ -49,27 +47,6 @@ export function UserManager() {
 
   function stopCreating() {
     setIsCreating(false);
-  }
-
-  function startLoading() {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    // Set timeout to show loading after 750ms
-    timeoutRef.current = setTimeout(() => {
-      setShowLoading(true);
-    }, 300);
-  }
-
-  function stopLoading() {
-    // Clear timeout if loading was stopped before 750ms
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-
-    setShowLoading(false);
   }
 
   const fetchUsers = useCallback(async () => {
@@ -91,7 +68,6 @@ export function UserManager() {
       role: users.role,
     }));
     setUsers(mappedData);
-    setLastSyncTime(new Date());
     stopLoading();
   }, [showMessage]);
 
