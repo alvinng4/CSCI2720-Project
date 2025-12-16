@@ -1,8 +1,55 @@
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+import { getToken, getUser } from "@/lib/AuthHelpers";
+
+const API_BASE =
+  (import.meta?.env?.VITE_API_BASE ?? "http://localhost:4000") + "/api";
+
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
+}
+
+export async function requestToBackend(method, endPoint, jsonData = null) {
+  const validMethods = ["POST", "GET", "PUT", "DELETE"];
+  const upperMethod = method?.toUpperCase?.();
+  if (!validMethods.includes(upperMethod)) {
+    return { ok: false, error: `Error: Invalid HTTP method: ${method}` };
+  }
+
+  const headers = {
+    authorization: `Bearer ${getToken()}`,
+    "x-user-id": `${getUser()?.id}`,
+  };
+  if (jsonData) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/${endPoint}`, {
+      method: upperMethod,
+      headers,
+      body: jsonData ? JSON.stringify(jsonData) : undefined,
+    });
+
+    let data = null;
+    try {
+      data = await res.json();
+    } catch {
+      // Do nothing
+    }
+
+    if (!res.ok) {
+      let errorMsg = "Error: Something went wrong.";
+      if (data?.error) {
+        errorMsg = `Error: ${data?.error}`;
+      }
+      return { ok: res.ok, error: errorMsg };
+    }
+    return { ok: res.ok, data };
+  } catch {
+    return { ok: false, error: "Network error. Please try again later." };
+  }
 }
 
 export function getUserLocation() {
