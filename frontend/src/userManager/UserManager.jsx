@@ -66,7 +66,7 @@ export function UserManager() {
     }));
     setUsers(mappedData);
     stopLoading();
-  }, [showMessage]);
+  }, [startLoading, stopLoading, showMessage]);
 
   useEffect(() => {
     fetchUsers();
@@ -227,18 +227,18 @@ export function UserManager() {
         refresh={refresh}
       />
       <PageShell title="User Manager (Admin only)">
-        {showLoading ? (
-          <LoadingScreen />
-        ) : (
-          <>
-            {/* Feedback message */}
-            <p
-              hidden={!isShowMessage}
-              className={MessageTypeToColor[messageType]}
-            >
-              {message}
-            </p>
-            {isAdmin && (
+        <>
+          {/* Feedback message */}
+          <p
+            hidden={!isShowMessage}
+            className={MessageTypeToColor[messageType]}
+          >
+            {message}
+          </p>
+          {showLoading ? (
+            <LoadingScreen />
+          ) : (
+            isAdmin && (
               <UserTableContext.Provider value={contextValue}>
                 <DataTable
                   columns={columns}
@@ -256,9 +256,9 @@ export function UserManager() {
                   )}
                 />
               </UserTableContext.Provider>
-            )}
-          </>
-        )}
+            )
+          )}
+        </>
       </PageShell>
     </>
   );
