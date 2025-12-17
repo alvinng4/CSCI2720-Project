@@ -11,21 +11,20 @@ import locationsRoutes from "./routes/locations.routes.js";
 import usersRoutes from "./routes/users.routes.js";
 
 import errorMiddleware from "./middleware/error.js";
+import loggingMiddleware from "./middleware/logging.js";
+import timeoutMiddleware from "./middleware/timeout.js";
 
 const app = express();
 
 /* Middleware delay for testing slow internet */
-app.use((_req, _res, next) => {
-  setTimeout(next, 1000);
-});
+const enableSlowInternet =
+  process.argv.includes("-s") || process.argv.includes("--slow-internet");
+if (enableSlowInternet) {
+  app.use(timeoutMiddleware);
+}
 
 /* Middleware for logging */
-app.use((req, _res, next) => {
-  console.log(
-    `[${new Date().toISOString()}] ${req.method} ${req.originalUrl} from ${req.ip}`
-  );
-  next();
-});
+app.use(loggingMiddleware);
 
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: "1mb" }));

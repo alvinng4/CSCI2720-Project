@@ -9,8 +9,9 @@ To run the backend, run the following commands:
 cd backend
 npm install
 npm run init-db // This will drop existing database with the name "culturalApp"
-npm run dev
+npm run dev -- [-s|-slow-internet]
 ```
+`-s|-slow-internet`: Simulate slow internet by adding 1s delay to all backend request
 
 > [!IMPORTANT]\
 > If you re-initialized the database after login, please logout your account on browser to prevent keeping the incorrect token ID.

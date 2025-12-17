@@ -23,3 +23,10 @@ npm run init-db
 
 > [!IMPORTANT]\
 > If you re-initialized the database after login, please logout your account on browser to prevent keeping the incorrect token ID.
+
+## Running the backend
+If you have completed the steps above, run the following command:
+```
+npm run dev -- [-s|-slow-internet]
+```
+`-s|-slow-internet`: Simulate slow internet by adding 1s delay to all backend request
