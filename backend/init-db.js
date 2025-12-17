@@ -8,13 +8,14 @@ import mongoose from "mongoose";
 
 import EventModel from "./src/models/Event.js";
 import CommentModel from "./src/models/Comment.js";
+import LikeModel from "./src/models/Like.js";
 import LocationModel from "./src/models/Location.js";
 import UserModel from "./src/models/User.js";
 import registerAccount from "./src/libs/register-account.js";
 
 const ADMIN_USERNAME = "Admin";
 const ADMIN_EMAIL = "admin@example.com";
-const ADMIN_PASSWORD = "admin_csci2720";
+const ADMIN_PASSWORD = "csci2720";
 
 const DEFAULT_PORT = "27017";
 const DEFAULT_DB_NAME = "culturalApp";
@@ -87,6 +88,9 @@ async function main() {
     /* Insert comments made by admin account */
     await insertComments();
 
+    /* Insert Likes for events */
+    await insertLikes();
+
     /* Close connection */
     console.log("\nInitialization completed. Closing connection...");
     await mongoose.connection.close();
@@ -127,7 +131,34 @@ async function insertAdminAccounts() {
 
 async function insertTestUserAccounts() {
   console.log("\nInserting test user accounts onto database");
-  const users = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
+  const users = [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p",
+    "q",
+    "r",
+    "s",
+    "t",
+    "u",
+    "v",
+    "w",
+    "x",
+    "y",
+    "z",
+  ];
   let inserted = 0;
   for (const u of users) {
     const email = `${u}@example.com`;
@@ -222,11 +253,52 @@ async function insertComments() {
   const comments = locations.map((loc) => ({
     user: adminUser._id,
     location: loc._id,
-    content: `Cool! (This comment is for ${loc.nameE})`,
+    content: `Cool! (init_db: This comment is for ${loc.nameE})`,
   }));
 
   await CommentModel.insertMany(comments);
   console.log(`Inserted ${comments.length} comments.`);
+}
+
+async function insertLikes() {
+  console.log("\nInserting random likes for each event");
+
+  // Load all users
+  const allUsers = await UserModel.find({}, "_id").lean();
+  if (allUsers.length === 0) {
+    throw new Error("No users found to create likes.");
+  }
+
+  // Load all events
+  const allEvents = await EventModel.find({}, "_id").lean();
+  if (allEvents.length === 0) {
+    throw new Error("No events found to attach likes to.");
+  }
+
+  const likesToInsert = [];
+  for (const event of allEvents) {
+    // Random number between 0 and total users (inclusive)
+    const numberOfLikes = Math.floor(Math.random() * (allUsers.length + 1));
+
+    // Shuffle users array to pick random ones
+    const shuffledUsers = [...allUsers].sort(() => 0.5 - Math.random());
+
+    const selectedUsers = shuffledUsers.slice(0, numberOfLikes);
+
+    for (const user of selectedUsers) {
+      likesToInsert.push({
+        user: user._id,
+        event: event._id,
+      });
+    }
+  }
+
+  if (likesToInsert.length > 0) {
+    await LikeModel.insertMany(likesToInsert);
+  }
+  console.log(
+    `Inserted ${likesToInsert.length} likes across ${allEvents.length} events.`
+  );
 }
 
 main();

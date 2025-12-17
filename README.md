@@ -26,7 +26,7 @@ npm run dev
 Then, you may register a new account, or use the provided accounts:
 * Admin: 
     - email: `admin@example.com`
-    - password: `admin_csci2720`
+    - password: `csci2720`
 * User:
     - email: `a@example.com`    
     - password: `a`
