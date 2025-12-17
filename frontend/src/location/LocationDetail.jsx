@@ -1,16 +1,16 @@
-import { CommentsList } from "@/location/comments-list";
-import { LoadingScreen } from "@/components/ui/loading-screen";
-import { MapComponent } from "@/location/map-component";
+import CommentsList from "@/location/comments-list";
+import LoadingScreen from "@/components/ui/loading-screen";
+import MapComponent from "@/location/map-component";
 import PageShell from "@/components/page-shell";
 import { Table, TableBody, TableRow, TableCell } from "@/components/ui/table";
-import { ToggleFavourite } from "@/components/toggle-favourite";
+import ToggleFavourite from "@/components/toggle-favourite";
 import { useLocationWithDistance } from "@/location/use-locations-with-distance";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 
 export function LocationDetail() {
   const { id } = useParams();
-  const [commentLength, setCommentLength] = useState(null);
+  const [commentLength, setCommentLength] = useState(0);
   const { location, loading, errorMsg } = useLocationWithDistance(id);
 
   if (loading) {

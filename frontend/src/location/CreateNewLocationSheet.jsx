@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MapComponent } from "@/location/map-component";
+import MapComponent from "@/location/map-component";
 import {
   Select,
   SelectContent,

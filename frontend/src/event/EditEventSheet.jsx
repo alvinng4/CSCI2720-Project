@@ -20,13 +20,13 @@ import { useCallback, useEffect, useState } from "react";
 
 import { updateEvent, getEvent } from "./event.api";
 import { getAllLocations } from "../location/location.api";
-import { MapComponent } from "@/location/map-component";
+import MapComponent from "@/location/map-component";
 import {
   MessageTypes,
   MessageTypeToColor,
   useMessage,
 } from "@/hooks/use-message";
-import { LoadingScreen } from "@/components/ui/loading-screen";
+import LoadingScreen from "@/components/ui/loading-screen";
 import useAsync from "@/hooks/use-async";
 
 function makeSubsectionTitle(title) {

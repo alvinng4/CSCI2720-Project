@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { CommentsList } from "@/location/comments-list";
-import { LoadingScreen } from "@/components/ui/loading-screen";
-import { MapComponent } from "@/location/map-component";
+import CommentsList from "@/location/comments-list";
+import LoadingScreen from "@/components/ui/loading-screen";
+import MapComponent from "@/location/map-component";
 import {
   Sheet,
   SheetContent,
@@ -10,7 +10,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Table, TableBody, TableRow, TableCell } from "@/components/ui/table";
-import { ToggleFavourite } from "@/components/toggle-favourite";
+import ToggleFavourite from "@/components/toggle-favourite";
 import { useLocationWithDistance } from "@/location/use-locations-with-distance";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";

@@ -21,7 +21,7 @@ import {
 import CommonTableToolBar from "@/components/common-table-toolbar";
 import CreateUserSheet from "./CreateUserSheet";
 import { getUser, isAdmin } from "@/lib/AuthHelpers";
-import { LoadingScreen } from "@/components/ui/loading-screen";
+import LoadingScreen from "@/components/ui/loading-screen";
 import {
   MessageTypes,
   MessageTypeToColor,

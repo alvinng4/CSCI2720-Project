@@ -4,7 +4,7 @@ import { Star } from "lucide-react";
 import { getUser } from "@/lib/AuthHelpers";
 import { requestToBackend } from "@/lib/utils";
 
-export function ToggleFavourite({ location, onUpdate, className }) {
+export default function ToggleFavourite({ location, onUpdate, className }) {
   const filledClassName = "fill-yellow-400 stroke-yellow-400";
   const unfilledClassName = "fill-none stroke-gray-400";
 

@@ -1,4 +1,4 @@
-export function LoadingScreen() {
+export default function LoadingScreen() {
   return (
     <div className="fixed inset-0 flex items-center justify-center pointer-events-none">
       <div className="sk-chase">

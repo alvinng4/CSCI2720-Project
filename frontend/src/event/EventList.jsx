@@ -10,7 +10,7 @@ import EditEventSheet from "./EditEventSheet";
 import EventDetailSheet from "./EventDetailSheet";
 import EventSideMenu from "./EventSideMenu";
 import { getUser, isAdmin } from "@/lib/AuthHelpers";
-import { LoadingScreen } from "@/components/ui/loading-screen";
+import LoadingScreen from "@/components/ui/loading-screen";
 import {
   MessageTypes,
   MessageTypeToColor,
@@ -102,10 +102,7 @@ export function EventList() {
       }
 
       if (isLoading) {
-        showMessage(
-          "Processing. Please wait before submitting!",
-          MessageTypes.ERROR
-        );
+        showMessage("Processing. Try again later.", MessageTypes.ERROR);
         return;
       }
 

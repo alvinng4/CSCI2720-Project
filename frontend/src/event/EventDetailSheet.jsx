@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/sheet";
 import { Table, TableBody, TableRow, TableCell } from "@/components/ui/table";
 
-import { MapComponent } from "@/location/map-component";
+import MapComponent from "@/location/map-component";
 import ToggleLike from "@/components/toggle-like";
 
 function makeSubsectionTitle(title) {

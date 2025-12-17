@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 
-export function MapComponent({ locations, center, onClick, style }) {
+export default function MapComponent({ locations, center, onClick, style }) {
   return (
     <MapContainer center={center} zoom={11} style={style}>
       <TileLayer
