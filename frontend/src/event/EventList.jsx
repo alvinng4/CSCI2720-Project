@@ -306,6 +306,11 @@ function getColumns(isAdmin, startEditing, onDelete, onIsLikeUpdate) {
       cell: ({ row }) => {
         return <ToggleLike event={row.original} onUpdate={onIsLikeUpdate} />;
       },
+      sortingFn: (rowA, rowB) => {
+        const a = Number(rowA.original.numLikes);
+        const b = Number(rowB.original.numLikes);
+        return a - b;
+      },
     },
   ];
 
