@@ -14,7 +14,7 @@ import CommentsList from "@/location/comments-list";
 import MapComponent from "@/location/map-component";
 import ToggleFavourite from "@/components/toggle-favourite";
 
-export function LocationSheet({
+export default function LocationSheet({
   location,
   setSelectedLocation,
   onIsFavouriteUpdate,

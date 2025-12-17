@@ -129,6 +129,11 @@ export default function EditEventSheet({
     }
 
     // Fill in changed fields
+    if (!event) {
+      showMessage("Event not found!", MessageTypes.ERROR);
+      return;
+    }
+
     const eventData = {};
     if (title !== (event?.titleE ?? "")) {
       eventData.titleE = title;

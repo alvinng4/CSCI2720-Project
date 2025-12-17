@@ -119,14 +119,20 @@ router.get("/", requireAuth, async (req, res, next) => {
 /* Update location */
 router.put("/:id", requireAuth, async (req, res, next) => {
   try {
-    const { nameE, district, latitude, longitude } = req.body;
-    const update = {};
-    if (nameE) update.nameE = nameE;
-    if (district) update.district = district;
-    if (latitude) update.latitude = latitude;
-    if (longitude) update.longitude = longitude;
-    const u = await Location.findByIdAndUpdate(req.params.id, update);
-    res.json(u);
+    const { location } = req.body;
+    const updatedLocation = await Location.findByIdAndUpdate(
+      req.params.id,
+      location,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!updatedLocation) {
+      return res.status(404).json({ error: "Some error occurred" });
+    }
+    res.status(200).json({ location: updatedLocation });
   } catch (e) {
     next(e);
   }
@@ -136,7 +142,7 @@ router.put("/:id", requireAuth, async (req, res, next) => {
 router.delete("/:id", requireAuth, async (req, res, next) => {
   try {
     await Location.findByIdAndDelete(req.params.id);
-    res.json({ ok: true });
+    res.status(200).json({ message: "Location successfully deleted" });
   } catch (e) {
     next(e);
   }

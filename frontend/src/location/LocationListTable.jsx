@@ -3,32 +3,51 @@
  */
 
 import { Button } from "@/components/ui/button";
-import { CreateNewLocationSheet } from "./CreateNewLocationSheet";
-import {
-  createLocation,
-  deleteLocation,
-  saveEditLocation,
-} from "./location.api";
 import { DataTable } from "@/components/ui/data-table";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { DataTableViewOptions } from "@/components/ui/data-table-view-options";
-import { EditLocationSheet } from "./EditLocationSheet";
-import LoadingScreen from "@/components/ui/loading-screen";
-import { LocationSheet } from "@/location/LocationSheet";
-import { LocationSideMenu } from "./location-side-menu";
-import ToggleFavourite from "@/components/toggle-favourite";
-import { useLocationsWithDistance } from "./use-locations-with-distance";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+
+import CommonTableToolBar from "@/components/common-table-toolbar";
+import CreateNewLocationSheet from "./CreateNewLocationSheet";
+import EditLocationSheet from "./EditLocationSheet";
+import { deleteLocation, getAllLocations } from "./location.api";
+import { getUserLocation, haversineDistance } from "@/lib/utils";
 import { getUser, isAdmin } from "@/lib/AuthHelpers";
+import LoadingScreen from "@/components/ui/loading-screen";
+import LocationSheet from "@/location/LocationSheet";
+import LocationSideMenu from "./location-side-menu";
+import {
+  MessageTypes,
+  MessageTypeToColor,
+  useMessage,
+} from "@/hooks/use-message";
+import ToggleFavourite from "@/components/toggle-favourite";
+import useAsync from "@/hooks/use-async";
 
 export function LocationListTable({ isFavourite }) {
   const user = getUser();
   const admin = isAdmin(user);
 
-  const [locations, setLocations] = useState(null);
+  const [locations, setLocations] = useState([]);
+  const [maxDist, setMaxDist] = useState(0);
+  const [distRange, setDistRange] = useState([0, 0]);
+
+  const { message, isShowMessage, messageType, showMessage, resetMessage } =
+    useMessage();
+  const {
+    isLoading,
+    isForegroundLoading,
+    lastSyncTime,
+    startForegroundLoading,
+    stopForegroundLoading,
+    startBackgroundLoading,
+    stopBackgroundLoading,
+  } = useAsync({ initialForegroundLoading: true });
+
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editingLocation, setEditingLocation] = useState(null);
+  const [editingLocationId, setEditingLocationId] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
 
   function startCreating() {
@@ -40,17 +59,13 @@ export function LocationListTable({ isFavourite }) {
   }
 
   function startEditing(id) {
-    if (admin) {
-      setEditingLocation(locations.find((loc) => loc.id === id));
-      setIsEditing(true);
-      if (!locations.find((loc) => loc.id === id)) {
-        alert("Location not found");
-      }
-    }
+    setEditingLocationId(id);
+    setIsEditing(true);
   }
 
   function stopEditing() {
     setIsEditing(false);
+    setEditingLocationId(null);
   }
 
   function onIsFavouriteUpdate(id, isFavourite) {
@@ -62,119 +77,211 @@ export function LocationListTable({ isFavourite }) {
     );
   }
 
-  const {
-    haveUserCoords,
-    locations: fetchedLocations,
-    loading,
-    errorMsg,
-    setErrorMsg,
-    maxDist,
-    distRange,
-    setDistRange,
-    lastSyncTime,
-    refresh,
-  } = useLocationsWithDistance({ isFavouriteOnly: isFavourite });
+  const onDelete = useCallback(
+    async (e, locationId) => {
+      e.stopPropagation();
+      const userConsent = confirm("Delete this location?");
+      if (!userConsent) {
+        return;
+      }
+
+      if (isLoading) {
+        showMessage(
+          "Processing. Please wait and try again later.",
+          MessageTypes.ERROR
+        );
+        return;
+      }
+
+      startBackgroundLoading();
+      showMessage("Connecting to database...");
+      const result = await deleteLocation(locationId);
+      stopBackgroundLoading();
+
+      if (!result.ok) {
+        const errMsg =
+          "Error occurred when deleting location: " +
+          (result?.error || "Unknown error");
+        showMessage(errMsg, MessageTypes.ERROR);
+        return;
+      }
+      showMessage(
+        `Success! Location with id ${locationId} is deleted.`,
+        MessageTypes.SPECIAL
+      );
+      setLocations((prev) => prev.filter((loc) => loc.id !== locationId));
+    },
+    [
+      setLocations,
+      isLoading,
+      showMessage,
+      startBackgroundLoading,
+      stopBackgroundLoading,
+    ]
+  );
+
+  const fetchLocations = useCallback(async () => {
+    startForegroundLoading();
+    const result = await getAllLocations();
+    if (!result.ok || !result?.data) {
+      showMessage(
+        result?.error || "Error: Something went wrong.",
+        MessageTypes.ERROR
+      );
+      stopForegroundLoading();
+      return;
+    }
+
+    const mappedData = result.data.map((loc) => ({
+      ...loc,
+      id: loc._id,
+      name: loc.nameE,
+      district: loc.district,
+      num_events: loc.numEvents,
+      latitude: Number(loc.latitude),
+      longitude: Number(loc.longitude),
+      isFavourite: loc?.isFavourite ?? false,
+    }));
+
+    /* Filter isFavourite */
+    const filtered = isFavourite
+      ? mappedData.filter((x) => x.isFavourite)
+      : mappedData;
+
+    /* Compute distance */
+    let userCoords = null;
+    try {
+      userCoords = await getUserLocation();
+    } catch {
+      showMessage(
+        "Failed to get user location. Showing data without distance.",
+        MessageTypes.ERROR
+      );
+      setLocations(filtered);
+      stopForegroundLoading();
+      return;
+    }
+
+    const locationsWithDist = filtered.map((loc) => ({
+      ...loc,
+      distance: haversineDistance(
+        userCoords.latitude,
+        userCoords.longitude,
+        loc.latitude,
+        loc.longitude
+      ),
+    }));
+
+    const distances = locationsWithDist
+      .map((x) => x.distance)
+      .filter((d) => typeof d === "number" && !Number.isNaN(d));
+    if (distances.length) {
+      const m = Math.max(...distances);
+      setMaxDist(m);
+      setDistRange(([min]) => [min, m]);
+    }
+
+    setLocations(locationsWithDist);
+    stopForegroundLoading();
+  }, [isFavourite, showMessage, startForegroundLoading, stopForegroundLoading]);
 
   useEffect(() => {
-    setLocations(fetchedLocations);
-  }, [fetchedLocations]);
+    fetchLocations();
+  }, [fetchLocations]);
+
+  const refresh = useCallback(() => {
+    fetchLocations();
+    resetMessage();
+  }, [fetchLocations, resetMessage]);
 
   const columns = getColumns(
-    haveUserCoords,
+    maxDist > 0,
     admin,
     startEditing,
-    (id) => deleteLocation(id, setErrorMsg, refresh),
+    onDelete,
     isFavourite,
     onIsFavouriteUpdate
   );
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
-
   return (
     <>
+      {admin && isCreating && (
+        <CreateNewLocationSheet
+          isCreating={isCreating}
+          stopCreating={stopCreating}
+          refresh={refresh}
+        />
+      )}
+      {admin && isEditing && (
+        <EditLocationSheet
+          locationId={editingLocationId}
+          isEditing={isEditing}
+          stopEditing={stopEditing}
+          refresh={refresh}
+        />
+      )}
       <LocationSheet
         location={selectedLocation}
         setSelectedLocation={setSelectedLocation}
         onIsFavouriteUpdate={onIsFavouriteUpdate}
       />
-      {admin && isCreating && (
-        <CreateNewLocationSheet
-          isCreating={isCreating}
-          onCancel={stopCreating}
-          onCreate={(locationData) =>
-            createLocation(locationData, setErrorMsg, stopCreating, refresh)
-          }
-        />
+      {/* Feedback message */}
+      <p hidden={!isShowMessage} className={MessageTypeToColor[messageType]}>
+        {message}
+      </p>
+      {isForegroundLoading ? (
+        <LoadingScreen />
+      ) : (
+        <div className="flex flex-col gap-y-4">
+          <DataTable
+            columns={columns}
+            data={locations}
+            renderToolbar={() => (
+              <CommonTableToolBar
+                lastSyncTime={lastSyncTime}
+                admin={admin}
+                caption={"Create Location (Admin)"}
+                onClick={startCreating}
+              />
+            )}
+            renderSideMenu={(table) => (
+              <LocationSideMenu
+                getFilterName={() =>
+                  table.getColumn("name")?.getFilterValue() ?? ""
+                }
+                setFilterName={(value) =>
+                  table.getColumn("name")?.setFilterValue(value)
+                }
+                getFilterDistrict={() =>
+                  table.getColumn("district")?.getFilterValue() ?? ""
+                }
+                setFilterDistrict={(value) =>
+                  table
+                    .getColumn("district")
+                    ?.setFilterValue(value === "all" ? "" : value || "")
+                }
+                maxDist={maxDist}
+                getDistRange={() => distRange}
+                setDistRange={(newValue) => {
+                  setDistRange(newValue);
+                  table.getColumn("distance")?.setFilterValue(newValue);
+                }}
+                extraComponents={() => {
+                  return (
+                    <div className="flex gap-2 justify-end">
+                      <Button size="sm" className="h-8" onClick={refresh}>
+                        Refresh
+                      </Button>
+                      <DataTableViewOptions table={table} className="!ml-0" />
+                    </div>
+                  );
+                }}
+              />
+            )}
+            onRowClick={(row) => setSelectedLocation(row)}
+          />
+        </div>
       )}
-      {admin && isEditing && (
-        <EditLocationSheet
-          isEditing={isEditing}
-          location={editingLocation}
-          onCancel={stopEditing}
-          onSave={(id, locationData) =>
-            saveEditLocation(
-              id,
-              locationData,
-              setErrorMsg,
-              stopEditing,
-              refresh
-            )
-          }
-        />
-      )}
-      <div className="text-red-500">{errorMsg}</div>
-      <div className="flex flex-col gap-y-4">
-        <DataTable
-          columns={columns}
-          data={locations}
-          renderToolbar={() => (
-            <div className="ml-auto flex items-center gap-3">
-              <span className="text-sm text-muted-foreground whitespace-nowrap">
-                Last Updated on{" "}
-                {lastSyncTime ? new Date(lastSyncTime).toLocaleString() : ""}
-              </span>
-              {admin && <Toolbar startCreating={startCreating} />}
-            </div>
-          )}
-          renderSideMenu={(table) => (
-            <LocationSideMenu
-              getFilterName={() =>
-                table.getColumn("name")?.getFilterValue() ?? ""
-              }
-              setFilterName={(value) =>
-                table.getColumn("name")?.setFilterValue(value)
-              }
-              getFilterDistrict={() =>
-                table.getColumn("district")?.getFilterValue() ?? ""
-              }
-              setFilterDistrict={(value) =>
-                table
-                  .getColumn("district")
-                  ?.setFilterValue(value === "all" ? "" : value || "")
-              }
-              maxDist={maxDist}
-              getDistRange={() => distRange}
-              setDistRange={(newValue) => {
-                setDistRange(newValue);
-                table.getColumn("distance")?.setFilterValue(newValue);
-              }}
-              extraComponents={() => {
-                return (
-                  <div className="flex gap-2 justify-end">
-                    <Button size="sm" className="h-8" onClick={refresh}>
-                      Refresh
-                    </Button>
-                    <DataTableViewOptions table={table} className="!ml-0" />
-                  </div>
-                );
-              }}
-            />
-          )}
-          onRowClick={(row) => setSelectedLocation(row)}
-        />
-      </div>
     </>
   );
 }
@@ -183,7 +290,7 @@ function getColumns(
   haveUserCoords,
   isAdmin,
   startEditing,
-  handleDelete,
+  onDelete,
   isFavourite,
   onIsFavouriteUpdate
 ) {
@@ -277,10 +384,7 @@ function getColumns(
             <Button
               size="sm"
               variant="destructive"
-              onClick={(event) => {
-                event.stopPropagation();
-                handleDelete(row.original.id);
-              }}
+              onClick={(e) => onDelete(e, row.original.id)}
             >
               Delete
             </Button>
@@ -291,12 +395,4 @@ function getColumns(
   }
 
   return columns;
-}
-
-function Toolbar({ startCreating }) {
-  return (
-    <Button size="sm" onClick={startCreating} className="ml-auto h-8">
-      Create Location (Admin)
-    </Button>
-  );
 }

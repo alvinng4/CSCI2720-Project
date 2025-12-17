@@ -22,7 +22,7 @@ import {
   hkIslandDistricts,
 } from "@/constants/districts";
 
-export function LocationSideMenu({
+export default function LocationSideMenu({
   getFilterName,
   setFilterName,
   getFilterDistrict,

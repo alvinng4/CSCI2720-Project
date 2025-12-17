@@ -139,13 +139,16 @@ router.put("/:id", requireAuth, async (req, res, next) => {
     const { event } = req.body;
     const location = event?.location;
     if (event?.titleE === "") {
-      return res.status(400).json({ error: "Event title cannot be changed to empty" });
+      return res
+        .status(400)
+        .json({ error: "Event title cannot be changed to empty" });
     }
 
-    if (location)
-    {
+    if (location) {
       if (location === "") {
-        return res.status(400).json({ error: "Event location cannot be changed to empty" });
+        return res
+          .status(400)
+          .json({ error: "Event location cannot be changed to empty" });
       }
 
       // Validate location ObjectId
@@ -169,7 +172,7 @@ router.put("/:id", requireAuth, async (req, res, next) => {
     }).populate("location");
 
     if (!updatedEvent) {
-      return res.status(404).json({ error: "Event not found" });
+      return res.status(404).json({ error: "Some error occurred" });
     }
     return res.status(200).json({ event: updatedEvent });
   } catch (e) {

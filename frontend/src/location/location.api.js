@@ -1,8 +1,4 @@
-import { getToken } from "@/lib/AuthHelpers";
 import { requestToBackend } from "@/lib/utils";
-
-const API_BASE =
-  (import.meta?.env?.VITE_API_BASE ?? "http://localhost:4000") + "/api";
 
 export async function getLocation(id) {
   if (!id) {
@@ -16,122 +12,64 @@ export async function getAllLocations() {
   return await requestToBackend("GET", "locations/");
 }
 
-export async function createLocation(
-  locationData,
-  setErrorMsg,
-  stopCreating,
-  refresh
-) {
-  setErrorMsg("");
-  let res = null;
-  try {
-    res = await fetch(`${API_BASE}/locations/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${getToken()}`,
-      },
-
-      body: JSON.stringify({
-        location: {
-          ...locationData,
-          latitude: Number(locationData.latitude),
-          longitude: Number(locationData.longitude),
-        },
-      }),
-    });
-  } catch {
-    setErrorMsg(
-      `Network error. Failed to create location, Please try again later.`
-    );
+export async function createLocation(locationData) {
+  /* Check input */
+  if (!locationData) {
+    return { ok: false, error: "Missing Location Data" };
+  }
+  if (locationData.nameE == null || locationData.nameE === "") {
+    return { ok: false, error: "Missing Fields: name must be provided" };
+  }
+  if (locationData.district == null || locationData.district === "") {
+    return { ok: false, error: "Missing Fields: district must be provided" };
+  }
+  if (locationData.latitude == null || locationData.latitude === "") {
+    return { ok: false, error: "Missing Fields: latitude must be provided" };
   }
 
-  if (!res.ok) {
-    const data = await res.json().catch(() => null);
-    setErrorMsg(
-      "Create location failed. " + (data?.message || "Some error occurred.")
-    );
-    return;
+  if (locationData.longitude == null || locationData.longitude === "") {
+    return { ok: false, error: "Missing Fields: longitude must be provided" };
   }
 
-  stopCreating();
-  refresh();
+  /* Send request to backend */
+  return await requestToBackend("POST", "locations/", {
+    location: locationData,
+  });
 }
 
-export async function saveEditLocation(
-  id,
-  locationData,
-  setErrorMsg,
-  stopEditing,
-  refresh
-) {
-  setErrorMsg("");
-
-  if (!locationData || !id) {
-    setErrorMsg("Edit failed. Location data is invalid.");
-    return;
+export async function updateLocation(id, locationData) {
+  if (!id) {
+    return { ok: false, error: "Missing location id." };
   }
 
-  let res = null;
-  try {
-    res = await fetch(`${API_BASE}/locations/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${getToken()}`,
-      },
-
-      body: JSON.stringify({
-        ...locationData,
-        latitude: Number(locationData.latitude),
-        longitude: Number(locationData.longitude),
-      }),
-    });
-  } catch {
-    setErrorMsg(
-      `Network error. Failed to update location id ${id}, Please try again later.`
-    );
-    return;
+  if (!locationData) {
+    return { ok: false, error: "Missing location data." };
   }
 
-  if (!res.ok) {
-    const data = await res.json().catch(() => null);
-    setErrorMsg("Edit failed. " + (data?.message || "Unknown error occurred."));
-    return;
+  if (locationData.nameE === "") {
+    return { ok: false, error: "name cannot be updated to empty" };
+  }
+  if (locationData.district === "") {
+    return { ok: false, error: "district cannot be updated to empty" };
+  }
+  if (locationData.latitude === "") {
+    return { ok: false, error: "latitude cannot be updated to empty" };
   }
 
-  stopEditing();
-  refresh();
+  if (locationData.longitude === "") {
+    return { ok: false, error: "longitude cannot be updated to empty" };
+  }
+
+  /* Send request to backend */
+  return await requestToBackend("PUT", `locations/${id}`, {
+    location: locationData,
+  });
 }
 
-export async function deleteLocation(id, setErrorMsg, refresh) {
-  setErrorMsg("");
-
-  const userConsent = confirm("Delete this location?");
-  if (!userConsent) {
-    return;
+export async function deleteLocation(id) {
+  if (!id) {
+    return { ok: false, error: "Missing location id." };
   }
 
-  let res = null;
-  try {
-    res = await fetch(`${API_BASE}/locations/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${getToken()}`,
-      },
-    });
-  } catch {
-    setErrorMsg(
-      `Network error. Failed to delete location id ${id}, Please try again later.`
-    );
-    return;
-  }
-
-  if (!res.ok) {
-    const data = await res.json().catch(() => null);
-    setErrorMsg(data?.message || "Delete failed");
-    return;
-  }
-  refresh();
+  return await requestToBackend("DELETE", `locations/${id}`);
 }
