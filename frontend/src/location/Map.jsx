@@ -129,7 +129,7 @@ export function Map() {
   return (
     <>
       <LocationSheet
-        locationId={selectedLocation?.id}
+        location={selectedLocation}
         setSelectedLocation={setSelectedLocation}
       />
       <PageShell title="Map">
