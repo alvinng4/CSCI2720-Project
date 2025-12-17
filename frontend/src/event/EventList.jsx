@@ -1,27 +1,38 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { CreateNewEventSheet } from "./CreateNewEventSheet";
-import { EditEventSheet } from "./EditEventSheet";
 import { DataTable } from "@/components/ui/data-table";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
-import { DataTableViewOptions } from "@/components/ui/data-table-view-options";
-import { deleteEvent } from "@/event/event.api";
-import { Input } from "@/components/ui/input";
-import { LoadingScreen } from "@/components/ui/loading-screen";
-import { PageShell } from "@/components/page-shell";
-import { useFetchEvents } from "./event.api";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
+
+import CommonTableToolBar from "@/components/common-table-toolbar";
+import CreateNewEventSheet from "./CreateNewEventSheet";
+import { deleteEvent, getAllEvents } from "./event.api";
+import EditEventSheet from "./EditEventSheet";
+import EventSideMenu from "./EventSideMenu";
 import { getUser, isAdmin } from "@/lib/AuthHelpers";
+import { LoadingScreen } from "@/components/ui/loading-screen";
+import {
+  MessageTypes,
+  MessageTypeToColor,
+  useMessage,
+} from "@/hooks/use-message";
+import useAsync from "@/hooks/use-async";
+import PageShell from "@/components/page-shell";
 
 export function EventList() {
-  const user = getUser();
-  const admin = isAdmin(user);
-
-  const [events, setEvents] = useState(null);
+  const admin = isAdmin(getUser());
+  const [events, setEvents] = useState([]);
+  const { message, isShowMessage, messageType, showMessage, resetMessage } =
+    useMessage();
+  const {
+    isLoading,
+    showInitialLoading,
+    lastSyncTime,
+    startLoading,
+    stopLoading,
+  } = useAsync();
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editingEvent, setEditingEvent] = useState(null);
-  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [editingEventId, setEditingEventId] = useState(null);
   const [_selectedEvent, setSelectedEvent] = useState(null);
 
   function startCreating() {
@@ -32,87 +43,136 @@ export function EventList() {
     setIsCreating(false);
   }
 
-  function startEditing(id) {
-    const found = (events || []).find((e) => e.id === id);
-    if (!found) {
-      setErrorMsg("Error: Event not found");
+  const fetchEvents = useCallback(async () => {
+    startLoading();
+    const result = await getAllEvents();
+    if (!result.ok || !result?.data) {
+      showMessage(
+        result?.error || "Error: Something went wrong.",
+        MessageTypes.ERROR
+      );
+      stopLoading();
       return;
     }
-    setEditingEvent(found);
+    const mappedData = result.data.map((event) => ({
+      ...event,
+      id: event._id,
+    }));
+    setEvents(mappedData);
+    stopLoading();
+  }, [showMessage, startLoading, stopLoading]);
+
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
+
+  const refresh = useCallback(() => {
+    fetchEvents();
+    resetMessage();
+  }, [fetchEvents, resetMessage]);
+
+  function startEditing(id) {
+    setEditingEventId(id);
     setIsEditing(true);
   }
 
   function stopEditing() {
     setIsEditing(false);
-    setEditingEvent(null);
+    setEditingEventId(null);
   }
 
-  const {
-    events: fetchedEvents,
-    loading,
-    errorMsg,
-    setErrorMsg,
-    lastSyncTime,
-    refresh,
-  } = useFetchEvents();
+  const onDelete = useCallback(
+    async (e, eventId) => {
+      e.stopPropagation();
+      const userConsent = confirm("Delete this event?");
+      if (!userConsent) {
+        return;
+      }
 
-  useEffect(() => {
-    setEvents(fetchedEvents);
-  }, [fetchedEvents]);
+      if (isLoading) {
+        showMessage(
+          "Processing. Please wait before submitting!",
+          MessageTypes.ERROR
+        );
+        return;
+      }
 
-  const columns = getColumns(admin, startEditing, (id) =>
-    deleteEvent(id, setErrorMsg, refresh)
+      startLoading();
+      showMessage("Connecting to database...");
+      const result = await deleteEvent(eventId);
+      if (!result.ok) {
+        const errMsg =
+          "Error occurred when deleting event: " +
+          (result?.error || "Unknown error");
+        showMessage(errMsg, MessageTypes.ERROR);
+        return;
+      }
+      stopLoading();
+      showMessage(
+        `Success! Event with id ${eventId} is deleted.`,
+        MessageTypes.SPECIAL
+      );
+      fetchEvents();
+    },
+    [fetchEvents, isLoading, showMessage, startLoading, stopLoading]
   );
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
+  const columns = getColumns(admin, startEditing, onDelete);
 
   return (
-    <PageShell title="Event List">
+    <>
       {admin && isCreating && (
         <CreateNewEventSheet
           isCreating={isCreating}
-          onCancel={stopCreating}
+          stopCreating={stopCreating}
           refresh={refresh}
         />
       )}
       {admin && isEditing && (
         <EditEventSheet
+          id={editingEventId}
           isEditing={isEditing}
-          event={editingEvent}
-          onCancel={stopEditing}
+          stopEditing={stopEditing}
           refresh={refresh}
         />
       )}
-      <div className="text-red-500">{errorMsg}</div>
-      <div className="flex flex-col gap-y-4">
-        <DataTable
-          columns={columns}
-          data={events}
-          renderToolbar={() => (
-            <div className="ml-auto flex items-center gap-3">
-              <span className="text-sm text-muted-foreground whitespace-nowrap">
-                Last Updated on{" "}
-                {lastSyncTime ? new Date(lastSyncTime).toLocaleString() : ""}
-              </span>
-              {admin && <Toolbar startCreating={startCreating} />}
-            </div>
-          )}
-          renderSideMenu={(table) => (
-            <EventSideMenu table={table} refresh={refresh} />
-          )}
-          onRowClick={(row) => setSelectedEvent(row)}
-        />
-      </div>
-    </PageShell>
+      <PageShell title="Event List">
+        {/* Feedback message */}
+        <p hidden={!isShowMessage} className={MessageTypeToColor[messageType]}>
+          {message}
+        </p>
+        {showInitialLoading ? (
+          <LoadingScreen />
+        ) : (
+          /* Table */
+          <div className="flex flex-col gap-y-4">
+            <DataTable
+              columns={columns}
+              data={events}
+              renderToolbar={() => (
+                <CommonTableToolBar
+                  lastSyncTime={lastSyncTime}
+                  admin={admin}
+                  caption={"Create Event (Admin)"}
+                  onClick={startCreating}
+                />
+              )}
+              renderSideMenu={(table) => (
+                <EventSideMenu table={table} refresh={refresh} />
+              )}
+              onRowClick={(row) => setSelectedEvent(row)}
+            />
+          </div>
+        )}
+      </PageShell>
+    </>
   );
 }
 
-function getColumns(isAdmin, startEditing, handleDelete) {
+function getColumns(isAdmin, startEditing, onDelete) {
   const columns = [
     {
-      accessorKey: "title",
+      accessorKey: "titleE",
       title: "Title",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Title" />
@@ -243,10 +303,7 @@ function getColumns(isAdmin, startEditing, handleDelete) {
             <Button
               size="sm"
               variant="destructive"
-              onClick={(event) => {
-                event.stopPropagation();
-                handleDelete(row.original.id);
-              }}
+              onClick={(e) => onDelete(e, row.original.id)}
             >
               Delete
             </Button>
@@ -257,81 +314,4 @@ function getColumns(isAdmin, startEditing, handleDelete) {
   }
 
   return columns;
-}
-
-function Toolbar({ startCreating }) {
-  return (
-    <Button size="sm" onClick={startCreating} className="ml-auto h-8">
-      Create Event (Admin)
-    </Button>
-  );
-}
-
-function EventSideMenu({ table, refresh }) {
-  return (
-    <Card className="bg-transparent shadow-none gap-2 min-w-80">
-      <CardHeader>
-        <CardTitle>
-          <span>Options</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <Input
-          placeholder="Search by title"
-          value={table.getColumn("title")?.getFilterValue() ?? ""}
-          onChange={(event) =>
-            table.getColumn("title")?.setFilterValue(event.target.value)
-          }
-        />
-        <Input
-          placeholder="Search by description"
-          value={table.getColumn("descE")?.getFilterValue() ?? ""}
-          onChange={(event) =>
-            table.getColumn("descE")?.setFilterValue(event.target.value)
-          }
-        />
-        <Input
-          placeholder="Search by location"
-          value={table.getColumn("location")?.getFilterValue() ?? ""}
-          onChange={(event) =>
-            table.getColumn("location")?.setFilterValue(event.target.value)
-          }
-        />
-        <Input
-          placeholder="Search by date"
-          value={table.getColumn("preDateE")?.getFilterValue() ?? ""}
-          onChange={(event) =>
-            table.getColumn("preDateE")?.setFilterValue(event.target.value)
-          }
-        />
-        <Input
-          placeholder="Search by duration"
-          value={table.getColumn("progTimeE")?.getFilterValue() ?? ""}
-          onChange={(event) =>
-            table.getColumn("progTimeE")?.setFilterValue(event.target.value)
-          }
-        />
-        <Input
-          placeholder="Search by price"
-          value={table.getColumn("priceE")?.getFilterValue() ?? ""}
-          onChange={(event) =>
-            table.getColumn("priceE")?.setFilterValue(event.target.value)
-          }
-        />
-        <Input
-          placeholder="Search by presenters"
-          value={table.getColumn("presenterOrgE")?.getFilterValue() ?? ""}
-          onChange={(event) =>
-            table.getColumn("presenterOrgE")?.setFilterValue(event.target.value)
-          }
-        />
-        <div className="flex gap-2 justify-end">
-          <Button size="sm" className="h-8" onClick={refresh}>
-            Refresh
-          </Button>
-          <DataTableViewOptions table={table} className="!ml-0" />
-        </div>
-      </CardContent>
-    </Card>
-  );
 }

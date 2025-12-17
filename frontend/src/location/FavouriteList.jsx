@@ -1,5 +1,5 @@
 import { LocationListTable } from "@/location/LocationListTable";
-import { PageShell } from "@/components/page-shell";
+import PageShell from "@/components/page-shell";
 
 export function FavouriteList() {
   return (

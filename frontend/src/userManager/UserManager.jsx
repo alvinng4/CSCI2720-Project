@@ -27,7 +27,7 @@ import {
   MessageTypeToColor,
   useMessage,
 } from "@/hooks/use-message";
-import { PageShell } from "@/components/page-shell";
+import PageShell from "@/components/page-shell";
 import { requestToBackend } from "@/lib/utils";
 import useAsync from "@/hooks/use-async";
 import UserManagerSideMenu from "./UserManagerSideMenu";

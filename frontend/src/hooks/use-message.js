@@ -21,7 +21,7 @@ export function useMessage() {
   const [messageType, setMessageType] = useState(MessageTypes.NORMAL);
   const [isShowMessage, setIsShowMessage] = useState(false);
 
-  const showMessage = useCallback((text, type) => {
+  const showMessage = useCallback((text, type = MessageTypes.NORMAL) => {
     setMessage(text);
     setMessageType(type);
     setIsShowMessage(true);

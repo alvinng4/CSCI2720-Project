@@ -21,7 +21,7 @@ router.post("/", requireAuth, async (req, res, next) => {
     }
 
     // Check if location exists
-    const locationExists = await Location.findById(location);
+    const locationExists = await Location.findById(location).lean();
     if (!locationExists) {
       return res.status(404).json({ error: "Location not found" });
     }
@@ -44,7 +44,7 @@ router.get("/:id", requireAuth, async (req, res, next) => {
       return res.status(400).json({ error: "Missing event Id" });
     }
 
-    const event = await Event.findById(id).lean();
+    const event = await Event.findById(id).populate("location").lean();
     if (!event) {
       return res.status(404).json({ error: "Event not found." });
     }
@@ -58,7 +58,7 @@ router.get("/:id", requireAuth, async (req, res, next) => {
 /* Read events */
 router.get("/", requireAuth, async (_req, res, next) => {
   try {
-    const events = await Event.find().populate("location");
+    const events = await Event.find().populate("location").lean();
     return res.status(200).json(events);
   } catch (e) {
     next(e);
@@ -73,15 +73,36 @@ router.put("/:id", requireAuth, async (req, res, next) => {
       return res.status(400).json({ error: "Missing event id" });
     }
 
+    // Check input
     const { event } = req.body;
-    const updated = await Event.findByIdAndUpdate(id, event, {
-      runValidators: true,
-    });
+    const location = event?.location;
+    if (!event?.titleE || !location) {
+      return res.status(400).json({ error: "Missing fields" });
+    }
 
-    if (!updated) {
+    // Validate location ObjectId
+    if (!mongoose.Types.ObjectId.isValid(location)) {
+      return res.status(400).json({ error: "Invalid location ID" });
+    }
+
+    // Check if location exists
+    const locationExists = await Location.findById(location).lean();
+    if (!locationExists) {
+      return res.status(404).json({ error: "Location not found" });
+    }
+
+    // Convert location to ObjectId
+    event.location = mongoose.Types.ObjectId.createFromHexString(location);
+
+    const updatedEvent = await Event.findByIdAndUpdate(id, event, {
+      new: true,
+      runValidators: true,
+    }).populate("location");
+
+    if (!updatedEvent) {
       return res.status(404).json({ error: "Event not found" });
     }
-    return res.status(200).json({ message: "Event updated successfully" });
+    return res.status(200).json({ event: updatedEvent });
   } catch (e) {
     next(e);
   }

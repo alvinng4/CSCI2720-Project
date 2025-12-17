@@ -15,9 +15,9 @@ import errorMiddleware from "./middleware/error.js";
 const app = express();
 
 /* Middleware delay for testing slow internet */
-// app.use((_req, _res, next) => {
-//   setTimeout(next, 1000);
-// });
+app.use((_req, _res, next) => {
+  setTimeout(next, 1000);
+});
 
 /* Middleware for logging */
 app.use((req, _res, next) => {

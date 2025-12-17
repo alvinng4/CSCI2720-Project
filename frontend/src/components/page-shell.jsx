@@ -1,7 +1,7 @@
-import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
 
-export function PageShell({ title, className, children }) {
+export default function PageShell({ title, className, children }) {
   return (
     <div className={cn("w-full px-6 py-8 container mx-auto", className)}>
       {title ? (

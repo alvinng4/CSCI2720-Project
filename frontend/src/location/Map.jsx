@@ -3,7 +3,7 @@ import { LoadingScreen } from "@/components/ui/loading-screen";
 import { LocationSheet } from "@/location/LocationSheet";
 import { LocationSideMenu } from "@/location/location-side-menu";
 import { MapComponent } from "@/location/map-component";
-import { PageShell } from "@/components/page-shell";
+import PageShell from "@/components/page-shell";
 import { useLocationsWithDistance } from "@/location/use-locations-with-distance";
 import { useState } from "react";
 

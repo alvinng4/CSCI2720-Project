@@ -7,7 +7,7 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { PageShell } from "@/components/page-shell";
+import PageShell from "@/components/page-shell";
 import { Separator } from "@/components/ui/separator";
 import { useTheme } from "@/components/theme-provider";
 
