@@ -190,8 +190,8 @@ export function LocationListTable({ isFavourite }) {
   }, [fetchLocations]);
 
   const refresh = useCallback(() => {
-    fetchLocations();
     resetMessage();
+    fetchLocations();
   }, [fetchLocations, resetMessage]);
 
   const columns = getColumns(
