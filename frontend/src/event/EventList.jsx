@@ -7,6 +7,7 @@ import CommonTableToolBar from "@/components/common-table-toolbar";
 import CreateNewEventSheet from "./CreateNewEventSheet";
 import { deleteEvent, getAllEvents } from "./event.api";
 import EditEventSheet from "./EditEventSheet";
+import EventDetailSheet from "./EventDetailSheet";
 import EventSideMenu from "./EventSideMenu";
 import { getUser, isAdmin } from "@/lib/AuthHelpers";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -15,6 +16,7 @@ import {
   MessageTypeToColor,
   useMessage,
 } from "@/hooks/use-message";
+import ToggleLike from "@/components/toggle-like";
 import useAsync from "@/hooks/use-async";
 import PageShell from "@/components/page-shell";
 
@@ -35,7 +37,7 @@ export function EventList() {
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingEventId, setEditingEventId] = useState(null);
-  const [_selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   function startCreating() {
     setIsCreating(true);
@@ -82,6 +84,15 @@ export function EventList() {
     setEditingEventId(null);
   }
 
+  function onIsLikeUpdate(id, isLike, numLikes) {
+    setEvents(
+      events.map((e) => (e._id === id ? { ...e, isLike, numLikes } : e))
+    );
+    setSelectedEvent((prev) =>
+      prev && prev._id === id ? { ...prev, isLike, numLikes } : prev
+    );
+  }
+
   const onDelete = useCallback(
     async (e, eventId) => {
       e.stopPropagation();
@@ -125,10 +136,15 @@ export function EventList() {
     ]
   );
 
-  const columns = getColumns(admin, startEditing, onDelete);
+  const columns = getColumns(admin, startEditing, onDelete, onIsLikeUpdate);
 
   return (
     <>
+      <EventDetailSheet
+        event={selectedEvent}
+        setSelectedEvent={setSelectedEvent}
+        onIsLikeUpdate={onIsLikeUpdate}
+      />
       {admin && isCreating && (
         <CreateNewEventSheet
           isCreating={isCreating}
@@ -168,7 +184,9 @@ export function EventList() {
               renderSideMenu={(table) => (
                 <EventSideMenu table={table} refresh={refresh} />
               )}
-              onRowClick={(row) => setSelectedEvent(row)}
+              onRowClick={(row) =>
+                setSelectedEvent(events.find((event) => row._id === event?._id))
+              }
             />
           </div>
         )}
@@ -177,7 +195,7 @@ export function EventList() {
   );
 }
 
-function getColumns(isAdmin, startEditing, onDelete) {
+function getColumns(isAdmin, startEditing, onDelete, onIsLikeUpdate) {
   const columns = [
     {
       accessorKey: "titleE",
@@ -288,6 +306,21 @@ function getColumns(isAdmin, startEditing, onDelete) {
       filterFn: (row, _columnId, filterValue) => {
         const value = row.original.presenterOrgE || "N/A";
         return value.toLowerCase().includes(filterValue.toLowerCase());
+      },
+    },
+    {
+      accessorKey: "isLike",
+      title: "Likes",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Likes" />
+      ),
+      cell: ({ row }) => {
+        return <ToggleLike event={row.original} onUpdate={onIsLikeUpdate} />;
+      },
+      sortingFn: (rowA, rowB) => {
+        const a = Number(rowA.original.numLikes);
+        const b = Number(rowB.original.numLikes);
+        return a - b;
       },
     },
   ];

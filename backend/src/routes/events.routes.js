@@ -56,9 +56,71 @@ router.get("/:id", requireAuth, async (req, res, next) => {
 });
 
 /* Read events */
-router.get("/", requireAuth, async (_req, res, next) => {
+router.get("/", requireAuth, async (req, res, next) => {
   try {
-    const events = await Event.find().populate("location").lean();
+    const events = await Event.aggregate([
+      {
+        $lookup: {
+          from: "likes",
+          let: { event: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$event", "$$event"] },
+                    {
+                      $eq: [
+                        "$user",
+                        mongoose.Types.ObjectId.createFromHexString(
+                          req.header("x-user-id")
+                        ),
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "userLike",
+        },
+      },
+      {
+        $lookup: {
+          from: "likes",
+          localField: "_id",
+          foreignField: "event",
+          as: "allLikes",
+        },
+      },
+      {
+        $addFields: {
+          isLike: { $gt: [{ $size: "$userLike" }, 0] },
+          numLikes: { $size: "$allLikes" },
+        },
+      },
+      {
+        $lookup: {
+          from: "locations",
+          localField: "location",
+          foreignField: "_id",
+          as: "location",
+        },
+      },
+      {
+        $unwind: {
+          path: "$location",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          userLike: 0,
+          allLikes: 0,
+        },
+      },
+      { $sort: { createdAt: -1 } },
+    ]);
     return res.status(200).json(events);
   } catch (e) {
     next(e);

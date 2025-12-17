@@ -6,9 +6,9 @@ import authRoutes from "./routes/auth.routes.js";
 import commentsRoutes from "./routes/comments.routes.js";
 import eventsRoutes from "./routes/events.routes.js";
 import favouritesRoutes from "./routes/favourites.routes.js";
-import usersRoutes from "./routes/users.routes.js";
+import likesRoutes from "./routes/likes.routes.js";
 import locationsRoutes from "./routes/locations.routes.js";
-// import adminRoutes from "./routes/admin.routes.js";
+import usersRoutes from "./routes/users.routes.js";
 
 import errorMiddleware from "./middleware/error.js";
 
@@ -40,9 +40,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/comments", commentsRoutes);
 app.use("/api/events", eventsRoutes);
 app.use("/api/favourites", favouritesRoutes);
-app.use("/api/users", usersRoutes);
+app.use("/api/likes", likesRoutes);
 app.use("/api/locations", locationsRoutes);
-// app.use("/api/admin", adminRoutes);
+app.use("/api/users", usersRoutes);
 
 /* Middleware for error handling */
 app.use(errorMiddleware);

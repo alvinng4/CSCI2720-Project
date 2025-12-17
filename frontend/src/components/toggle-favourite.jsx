@@ -1,50 +1,34 @@
 import { cn } from "@/lib/utils";
-import { getToken, getUser } from "@/lib/AuthHelpers";
 import { Star } from "lucide-react";
-import { useState } from "react";
 
-const API_BASE =
-  (import.meta?.env?.VITE_API_BASE ?? "http://localhost:4000") + "/api";
+import { getUser } from "@/lib/AuthHelpers";
+import { requestToBackend } from "@/lib/utils";
 
 export function ToggleFavourite({ location, onUpdate, className }) {
   const filledClassName = "fill-yellow-400 stroke-yellow-400";
   const unfilledClassName = "fill-none stroke-gray-400";
-  const [isFavourite, setIsFavourite] = useState(location.isFavourite);
 
-  const toggleFavourite = async (event) => {
-    event.stopPropagation();
-    let res = null;
+  const isFavourite = location?.isFavourite ?? false;
+
+  const toggleFavourite = async (e) => {
+    e.stopPropagation();
     const user = getUser();
-    try {
-      res = await fetch(`${API_BASE}/favourites/toggle`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`,
-        },
-        body: JSON.stringify({
-          user: user.id,
-          location: location.id,
-          isFavourite,
-        }),
-      });
-    } catch (err) {
-      console.log(err);
+
+    const result = await requestToBackend("POST", "favourites/toggle", {
+      user: user?.id,
+      location: location?.id,
+      isFavourite,
+    });
+    if (!result?.ok || result?.data?.isFavourite === null) {
       return;
     }
 
-    if (!res.ok) {
-      return;
-    }
-
-    const data = await res.json();
-    setIsFavourite(data.isFavourite);
-    onUpdate(location?.id, data.isFavourite);
+    onUpdate(location?.id, result.data.isFavourite);
   };
 
   return (
     <Star
-      onClick={(event) => toggleFavourite(event)}
+      onClick={(e) => toggleFavourite(e)}
       className={cn(
         className,
         "cursor-pointer transition-colors",

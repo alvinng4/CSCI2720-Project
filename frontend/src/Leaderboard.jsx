@@ -1,8 +1,8 @@
 import PageShell from "@/components/page-shell";
 
-export function Suggestions() {
+export function Leaderboard() {
   return (
-    <PageShell title="Suggestions">
+    <PageShell title="Leaderboard">
       <p className="text-muted-foreground">Hello, world!</p>
     </PageShell>
   );
