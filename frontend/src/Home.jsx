@@ -106,9 +106,7 @@ export function Home() {
                 </span>
                 Leaderboard
               </CardTitle>
-              <CardDescription>
-                See the most popular events
-              </CardDescription>
+              <CardDescription>See the most popular events</CardDescription>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
               <ul className="list-disc space-y-1 pl-5">
