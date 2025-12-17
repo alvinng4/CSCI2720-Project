@@ -44,7 +44,7 @@ export default function ToggleLike({ event, onUpdate, className }) {
       <span
         className={cn(
           className,
-          "cursor-pointer transition-colors",
+          "transition-colors",
           isLike ? filledTextClassName : unfilledTextClassName
         )}
       >

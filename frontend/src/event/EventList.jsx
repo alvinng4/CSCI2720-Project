@@ -7,6 +7,7 @@ import CommonTableToolBar from "@/components/common-table-toolbar";
 import CreateNewEventSheet from "./CreateNewEventSheet";
 import { deleteEvent, getAllEvents } from "./event.api";
 import EditEventSheet from "./EditEventSheet";
+import EventDetailSheet from "./EventDetailSheet";
 import EventSideMenu from "./EventSideMenu";
 import { getUser, isAdmin } from "@/lib/AuthHelpers";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -36,7 +37,7 @@ export function EventList() {
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingEventId, setEditingEventId] = useState(null);
-  const [_selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   function startCreating() {
     setIsCreating(true);
@@ -85,7 +86,10 @@ export function EventList() {
 
   function onIsLikeUpdate(id, isLike, numLikes) {
     setEvents(
-      events.map((e) => (e.id === id ? { ...e, isLike, numLikes } : e))
+      events.map((e) => (e._id === id ? { ...e, isLike, numLikes } : e))
+    );
+    setSelectedEvent((prev) =>
+      prev && prev._id === id ? { ...prev, isLike, numLikes } : prev
     );
   }
 
@@ -136,6 +140,11 @@ export function EventList() {
 
   return (
     <>
+      <EventDetailSheet
+        event={selectedEvent}
+        setSelectedEvent={setSelectedEvent}
+        onIsLikeUpdate={onIsLikeUpdate}
+      />
       {admin && isCreating && (
         <CreateNewEventSheet
           isCreating={isCreating}
@@ -175,7 +184,9 @@ export function EventList() {
               renderSideMenu={(table) => (
                 <EventSideMenu table={table} refresh={refresh} />
               )}
-              onRowClick={(row) => setSelectedEvent(row)}
+              onRowClick={(row) =>
+                setSelectedEvent(events.find((event) => row._id === event?._id))
+              }
             />
           </div>
         )}

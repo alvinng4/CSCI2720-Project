@@ -38,17 +38,19 @@ router.post("/toggle", requireAuth, async (req, res, next) => {
     let actualIsLike = 0;
     if (existing && isLike) {
       await existing.deleteOne();
-      statusCode = 200
-      actualIsLike = false
+      statusCode = 200;
+      actualIsLike = false;
     } else if (!existing && !isLike) {
       const like = new Like({ user, event });
       await like.save();
-      statusCode = 201
-      actualIsLike = true
+      statusCode = 201;
+      actualIsLike = true;
     }
 
     const numLikes = await Like.countDocuments({ event });
-    return res.status(Number(statusCode)).json({ isLike: actualIsLike, numLikes });
+    return res
+      .status(Number(statusCode))
+      .json({ isLike: actualIsLike, numLikes });
   } catch (e) {
     next(e);
   }
