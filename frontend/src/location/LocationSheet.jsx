@@ -96,7 +96,7 @@ export function LocationSheet({
                 {makeSubsectionTitle(`Comments (${commentLength})`)}
                 <CommentsList
                   className="px-3 py-3 border rounded-md bg-muted/40"
-                  location={location}
+                  locationId={location?.id}
                   setCommentLength={setCommentLength}
                 />
               </div>

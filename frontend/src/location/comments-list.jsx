@@ -14,7 +14,7 @@ import useAsync from "@/hooks/use-async";
 
 export default function CommentsList({
   className,
-  location,
+  locationId,
   setCommentLength,
 }) {
   const [isLeavingComment, setIsLeavingComment] = useState(false);
@@ -31,7 +31,7 @@ export default function CommentsList({
 
   /* Load comments */
   const fetchComments = useCallback(async () => {
-    if (!location?.id) {
+    if (!locationId) {
       showMessage("Error: Missing location id!", MessageTypes.ERROR);
       return;
     }
@@ -39,7 +39,7 @@ export default function CommentsList({
     startForegroundLoading();
     const result = await requestToBackend(
       "GET",
-      `comments/?location=${encodeURIComponent(location.id)}`
+      `comments/?location=${encodeURIComponent(locationId)}`
     );
     stopForegroundLoading();
 
@@ -55,7 +55,7 @@ export default function CommentsList({
     setComments(result.data);
     setCommentLength(result.data.length);
   }, [
-    location?.id,
+    locationId,
     setCommentLength,
     startForegroundLoading,
     stopForegroundLoading,
@@ -83,7 +83,7 @@ export default function CommentsList({
     const result = await requestToBackend("POST", "comments/", {
       content,
       user: user.id,
-      location: location.id,
+      location: locationId,
     });
     stopForegroundLoading();
 

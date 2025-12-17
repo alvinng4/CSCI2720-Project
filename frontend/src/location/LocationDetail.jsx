@@ -1,28 +1,77 @@
-import CommentsList from "@/location/comments-list";
-import LoadingScreen from "@/components/ui/loading-screen";
-import MapComponent from "@/location/map-component";
-import PageShell from "@/components/page-shell";
 import { Table, TableBody, TableRow, TableCell } from "@/components/ui/table";
-import ToggleFavourite from "@/components/toggle-favourite";
-import { useLocationWithDistance } from "@/location/use-locations-with-distance";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+
+import CommentsList from "./comments-list";
+import { getLocation } from "./location.api";
+import LoadingScreen from "@/components/ui/loading-screen";
+import MapComponent from "./map-component";
+import {
+  MessageTypes,
+  MessageTypeToColor,
+  useMessage,
+} from "@/hooks/use-message";
+import PageShell from "@/components/page-shell";
+import ToggleFavourite from "@/components/toggle-favourite";
+import useAsync from "@/hooks/use-async";
 
 export function LocationDetail() {
   const { id } = useParams();
   const [commentLength, setCommentLength] = useState(0);
-  const { location, loading, errorMsg } = useLocationWithDistance(id);
+  const [location, setLocation] = useState(null);
+  const { message, isShowMessage, messageType, showMessage } = useMessage();
+  const {
+    isForegroundLoading,
+    lastSyncTime,
+    startForegroundLoading,
+    stopForegroundLoading,
+  } = useAsync({ initialForegroundLoading: true });
 
-  // TODO
-  // function onIsFavouriteUpdate(id, isFavourite) {
-  //   setLocations(
-  //     locations.map((loc) => (loc.id === id ? { ...loc, isFavourite } : loc))
-  //   );
-  // }
-
-  if (loading) {
-    return <LoadingScreen />;
+  function onIsFavouriteUpdate(_, isFavourite) {
+    setLocation({
+      ...location,
+      isFavourite: isFavourite,
+    });
   }
+
+  const fetchLocation = useCallback(async () => {
+    if (!id) {
+      showMessage("Error: Missing location ID", MessageTypes.ERROR);
+      return;
+    }
+
+    startForegroundLoading();
+    const result = await getLocation(id);
+    stopForegroundLoading();
+
+    if (!result.ok || !result?.data?.location) {
+      showMessage(
+        result?.error || "Error: Something went wrong.",
+        MessageTypes.ERROR
+      );
+      return;
+    }
+    const loc = result.data.location;
+    setLocation({
+      ...loc,
+      id: loc?._id,
+      name: loc?.nameE,
+      num_events: loc?.numEvents,
+      latitude: Number(loc?.latitude ?? 0),
+      longitude: Number(loc?.longitude ?? 0),
+      isFavourite: loc?.isFavourite ?? false,
+    });
+  }, [
+    id,
+    startForegroundLoading,
+    stopForegroundLoading,
+    showMessage,
+    setLocation,
+  ]);
+
+  useEffect(() => {
+    fetchLocation();
+  }, [fetchLocation]);
 
   const info = [
     { label: "District", value: location?.district },
@@ -35,68 +84,97 @@ export function LocationDetail() {
     { label: "# Events", value: location?.num_events },
   ];
 
+  if (isForegroundLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <>
       <PageShell title={location?.name}>
-        <div className="text-red-500">{errorMsg}</div>
         {location && (
-          <div className="px-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Left column */}
-            <div className="space-y-6">
-              {/* Information */}
-              <div>
-                {makeSubsectionTitle("Information")}
-                <div className="border rounded-md">
-                  <Table>
-                    <TableBody>
-                      {info.map((item) => (
-                        <TableRow key={item.label}>
+          <div className="px-4">
+            {/* Feedback message */}
+            <p
+              hidden={!isShowMessage}
+              className={MessageTypeToColor[messageType]}
+            >
+              {message}
+            </p>
+
+            {/* Sync time indicator */}
+            {lastSyncTime && (
+              <div className="flex justify-end mb-2">
+                <span className="text-sm text-muted-foreground whitespace-nowrap">
+                  Last Updated on{" "}
+                  {lastSyncTime ? new Date(lastSyncTime).toLocaleString() : ""}
+                </span>
+              </div>
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Left column */}
+              <div className="space-y-6">
+                {/* Information */}
+                <div>
+                  {makeSubsectionTitle("Information")}
+                  <div className="border rounded-md">
+                    <Table>
+                      <TableBody>
+                        {info.map((item) => (
+                          <TableRow key={item.label}>
+                            <TableCell className="font-medium w-40">
+                              {item.label}
+                            </TableCell>
+                            <TableCell>{item.value}</TableCell>
+                          </TableRow>
+                        ))}
+                        <TableRow>
                           <TableCell className="font-medium w-40">
-                            {item.label}
+                            Favourite
                           </TableCell>
-                          <TableCell>{item.value}</TableCell>
+                          <TableCell>
+                            <ToggleFavourite
+                              location={location}
+                              onUpdate={onIsFavouriteUpdate}
+                            />
+                          </TableCell>
                         </TableRow>
-                      ))}
-                      <TableRow>
-                        <TableCell className="font-medium w-40">
-                          Favourite
-                        </TableCell>
-                        <TableCell>
-                          <ToggleFavourite location={location} />
-                        </TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
+
+                {/* Map */}
+                <div>
+                  {makeSubsectionTitle("Map")}
+                  <div className="px-3 py-3 border rounded-md bg-muted/40">
+                    {!!location &&
+                      !!location?.latitude &&
+                      !!location?.longitude && (
+                        <MapComponent
+                          locations={[location]}
+                          center={[location?.latitude, location?.longitude]}
+                          style={{
+                            height: "500px",
+                            width: "100%",
+                            zIndex: "1",
+                          }}
+                        />
+                      )}
+                  </div>
                 </div>
               </div>
 
-              {/* Map */}
+              {/* Right column */}
               <div>
-                {makeSubsectionTitle("Map")}
-                <div className="px-3 py-3 border rounded-md bg-muted/40">
-                  {!!location &&
-                    !!location?.latitude &&
-                    !!location?.longitude && (
-                      <MapComponent
-                        locations={[location]}
-                        center={[location?.latitude, location?.longitude]}
-                        style={{ height: "500px", width: "100%", zIndex: "1" }}
-                      />
-                    )}
+                {/* Comments */}
+                <div>
+                  {makeSubsectionTitle(`Comments (${commentLength})`)}
+                  <CommentsList
+                    className="px-3 py-3 border rounded-md bg-muted/40"
+                    locationId={id}
+                    setCommentLength={setCommentLength}
+                  />
                 </div>
-              </div>
-            </div>
-
-            {/* Right column */}
-            <div>
-              {/* Comments */}
-              <div>
-                {makeSubsectionTitle(`Comments (${commentLength})`)}
-                <CommentsList
-                  className="px-3 py-3 border rounded-md bg-muted/40"
-                  location={location}
-                  setCommentLength={setCommentLength}
-                />
               </div>
             </div>
           </div>

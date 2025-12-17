@@ -30,7 +30,7 @@ export default function useAsync({
     }, foregroundDelayMs);
   }, [foregroundDelayMs]);
 
-  const stopForegroundLoading = useCallback((setSyncTime) => {
+  const stopForegroundLoading = useCallback((setSyncTime = true) => {
     if (foregroundTimeoutRef.current) {
       clearTimeout(foregroundTimeoutRef.current);
       foregroundTimeoutRef.current = null;
@@ -52,7 +52,7 @@ export default function useAsync({
     }, backgroundDelayMs);
   }, [backgroundDelayMs]);
 
-  const stopBackgroundLoading = useCallback((setSyncTime) => {
+  const stopBackgroundLoading = useCallback((setSyncTime = false) => {
     if (backgroundTimeoutRef.current) {
       clearTimeout(backgroundTimeoutRef.current);
       backgroundTimeoutRef.current = null;
