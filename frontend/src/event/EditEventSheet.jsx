@@ -103,10 +103,12 @@ export default function EditEventSheet({
   }, [showMessage]);
 
   useEffect(() => {
-    startForegroundLoading();
-    fetchEvent();
-    fetchLocations();
-    stopForegroundLoading();
+    (async () => {
+      startForegroundLoading();
+      await fetchEvent();
+      await fetchLocations();
+      stopForegroundLoading();
+    })();
   }, [
     startForegroundLoading,
     stopForegroundLoading,

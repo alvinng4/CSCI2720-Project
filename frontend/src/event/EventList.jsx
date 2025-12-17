@@ -122,15 +122,9 @@ export function EventList() {
         `Success! Event with id ${eventId} is deleted.`,
         MessageTypes.SPECIAL
       );
-      fetchEvents();
+      setEvents((prev) => prev.filter((event) => event.id !== eventId));
     },
-    [
-      fetchEvents,
-      isLoading,
-      showMessage,
-      startBackgroundLoading,
-      stopBackgroundLoading,
-    ]
+    [isLoading, showMessage, startBackgroundLoading, stopBackgroundLoading]
   );
 
   const columns = getColumns(admin, startEditing, onDelete, onIsLikeUpdate);

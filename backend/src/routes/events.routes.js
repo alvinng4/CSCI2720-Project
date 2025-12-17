@@ -138,23 +138,30 @@ router.put("/:id", requireAuth, async (req, res, next) => {
     // Check input
     const { event } = req.body;
     const location = event?.location;
-    if (!event?.titleE || !location) {
-      return res.status(400).json({ error: "Missing fields" });
+    if (event?.titleE === "") {
+      return res.status(400).json({ error: "Event title cannot be changed to empty" });
     }
 
-    // Validate location ObjectId
-    if (!mongoose.Types.ObjectId.isValid(location)) {
-      return res.status(400).json({ error: "Invalid location ID" });
-    }
+    if (location)
+    {
+      if (location === "") {
+        return res.status(400).json({ error: "Event location cannot be changed to empty" });
+      }
 
-    // Check if location exists
-    const locationExists = await Location.findById(location).lean();
-    if (!locationExists) {
-      return res.status(404).json({ error: "Location not found" });
-    }
+      // Validate location ObjectId
+      if (!mongoose.Types.ObjectId.isValid(location)) {
+        return res.status(400).json({ error: "Invalid location ID" });
+      }
 
-    // Convert location to ObjectId
-    event.location = mongoose.Types.ObjectId.createFromHexString(location);
+      // Check if location exists
+      const locationExists = await Location.findById(location).lean();
+      if (!locationExists) {
+        return res.status(404).json({ error: "Location not found" });
+      }
+
+      // Convert location to ObjectId
+      event.location = mongoose.Types.ObjectId.createFromHexString(location);
+    }
 
     const updatedEvent = await Event.findByIdAndUpdate(id, event, {
       new: true,
