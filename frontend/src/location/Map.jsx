@@ -51,6 +51,7 @@ export function Map() {
       district: loc.district,
       latitude: Number(loc.latitude),
       longitude: Number(loc.longitude),
+      num_events: loc.numEvents,
     }));
 
     /* Compute distance */
