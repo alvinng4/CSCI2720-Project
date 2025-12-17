@@ -55,7 +55,7 @@ export default function CommentsList({
     setComments(result.data);
     setCommentLength(result.data.length);
   }, [
-    location,
+    location?.id,
     setCommentLength,
     startForegroundLoading,
     stopForegroundLoading,
@@ -72,7 +72,10 @@ export default function CommentsList({
     const user = getUser();
 
     if (isLoading) {
-      showMessage("Processing. Please wait and try again later.", MessageTypes.ERROR);
+      showMessage(
+        "Processing. Please wait and try again later.",
+        MessageTypes.ERROR
+      );
       return;
     }
 

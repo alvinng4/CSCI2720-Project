@@ -13,6 +13,13 @@ export function LocationDetail() {
   const [commentLength, setCommentLength] = useState(0);
   const { location, loading, errorMsg } = useLocationWithDistance(id);
 
+  // TODO
+  // function onIsFavouriteUpdate(id, isFavourite) {
+  //   setLocations(
+  //     locations.map((loc) => (loc.id === id ? { ...loc, isFavourite } : loc))
+  //   );
+  // }
+
   if (loading) {
     return <LoadingScreen />;
   }

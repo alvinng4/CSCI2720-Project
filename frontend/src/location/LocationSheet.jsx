@@ -1,7 +1,4 @@
 import { Button } from "@/components/ui/button";
-import CommentsList from "@/location/comments-list";
-import LoadingScreen from "@/components/ui/loading-screen";
-import MapComponent from "@/location/map-component";
 import {
   Sheet,
   SheetContent,
@@ -10,19 +7,20 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Table, TableBody, TableRow, TableCell } from "@/components/ui/table";
-import ToggleFavourite from "@/components/toggle-favourite";
-import { useLocationWithDistance } from "@/location/use-locations-with-distance";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import CommentsList from "@/location/comments-list";
+import MapComponent from "@/location/map-component";
+import ToggleFavourite from "@/components/toggle-favourite";
 
 export function LocationSheet({
-  locationId,
+  location,
   setSelectedLocation,
   onIsFavouriteUpdate,
 }) {
   const navigate = useNavigate();
-  const [commentLength, setCommentLength] = useState(null);
-  const { location, loading, errorMsg } = useLocationWithDistance(locationId);
+  const [commentLength, setCommentLength] = useState(0);
 
   const info = [
     { label: "District", value: location?.district },
@@ -33,9 +31,11 @@ export function LocationSheet({
     { label: "# Events", value: location?.num_events },
   ];
 
+  useEffect(() => setCommentLength(0), [location]); // Reset comment length every time location changes
+
   return (
     <Sheet
-      open={!!locationId}
+      open={!!location}
       onOpenChange={(open) => {
         if (!open) {
           setSelectedLocation(null);
@@ -43,14 +43,11 @@ export function LocationSheet({
       }}
     >
       <SheetContent side="left" className="w-200 flex flex-col">
-        {loading ? (
-          <LoadingScreen />
-        ) : (
+        {location && (
           <>
             <SheetHeader className="px-4">
               <SheetTitle>{location?.name}</SheetTitle>
             </SheetHeader>
-            <div className="text-red-500">{errorMsg}</div>
             <div className="flex-1 overflow-y-auto px-4 space-y-2">
               {/* Information */}
               <div>

@@ -57,6 +57,9 @@ export function LocationListTable({ isFavourite }) {
     setLocations(
       locations.map((loc) => (loc.id === id ? { ...loc, isFavourite } : loc))
     );
+    setSelectedLocation((prev) =>
+      prev && prev.id === id ? { ...prev, isFavourite } : prev
+    );
   }
 
   const {
@@ -92,7 +95,7 @@ export function LocationListTable({ isFavourite }) {
   return (
     <>
       <LocationSheet
-        locationId={selectedLocation?.id}
+        location={selectedLocation}
         setSelectedLocation={setSelectedLocation}
         onIsFavouriteUpdate={onIsFavouriteUpdate}
       />
