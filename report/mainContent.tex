@@ -1,118 +1,165 @@
-\section{Methodologies}
+\section{Methodology}
 
 \subsection{Files Submitted}
-\begin{table}[h]
-    \centering
-    \begin{tabular}{lp{9cm}}
-        \hline
-        \texttt{frontend/src/home/Home.jsx} & Landing page (hero + feature cards). \\
-        \texttt{frontend/src/location/LocationList.jsx} & Locations directory page. \\
-        \texttt{frontend/src/location/LocationListTable.jsx} & Reusable table, filters, distance column, admin actions. \\
-        \texttt{frontend/src/location/CreateLocationSheet.jsx} & Admin create side sheet with map preview. \\
-        \texttt{frontend/src/location/EditLocationSheet.jsx} & Admin edit side sheet with map preview. \\
-        \texttt{frontend/src/event/EventList.jsx} & Event list with admin toolbar. \\
-        \texttt{frontend/src/event/CreateNewEventSheet.jsx} & Admin create event sheet. \\
-        \texttt{frontend/src/event/EditEventSheet.jsx} & Admin edit event sheet. \\
-        \texttt{frontend/src/favourites/FavouriteList.jsx} & Favourites view (locations only). \\
-        \texttt{frontend/src/lib/locations.api.js} & REST helpers for locations (GET/POST/PUT/DELETE). \\
-        \texttt{frontend/src/event/event.api.js} & REST helpers for events (GET/POST/PUT/DELETE). \\
-        \texttt{frontend/src/lib/favourites.js} & LocalStorage store for star toggles. \\
-        \texttt{frontend/src/hooks/use-locations-with-distance.js} & Geolocation + haversine distance computation. \\
-        \texttt{frontend/src/components/map-component.jsx} & Leaflet map, marker preview. \\
-        \texttt{frontend/src/components/ui/data-table/*} & Table, column header, view options components. \\
-        \hline
-    \end{tabular}
-\end{table}
+Below are the directory structure of the project.
+For simplicity, irrelevant or simple configuration files are omitted.
+\begin{verbatim}
+CSCI2720-Project/
+|-- report/                                // Source code for report
+|-- data/
+|   `-- preprocess.py                      // Data preprocessing script
+|-- frontend/
+`-- backend/
+\end{verbatim}
 
-\subsection{Dataset Preprocessing}
+\subsubsection{Frontend}
+\begin{verbatim}
+frontend/
+ `- src/
+    |-- main.jsx                       // Root of the app
+    |-- App.jsx                        // Main App component
+    |-- index.css                      // Theme CSS config.
+    |-- TopNav.jsx                     // Navigation bar
+    |-- Home.jsx                       // Home page
+    |-- Auth.jsx                       // Authentication page
+    |-- Leaderboard.jsx                // Leaderboard page
+    |-- event/                         // Event-related files
+    |-- location/                      // Location-related files
+    |-- UserManager/                   // User Manager related files
+    |-- constants/                     // Reuseable constants
+    |-- hooks/                         // Reuseable hooks
+    |-- public/                        // Assets folder
+    |-- lib/                           // Helper functions
+    `-- components/                    // Reuseable components
+        |-- common-table-toolbar.jsx   // Reuseable table tool-bar
+        |-- toggle-favourite.jsx       // Button to toggle favourite
+        |-- toggle-like.jsx            // Button to toggle like
+        |-- page-shell.jsx             // A "Shell" for padding and title
+        |-- mode-toggle.jsx            // Shadcn dark mode toggle
+        |-- theme-provider.jsx         // Shadcn dark mode theme provider
+        `-- ui/                        // Shadcn UI components
+\end{verbatim}
 
-\subsection{Required Actions}
-\subsubsection{Landing Page}
-The landing page presents a hero banner of Hong Kong's skyline and three feature cards that deep-link into the app: (i) \emph{Locations list}, (ii) \emph{Map view}, and (iii) \emph{Favourites}. The page is intentionally lightweight—no data fetch occurs here—so first paint is fast and navigation is obvious for new users.
-\paragraph{UI structure}
-\begin{itemize}
-  \item \textbf{Hero banner}: full-width image with subtle gradient overlay to preserve title contrast.
-  \item \textbf{Feature cards grid}: responsive 1–3 column layout with icon, title, and a one-line description; each card routes to its respective module.
-  \item \textbf{Top nav}: global navigation to Home, Location List, Event List, Map, and Favourite List; auth avatar with role badge.
-\end{itemize}
-\paragraph{Interactions}
-\begin{itemize}
-  \item Cards are keyboard-focusable and announce destination via \texttt{aria-label}.
-  \item No API calls are made on Home; all data work happens after navigation.
-\end{itemize}
+\subsubsection{Backend}
+\begin{verbatim}
+backend/
+  |-- .env                               // Environment files storing secret keys
+  |-- init-db.js                         // Script for initializing database
+  `-- src/
+      |-- index.js                       // Root of backend
+      |-- app.js                         // Main App component
+      |-- libs/
+      |   |-- connect-db.js              // For database connecting
+      |   `-- register-account.js        // For registering user accounts
+      |-- middleware/
+      |   |-- error.js                   // For error handling
+      |   |-- logging.js                 // For logging all backend requests
+      |   |-- require-auth.js            // Check user auth token
+      |   |-- require-recaptcha.js       // Check ReCAPTCHA tokens
+      |   `-- timeout.js                 // To simulate slow internet connection
+      |-- models/                        // Schema definitions
+      `-- routes/                        // All backend routes
+\end{verbatim}
 
-\subsubsection{Locations}
-\label{subsec:locations}
-This is a dedicated directory distinct from the Home page. It lists venues with sorting, text filters, district selection, distance range (if geolocation granted), and a favourites toggle.
-CRUD for Admin Users: Administrators can create, edit, and delete locations. The create/edit sheets include name, district, latitude, and longitude, accompanied by a live map preview to verify coordinates. The list view supports filtering by name/district and, where geolocation is granted, a computed distance column. Successful mutations refresh the table so changes appear without reloading.
-\paragraph{Key features}
-\begin{itemize}
-  \item \textbf{Client-side filters}: name/description/district; range slider binds to a custom filter predicate on the distance column.
-  \item \textbf{Distance computation}: when permitted, user coordinates feed a Haversine helper to derive per-row distance (km).
-  \item \textbf{Favourites}: star button writes to \texttt{localStorage} (\texttt{favourites/v1}) with optimistic UI.
-  \item \textbf{Admin actions}: left-sheet modals for \emph{Create} and \emph{Edit}; deletion with confirm dialog; table refreshes on success.
-\end{itemize}
-\paragraph{CRUD Admin}
-\label{subsec:locations-crud}
-Parallel CRUD to events:
-\begin{itemize}
-  \item \textbf{Create/Edit sheets}: fields for name, district, latitude, longitude; live map marker preview.
-  \item \textbf{Success flow}: close sheet, toast message, and in-memory table refresh (\emph{no} hard reload required).
-\end{itemize}
+\subsection{Data Preprocessing}
+Preprocessing the cultural events and venues dataset are simple.
+Here we briefly outline the process.
+\begin{enumerate}
+    \item Get government dataset \verb|venues.xml| and \verb|events.xml| from \url{https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural}
+    \item Parse the data with Python \verb|xmltodict| package.
+    \item Remove data that missing required fields, e.g. latitude and longitude.
+    \item Pick 10 random venues in accordance with the requirements.
+    \item Dump the data to JSON for backend initialization.
+\end{enumerate}
+For details, see \verb|data/preprocessing.py| and \verb|data/README.md|.
 
-\subsubsection{Events}
-CRUD for Admin Users: Administrators can list, search, sort, create, edit, and delete events. The table includes fixed column widths with truncation to prevent long content from collapsing other columns, and a role-gated toolbar exposes action buttons only to admins. Creating or editing opens a Radix Sheet containing form fields for title, description, date, time, price, presenters, and venue (select). Required fields are validated on submit. After a successful mutation, the table refreshes and a “Last Updated” indicator (persisted in \texttt{localStorage}) is shown in the toolbar.
-\paragraph{Create Event}
-\begin{itemize}
-  \item Fields: title, description, venue (select), date, time, price, presenters; embedded map previews venue coordinates.
-  \item On submit, payload validation occurs client-side; successful POST closes the sheet and triggers a table refresh.
-\end{itemize}
-\paragraph{Edit Event}
-\begin{itemize}
-  \item Opens with current values populated; allows partial edits.
-  \item Uses \texttt{PUT /api/events/:id} (or \texttt{PATCH} if supported) and updates the visible row without a full page reload.
-\end{itemize}
+% \subsection{Required Actions}
+% \subsubsection{Landing Page}
+% The landing page presents a hero banner of Hong Kong's skyline and three feature cards that deep-link into the app: (i) \emph{Locations list}, (ii) \emph{Map view}, and (iii) \emph{Favourites}. The page is intentionally lightweight—no data fetch occurs here—so first paint is fast and navigation is obvious for new users.
+% \paragraph{UI structure}
+% \begin{itemize}
+%   \item \textbf{Hero banner}: full-width image with subtle gradient overlay to preserve title contrast.
+%   \item \textbf{Feature cards grid}: responsive 1–3 column layout with icon, title, and a one-line description; each card routes to its respective module.
+%   \item \textbf{Top nav}: global navigation to Home, Location List, Event List, Map, and Favourite List; auth avatar with role badge.
+% \end{itemize}
+% \paragraph{Interactions}
+% \begin{itemize}
+%   \item Cards are keyboard-focusable and announce destination via \texttt{aria-label}.
+%   \item No API calls are made on Home; all data work happens after navigation.
+% \end{itemize}
 
-\subsubsection{Favourites View}
-The Favourites view reuses the table in Locations page, filtered to locations starred by the user. Favourites are persisted in \texttt{localStorage} using a simple key-value store (\texttt{favourites/v1}). Toggling the star updates the store immediately and re-renders the table without a server round-trip. The same filters/sorting and detail sheet are available.
+% \subsubsection{Locations}
+% \label{subsec:locations}
+% This is a dedicated directory distinct from the Home page. It lists venues with sorting, text filters, district selection, distance range (if geolocation granted), and a favourites toggle.
+% CRUD for Admin Users: Administrators can create, edit, and delete locations. The create/edit sheets include name, district, latitude, and longitude, accompanied by a live map preview to verify coordinates. The list view supports filtering by name/district and, where geolocation is granted, a computed distance column. Successful mutations refresh the table so changes appear without reloading.
+% \paragraph{Key features}
+% \begin{itemize}
+%   \item \textbf{Client-side filters}: name/description/district; range slider binds to a custom filter predicate on the distance column.
+%   \item \textbf{Distance computation}: when permitted, user coordinates feed a Haversine helper to derive per-row distance (km).
+%   \item \textbf{Favourites}: star button writes to \texttt{localStorage} (\texttt{favourites/v1}) with optimistic UI.
+%   \item \textbf{Admin actions}: left-sheet modals for \emph{Create} and \emph{Edit}; deletion with confirm dialog; table refreshes on success.
+% \end{itemize}
+% \paragraph{CRUD Admin}
+% \label{subsec:locations-crud}
+% Parallel CRUD to events:
+% \begin{itemize}
+%   \item \textbf{Create/Edit sheets}: fields for name, district, latitude, longitude; live map marker preview.
+%   \item \textbf{Success flow}: close sheet, toast message, and in-memory table refresh (\emph{no} hard reload required).
+% \end{itemize}
 
-\subsubsection{API Integration and Auth}
-Frontend API helpers wrap REST endpoints for events and locations:
-\begin{itemize}
-  \item \textbf{Events:} \texttt{GET /api/events}, \texttt{POST /api/events}, \texttt{PUT /api/events/:id}, \texttt{DELETE /api/events/:id}.
-  \item \textbf{Locations:} \texttt{GET /api/locations}, \texttt{POST /api/locations}, \texttt{PUT /api/locations/:id}, \texttt{DELETE /api/locations/:id}.
-\end{itemize}
-Requests include \texttt{Authorization: Bearer \textless token\textgreater} retrieved from \texttt{localStorage}. Responses are normalized for table display and for form initial values in the edit sheets.
+% \subsubsection{Events}
+% CRUD for Admin Users: Administrators can list, search, sort, create, edit, and delete events. The table includes fixed column widths with truncation to prevent long content from collapsing other columns, and a role-gated toolbar exposes action buttons only to admins. Creating or editing opens a Radix Sheet containing form fields for title, description, date, time, price, presenters, and venue (select). Required fields are validated on submit. After a successful mutation, the table refreshes and a “Last Updated” indicator (persisted in \texttt{localStorage}) is shown in the toolbar.
+% \paragraph{Create Event}
+% \begin{itemize}
+%   \item Fields: title, description, venue (select), date, time, price, presenters; embedded map previews venue coordinates.
+%   \item On submit, payload validation occurs client-side; successful POST closes the sheet and triggers a table refresh.
+% \end{itemize}
+% \paragraph{Edit Event}
+% \begin{itemize}
+%   \item Opens with current values populated; allows partial edits.
+%   \item Uses \texttt{PUT /api/events/:id} (or \texttt{PATCH} if supported) and updates the visible row without a full page reload.
+% \end{itemize}
 
-\subsection{Data Normalization \& UI Pre-processing}
-\textbf{Events:} The payload is normalized to a table row structure and a display-only \texttt{dateTime} string is composed from \texttt{date} and \texttt{time}. The presenters field is unified across backends emitting either \texttt{presenter} or \texttt{presenters}. For submissions, both \texttt{venueId} and a denormalized \texttt{venue} name are sent as required by the backend.
-\newline
-\textbf{Locations:} The API response is mapped to \{\texttt{id}, \texttt{name}, \texttt{district}, \texttt{latitude}, \texttt{longitude}, \texttt{num\_events}\}. When geolocation is available, a \texttt{distance} (km) field is computed for sorting and range filtering.
+% \subsubsection{Favourites View}
+% The Favourites view reuses the table in Locations page, filtered to locations starred by the user. Favourites are persisted in \texttt{localStorage} using a simple key-value store (\texttt{favourites/v1}). Toggling the star updates the store immediately and re-renders the table without a server round-trip. The same filters/sorting and detail sheet are available.
 
-\subsection{UI/UX Details}
-\begin{itemize}
-  \item \textbf{Fixed-width columns \& truncation} ensure long text does not hide other columns and maintain consistent row height.
-  \item \textbf{Accessible Sheets (Radix)} for Create/Edit: titles are provided; description/aria attributes are handled to suppress a11y warnings.
-  \item \textbf{Role-gated controls}: admin toolbars and destructive actions are hidden from non-admin users.
-  \item \textbf{Immediate feedback}: sheets close and tables refresh on success; validation errors are surfaced inline; a last-updated timestamp appears after any mutation.
-\end{itemize}
+% \subsubsection{API Integration and Auth}
+% Frontend API helpers wrap REST endpoints for events and locations:
+% \begin{itemize}
+%   \item \textbf{Events:} \texttt{GET /api/events}, \texttt{POST /api/events}, \texttt{PUT /api/events/:id}, \texttt{DELETE /api/events/:id}.
+%   \item \textbf{Locations:} \texttt{GET /api/locations}, \texttt{POST /api/locations}, \texttt{PUT /api/locations/:id}, \texttt{DELETE /api/locations/:id}.
+% \end{itemize}
+% Requests include \texttt{Authorization: Bearer \textless token\textgreater} retrieved from \texttt{localStorage}. Responses are normalized for table display and for form initial values in the edit sheets.
 
-\subsection{Minimal Backend Touchpoints for These Features}
-To support the above flows, the Events and Locations routes accept create/update/delete with the field names and payload shapes described. Events update requires both \texttt{venueId} and denormalized \texttt{venue}; presenters are handled when the backend emits either \texttt{presenter} or \texttt{presenters}. Responses return the normalized fields consumed by the table and edit sheets.
+% \subsection{Data Normalization \& UI Pre-processing}
+% \textbf{Events:} The payload is normalized to a table row structure and a display-only \texttt{dateTime} string is composed from \texttt{date} and \texttt{time}. The presenters field is unified across backends emitting either \texttt{presenter} or \texttt{presenters}. For submissions, both \texttt{venueId} and a denormalized \texttt{venue} name are sent as required by the backend.
+% \newline
+% \textbf{Locations:} The API response is mapped to \{\texttt{id}, \texttt{name}, \texttt{district}, \texttt{latitude}, \texttt{longitude}, \texttt{num\_events}\}. When geolocation is available, a \texttt{distance} (km) field is computed for sorting and range filtering.
 
-\subsection{Extra Features}
+% \subsection{UI/UX Details}
+% \begin{itemize}
+%   \item \textbf{Fixed-width columns \& truncation} ensure long text does not hide other columns and maintain consistent row height.
+%   \item \textbf{Accessible Sheets (Radix)} for Create/Edit: titles are provided; description/aria attributes are handled to suppress a11y warnings.
+%   \item \textbf{Role-gated controls}: admin toolbars and destructive actions are hidden from non-admin users.
+%   \item \textbf{Immediate feedback}: sheets close and tables refresh on success; validation errors are surfaced inline; a last-updated timestamp appears after any mutation.
+% \end{itemize}
 
-\subsection{Algorithms/Functions}
-\begin{itemize}
-    \item \textbf{Haversine distance}: computes user-to-venue distance for sorting and range filtering.
-    \item \textbf{Debounced filters}: search inputs debounce updates to avoid excessive re-rendering.
-    \item \textbf{Fetch wrappers}: centralized REST helpers attach \texttt{Authorization} headers and handle JSON/HTTP errors.
-    \item \textbf{Optimistic UI}: favourites toggle updates the view immediately; state reconciles on storage events.
-\end{itemize}
+% \subsection{Minimal Backend Touchpoints for These Features}
+% To support the above flows, the Events and Locations routes accept create/update/delete with the field names and payload shapes described. Events update requires both \texttt{venueId} and denormalized \texttt{venue}; presenters are handled when the backend emits either \texttt{presenter} or \texttt{presenters}. Responses return the normalized fields consumed by the table and edit sheets.
 
-\subsection{Data Schemas and Models}
-\textbf{Event} (consumed fields): \texttt{\_id}, \texttt{title}, \texttt{description}, \texttt{date}, \texttt{time}, \texttt{price}, \texttt{presenter/presenters}, \texttt{venueId}, \texttt{venue}.
-\newline
-\textbf{Location} (consumed fields): \texttt{\_id} (\(\rightarrow\) \texttt{id}), \texttt{nameE} (\(\rightarrow\) \texttt{name}), \texttt{district}, \texttt{latitude}, \texttt{longitude}, \texttt{num\_events}.
-\newline
-Client-side validation ensures Event submissions include \texttt{title}, \texttt{date}, \texttt{time}, \texttt{venueId}, and \texttt{venue}; and Location submissions include \texttt{nameE}, \texttt{district}, \texttt{latitude}, and \texttt{longitude}.
+% \subsection{Extra Features}
+
+% \subsection{Algorithms/Functions}
+% \begin{itemize}
+%     \item \textbf{Haversine distance}: computes user-to-venue distance for sorting and range filtering.
+%     \item \textbf{Debounced filters}: search inputs debounce updates to avoid excessive re-rendering.
+%     \item \textbf{Fetch wrappers}: centralized REST helpers attach \texttt{Authorization} headers and handle JSON/HTTP errors.
+%     \item \textbf{Optimistic UI}: favourites toggle updates the view immediately; state reconciles on storage events.
+% \end{itemize}
+
+% \subsection{Data Schemas and Models}
+% \textbf{Event} (consumed fields): \texttt{\_id}, \texttt{title}, \texttt{description}, \texttt{date}, \texttt{time}, \texttt{price}, \texttt{presenter/presenters}, \texttt{venueId}, \texttt{venue}.
+% \newline
+% \textbf{Location} (consumed fields): \texttt{\_id} (\(\rightarrow\) \texttt{id}), \texttt{nameE} (\(\rightarrow\) \texttt{name}), \texttt{district}, \texttt{latitude}, \texttt{longitude}, \texttt{num\_events}.
+% \newline
+% Client-side validation ensures Event submissions include \texttt{title}, \texttt{date}, \texttt{time}, \texttt{venueId}, and \texttt{venue}; and Location submissions include \texttt{nameE}, \texttt{district}, \texttt{latitude}, and \texttt{longitude}.

@@ -1,191 +1,84 @@
-%% ****** Start of file apstemplate.tex ****** %
-%%
-%%
-%%   This file is part of the APS files in the REVTeX 4.2 distribution.
-%%   Version 4.2a of REVTeX, January, 2015
-%%
-%%
-%%   Copyright (c) 2015 The American Physical Society.
-%%
-%%   See the REVTeX 4 README file for restrictions and more information.
-%%
-%
-% This is a template for producing manuscripts for use with REVTEX 4.2
-% Copy this file to another name and then work on that file.
-% That way, you always have this original template file to use.
-%
-% Group addresses by affiliation; use superscriptaddress for long
-% author lists, or if there are many overlapping affiliations.
-% For Phys. Rev. appearance, change preprint to twocolumn.
-% Choose pra, prb, prc, prd, pre, prl, prstab, prstper, or rmp for journal
-%  Add 'draft' option to mark overfull boxes with black boxes
-%  Add 'showkeys' option to make keywords appear
-\documentclass[
-    aps,
-    prl,
-    preprint,
-    groupedaddress,
-    notitlepage
-]{revtex4-2}
-%\documentclass[aps,prl,preprint,superscriptaddress]{revtex4-2}
-%\documentclass[aps,prl,reprint,groupedaddress]{revtex4-2}
-
-% You should use BibTeX and apsrev.bst for references
-% Choosing a journal automatically selects the correct APS
-% BibTeX style file (bst file), so only uncomment the line
-% below if necessary.
-%\bibliographystyle{apsrev4-2}
-
-\usepackage{booktabs}
-\usepackage{enumitem}
-\usepackage{graphicx}
-\usepackage{hyperref}
+\documentclass[11pt]{article}
+\usepackage{graphicx} % To include graphics 
+\usepackage[tbtags]{amsmath} % tbtags to make eq number at last line
+\usepackage{amssymb}
+%\usepackage{wrapfig} % For figures next to text
+\usepackage{booktabs} % Better tables
+% \usepackage{physics} 
+\usepackage{cases} % For cases with separate labels
+\usepackage{hyperref}% For cross-referencing
 \hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue}
+%\usepackage{pgfplots} % For drawing graphs
+\usepackage{parskip} % To remove indentation and set paragraph spacing
+\usepackage[margin=1in]{geometry}
+%\usepackage{cancel} % To cancel out terms
+\usepackage{listings} % To write code
+\usepackage{xcolor} % To write color text/math by \textcolor{color}{text}
+\usepackage{enumitem} % Better list environment
+\usepackage{fancyhdr} % For custom headers and footers
+% \usepackage{amsthm} % To write theorems and proofs
+% \renewcommand\qedsymbol{$\blacksquare$}
+% \usepackage{algorithm}
+% \usepackage{algpseudocode}
+\usepackage{tocloft}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+
+%%%%%%%%%% Configure fancy headers %%%%%%%%%%
+\pagestyle{fancy}
+
+%%%%%%%%%% listings config (for writing code) %%%%%%%%%%
+% \definecolor{codegreen}{rgb}{0,0.6,0}
+% \definecolor{codegray}{rgb}{0.5,0.5,0.5}
+% \definecolor{codepurple}{rgb}{0.58,0,0.82}
+% \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% \lstdefinestyle{mystyle}{
+%     frame=tb,
+%     basicstyle=\ttfamily,
+%     backgroundcolor=\color{backcolour},   
+%     % commentstyle=\color{codegreen},
+%     % keywordstyle=\color{magenta},
+%     % stringstyle=\color{codepurple},
+%     breakatwhitespace=false,         
+%     breaklines=true,                 
+%     captionpos=b,                    
+%     keepspaces=true,                 
+%     numbers=left,                    
+%     numbersep=5pt,                  
+%     showspaces=false,                
+%     showstringspaces=false,
+%     showtabs=false,                  
+%     tabsize=4
+% }
+% \lstset{style=mystyle}
+
+% Title
+\title{CSCI2720 Project}
+\author{
+    \textbf{Group 33} \\[1em]
+    \begin{tabular}{ll}
+        Chan Darren Jun Rong & (1155256148) \\
+        Li Clement & (1155214128) \\
+        Ng Ching Yin & (1155175606) \\
+        Zhao Yiming & (1155211152)
+    \end{tabular}
+}
+\date{\today}
 
 \begin{document}
 
-% Use the \preprint command to place your local institutional report
-% number in the upper righthand corner of the title page in preprint mode.
-% Multiple \preprint commands are allowed.
-% Use the 'preprintnumbers' class option to override journal defaults
-% to display numbers if necessary
-%\preprint{}
-
-%Title of paper
-\title{Project title}
-
-% repeat the \author .. \affiliation  etc. as needed
-% \email, \thanks, \homepage, \altaffiliation all apply to the current
-% author. Explanatory text should go in the []'s, actual e-mail
-% address or url should go in the {}'s for \email and \homepage.
-% Please use the appropriate macro foreach each type of information
-
-% \affiliation command applies to all authors since the last
-% \affiliation command. The \affiliation command should follow the
-% other information
-% \affiliation can be followed by \email, \homepage, \thanks as well.
-\author{xxx}
-% \email[]{ngchingyin@link.cuhk.edu.hk}
-%\homepage[]{Your web page}
-%\thanks{}
-%\altaffiliation{}
-\affiliation{%
-    The Chinese University of Hong Kong,
-    Shatin, N.T., Hong Kong, China
-}%
-
-%Collaboration name if desired (requires use of superscriptaddress
-%option in \documentclass). \noaffiliation is required (may also be
-%used with the \author command).
-%\collaboration can be followed by \email, \homepage, \thanks as well.
-%\collaboration{}
-%\noaffiliation
-
-\date{\today}
-
-\begin{abstract}
-    \include{abstract}
-\end{abstract}
-
-% insert suggested keywords - APS authors don't need to do this
-%\keywords{}
-
-%\maketitle must follow title, authors, abstract, and keywords
+\setcounter{secnumdepth}{0}
 \maketitle
 
-% body of paper here - Use proper section commands
-% References should be done using the \cite, \ref, and \label commands
+\input{abstract}
+
+% Table of contents
+{
+    \hypersetup{linkcolor=black}
+    \tableofcontents
+}
 
 \include{mainContent}
 
 
-
-
-
-
-% If in two-column mode, this environment will change to single-column
-% format so that long equations can be displayed. Use
-% sparingly.
-%\begin{widetext}
-% put long equation here
-%\end{widetext}
-
-% figures should be put into the text as floats.
-% Use the graphics or graphicx packages (distributed with LaTeX2e)
-% and the \includegraphics macro defined in those packages.
-% See the LaTeX Graphics Companion by Michel Goosens, Sebastian Rahtz,
-% and Frank Mittelbach for instance.
-%
-% Here is an example of the general form of a figure:
-% Fill in the caption in the braces of the \caption{} command. Put the label
-% that you will use with \ref{} command in the braces of the \label{} command.
-% Use the figure* environment if the figure should span across the
-% entire page. There is no need to do explicit centering.
-
-% \begin{figure}
-% \includegraphics{}%
-% \caption{\label{}}
-% \end{figure}
-
-% Surround figure environment with turnpage environment for landscape
-% figure
-% \begin{turnpage}
-% \begin{figure}
-% \includegraphics{}%
-% \caption{\label{}}
-% \end{figure}
-% \end{turnpage}
-
-% tables should appear as floats within the text
-%
-% Here is an example of the general form of a table:
-% Fill in the caption in the braces of the \caption{} command. Put the label
-% that you will use with \ref{} command in the braces of the \label{} command.
-% Insert the column specifiers (l, r, c, d, etc.) in the empty braces of the
-% \begin{tabular}{} command.
-% The ruledtabular enviroment adds doubled rules to table and sets a
-% reasonable default table settings.
-% Use the table* environment to get a full-width table in two-column
-% Add \usepackage{longtable} and the longtable (or longtable*}
-% environment for nicely formatted long tables. Or use the the [H]
-% placement option to break a long table (with less control than 
-% in longtable).
-% \begin{table}%[H] add [H] placement to break table across pages
-% \caption{\label{}}
-% \begin{ruledtabular}
-% \begin{tabular}{}
-% Lines of table here ending with \\
-% \end{tabular}
-% \end{ruledtabular}
-% \end{table}
-
-% Surround table environment with turnpage environment for landscape
-% table
-% \begin{turnpage}
-% \begin{table}
-% \caption{\label{}}
-% \begin{ruledtabular}
-% \begin{tabular}{}
-% \end{tabular}
-% \end{ruledtabular}
-% \end{table}
-% \end{turnpage}
-
-% Specify following sections are appendices. Use \appendix* if there
-% only one appendix.
-
-% \section{Appendix}
-% \subsection{Training loss, RMSE and learning rate history}
-
-% If you have acknowledgments, this puts in the proper section head.
-%\begin{acknowledgments}
-% put your acknowledgments here.
-%\end{acknowledgments}
-
-% Create the reference section using BibTeX:
-% \bibliography{fyp.bib}
-
 \end{document}
-%
-% ****** End of file apstemplate.tex ******
-
