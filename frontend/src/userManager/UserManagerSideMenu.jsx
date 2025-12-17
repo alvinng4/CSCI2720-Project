@@ -13,10 +13,10 @@ export default function UserManagerSideMenu({ table, refresh }) {
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <Input
-          placeholder="Search by name"
-          value={table.getColumn("name")?.getFilterValue() ?? ""}
+          placeholder="Search by username"
+          value={table.getColumn("username")?.getFilterValue() ?? ""}
           onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
+            table.getColumn("username")?.setFilterValue(event.target.value)
           }
         />
         <Input
