@@ -1,0 +1,60 @@
+\subsection{Files Submitted}
+Below are the directory structure of the project.
+For simplicity, irrelevant or simple configuration files are omitted.
+\begin{verbatim}
+CSCI2720-Project/
+|-- report/                                // Source code for report
+|-- data/
+|   `-- preprocess.py                      // Data preprocessing script
+|-- frontend/
+`-- backend/
+\end{verbatim}
+
+\subsubsection{Frontend}
+\begin{verbatim}
+frontend/
+ `- src/
+    |-- main.jsx                       // Root of the app
+    |-- App.jsx                        // Main App component
+    |-- index.css                      // Theme CSS config.
+    |-- TopNav.jsx                     // Navigation bar
+    |-- Home.jsx                       // Home page
+    |-- Auth.jsx                       // Authentication page
+    |-- Leaderboard.jsx                // Leaderboard page
+    |-- event/                         // Event-related files
+    |-- location/                      // Location-related files
+    |-- UserManager/                   // User Manager related files
+    |-- constants/                     // Reuseable constants
+    |-- hooks/                         // Reuseable hooks
+    |-- public/                        // Assets folder
+    |-- lib/                           // Helper functions
+    `-- components/                    // Reuseable components
+        |-- common-table-toolbar.jsx   // Reuseable table tool-bar
+        |-- toggle-favourite.jsx       // Button to toggle favourite
+        |-- toggle-like.jsx            // Button to toggle like
+        |-- page-shell.jsx             // A "Shell" for padding and title
+        |-- mode-toggle.jsx            // Shadcn dark mode toggle
+        |-- theme-provider.jsx         // Shadcn dark mode theme provider
+        `-- ui/                        // Shadcn UI components
+\end{verbatim}
+
+\subsubsection{Backend}
+\begin{verbatim}
+backend/
+  |-- .env                               // Environment files storing secret keys
+  |-- init-db.js                         // Script for initializing database
+  `-- src/
+      |-- index.js                       // Root of backend
+      |-- app.js                         // Main App component
+      |-- libs/
+      |   |-- connect-db.js              // For database connecting
+      |   `-- register-account.js        // For registering user accounts
+      |-- middleware/
+      |   |-- error.js                   // For error handling
+      |   |-- logging.js                 // For logging all backend requests
+      |   |-- require-auth.js            // Check user auth token
+      |   |-- require-recaptcha.js       // Check ReCAPTCHA tokens
+      |   `-- timeout.js                 // To simulate slow internet connection
+      |-- models/                        // Schema definitions
+      `-- routes/                        // All backend routes
+\end{verbatim}

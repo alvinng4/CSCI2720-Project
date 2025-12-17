@@ -1,79 +1,28 @@
-\section{Methodology}
 
-\subsection{Files Submitted}
-Below are the directory structure of the project.
-For simplicity, irrelevant or simple configuration files are omitted.
-\begin{verbatim}
-CSCI2720-Project/
-|-- report/                                // Source code for report
-|-- data/
-|   `-- preprocess.py                      // Data preprocessing script
-|-- frontend/
-`-- backend/
-\end{verbatim}
 
-\subsubsection{Frontend}
-\begin{verbatim}
-frontend/
- `- src/
-    |-- main.jsx                       // Root of the app
-    |-- App.jsx                        // Main App component
-    |-- index.css                      // Theme CSS config.
-    |-- TopNav.jsx                     // Navigation bar
-    |-- Home.jsx                       // Home page
-    |-- Auth.jsx                       // Authentication page
-    |-- Leaderboard.jsx                // Leaderboard page
-    |-- event/                         // Event-related files
-    |-- location/                      // Location-related files
-    |-- UserManager/                   // User Manager related files
-    |-- constants/                     // Reuseable constants
-    |-- hooks/                         // Reuseable hooks
-    |-- public/                        // Assets folder
-    |-- lib/                           // Helper functions
-    `-- components/                    // Reuseable components
-        |-- common-table-toolbar.jsx   // Reuseable table tool-bar
-        |-- toggle-favourite.jsx       // Button to toggle favourite
-        |-- toggle-like.jsx            // Button to toggle like
-        |-- page-shell.jsx             // A "Shell" for padding and title
-        |-- mode-toggle.jsx            // Shadcn dark mode toggle
-        |-- theme-provider.jsx         // Shadcn dark mode theme provider
-        `-- ui/                        // Shadcn UI components
-\end{verbatim}
 
-\subsubsection{Backend}
-\begin{verbatim}
-backend/
-  |-- .env                               // Environment files storing secret keys
-  |-- init-db.js                         // Script for initializing database
-  `-- src/
-      |-- index.js                       // Root of backend
-      |-- app.js                         // Main App component
-      |-- libs/
-      |   |-- connect-db.js              // For database connecting
-      |   `-- register-account.js        // For registering user accounts
-      |-- middleware/
-      |   |-- error.js                   // For error handling
-      |   |-- logging.js                 // For logging all backend requests
-      |   |-- require-auth.js            // Check user auth token
-      |   |-- require-recaptcha.js       // Check ReCAPTCHA tokens
-      |   `-- timeout.js                 // To simulate slow internet connection
-      |-- models/                        // Schema definitions
-      `-- routes/                        // All backend routes
-\end{verbatim}
 
-\subsection{Data Preprocessing}
-Preprocessing the cultural events and venues dataset are simple.
-Here we briefly outline the process.
-\begin{enumerate}
-    \item Get government dataset \verb|venues.xml| and \verb|events.xml| from \url{https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural}
-    \item Parse the data with Python \verb|xmltodict| package.
-    \item Remove data that missing required fields, e.g. latitude and longitude.
-    \item Pick 10 random venues in accordance with the requirements.
-    \item Dump the data to JSON for backend initialization.
-\end{enumerate}
-For details, see \verb|data/preprocessing.py| and \verb|data/README.md|.
 
-% \subsection{Required Actions}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 % \subsubsection{Landing Page}
 % The landing page presents a hero banner of Hong Kong's skyline and three feature cards that deep-link into the app: (i) \emph{Locations list}, (ii) \emph{Map view}, and (iii) \emph{Favourites}. The page is intentionally lightweight—no data fetch occurs here—so first paint is fast and navigation is obvious for new users.
 % \paragraph{UI structure}

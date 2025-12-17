@@ -1,0 +1,11 @@
+\subsection{Data Preprocessing}
+Preprocessing the cultural events and venues dataset are simple.
+Here we briefly outline the process.
+\begin{enumerate}
+    \item Get government dataset \verb|venues.xml| and \verb|events.xml| from \url{https://data.gov.hk/en-data/dataset/hk-lcsd-event-event-cultural}
+    \item Parse the data with Python \verb|xmltodict| package.
+    \item Remove data that missing required fields, e.g. latitude and longitude.
+    \item Pick 10 random venues in accordance with the requirements.
+    \item Dump the data in JSON format for backend initialization.
+\end{enumerate}
+For details, see \verb|data/preprocessing.py| and \verb|data/README.md|.

@@ -20,6 +20,7 @@
 % \renewcommand\qedsymbol{$\blacksquare$}
 % \usepackage{algorithm}
 % \usepackage{algpseudocode}
+\usepackage{subcaption}
 \usepackage{tocloft}
 \renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
 
@@ -53,7 +54,7 @@
 % \lstset{style=mystyle}
 
 % Title
-\title{CSCI2720 Project}
+\title{CSCI2720 Group Project: Cultural HK}
 \author{
     \textbf{Group 33} \\[1em]
     \begin{tabular}{ll}
@@ -67,7 +68,6 @@
 
 \begin{document}
 
-\setcounter{secnumdepth}{0}
 \maketitle
 
 \input{abstract}
@@ -78,7 +78,12 @@
     \tableofcontents
 }
 
-\include{mainContent}
+\newpage
+\section{Methodology}
+\input{files_submitted}
+\input{data_preprocessing}
+\input{user_action_requirements}
+\input{admin_action_requirements}
 
 
 \end{document}
