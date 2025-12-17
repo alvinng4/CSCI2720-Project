@@ -70,7 +70,6 @@ export default function CreateNewEventSheet({
       ...loc,
       id: loc._id,
       name: loc.nameE,
-      isFavourite: loc?.isFavourite ?? false,
     }));
     setLocations(mappedData);
     stopForegroundLoading();

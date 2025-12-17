@@ -83,7 +83,7 @@ router.get("/", requireAuth, async (req, res, next) => {
                     {
                       $eq: [
                         "$user",
-                        new mongoose.Types.ObjectId(req.header("x-user-id")),
+                        mongoose.Types.ObjectId.createFromHexString(req.header("x-user-id")),
                       ],
                     },
                   ],

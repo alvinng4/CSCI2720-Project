@@ -98,7 +98,6 @@ export default function EditEventSheet({
       ...loc,
       id: loc._id,
       name: loc.nameE,
-      isFavourite: loc?.isFavourite ?? false,
     }));
     setLocations(mappedData);
   }, [showMessage]);

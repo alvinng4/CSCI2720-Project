@@ -15,6 +15,7 @@ import {
   MessageTypeToColor,
   useMessage,
 } from "@/hooks/use-message";
+import ToggleLike from "@/components/toggle-like";
 import useAsync from "@/hooks/use-async";
 import PageShell from "@/components/page-shell";
 
@@ -82,6 +83,12 @@ export function EventList() {
     setEditingEventId(null);
   }
 
+  function onIsLikeUpdate(id, isLike, numLikes) {
+    setEvents(
+      events.map((e) => (e.id === id ? { ...e, isLike, numLikes } : e))
+    );
+  }
+
   const onDelete = useCallback(
     async (e, eventId) => {
       e.stopPropagation();
@@ -125,7 +132,7 @@ export function EventList() {
     ]
   );
 
-  const columns = getColumns(admin, startEditing, onDelete);
+  const columns = getColumns(admin, startEditing, onDelete, onIsLikeUpdate);
 
   return (
     <>
@@ -177,7 +184,7 @@ export function EventList() {
   );
 }
 
-function getColumns(isAdmin, startEditing, onDelete) {
+function getColumns(isAdmin, startEditing, onDelete, onIsLikeUpdate) {
   const columns = [
     {
       accessorKey: "titleE",
@@ -288,6 +295,16 @@ function getColumns(isAdmin, startEditing, onDelete) {
       filterFn: (row, _columnId, filterValue) => {
         const value = row.original.presenterOrgE || "N/A";
         return value.toLowerCase().includes(filterValue.toLowerCase());
+      },
+    },
+    {
+      accessorKey: "isLike",
+      title: "Likes",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Likes" />
+      ),
+      cell: ({ row }) => {
+        return <ToggleLike event={row.original} onUpdate={onIsLikeUpdate} />;
       },
     },
   ];
