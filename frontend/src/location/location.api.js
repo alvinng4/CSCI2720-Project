@@ -4,6 +4,14 @@ import { requestToBackend } from "@/lib/utils";
 const API_BASE =
   (import.meta?.env?.VITE_API_BASE ?? "http://localhost:4000") + "/api";
 
+export async function getLocation(id) {
+  if (!id) {
+    return { ok: false, error: "Missing location id." };
+  }
+
+  return requestToBackend("GET", `locations/${id}`);
+}
+
 export async function getAllLocations() {
   return await requestToBackend("GET", "locations/");
 }

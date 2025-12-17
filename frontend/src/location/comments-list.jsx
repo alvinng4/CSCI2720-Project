@@ -1,123 +1,100 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { getToken, getUser } from "@/lib/AuthHelpers";
-import { LoadingScreen } from "@/components/ui/loading-screen";
 import { Textarea } from "@/components/ui/textarea";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+
+import { getUser } from "@/lib/AuthHelpers";
 import {
   MessageTypes,
   MessageTypeToColor,
   useMessage,
 } from "@/hooks/use-message";
+import { requestToBackend } from "@/lib/utils";
+import useAsync from "@/hooks/use-async";
 
-const API_BASE =
-  (import.meta?.env?.VITE_API_BASE ?? "http://localhost:4000") + "/api";
-
-export function CommentsList({ className, location, setCommentLength }) {
+export default function CommentsList({
+  className,
+  location,
+  setCommentLength,
+}) {
   const [isLeavingComment, setIsLeavingComment] = useState(false);
   const [userInput, setUserInput] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [comments, setComments] = useState([]);
   const { message, isShowMessage, messageType, showMessage, resetMessage } =
     useMessage();
+  const {
+    isLoading,
+    isForegroundLoading,
+    startForegroundLoading,
+    stopForegroundLoading,
+  } = useAsync({ initialForegroundLoading: true });
 
   /* Load comments */
+  const fetchComments = useCallback(async () => {
+    if (!location?.id) {
+      showMessage("Error: Missing location id!", MessageTypes.ERROR);
+      return;
+    }
+
+    startForegroundLoading();
+    const result = await requestToBackend(
+      "GET",
+      `comments/?location=${encodeURIComponent(location.id)}`
+    );
+    stopForegroundLoading();
+
+    if (!result?.ok || !result?.data || !result?.data?.length) {
+      showMessage(
+        "Error when fetching comments: " +
+          (result?.error || "Something went wrong."),
+        MessageTypes.ERROR
+      );
+      return;
+    }
+
+    setComments(result.data);
+    setCommentLength(result.data.length);
+  }, [
+    location,
+    setCommentLength,
+    startForegroundLoading,
+    stopForegroundLoading,
+    showMessage,
+  ]);
+
   useEffect(() => {
-    (async () => {
-      resetMessage();
-      setIsLoading(true);
-      setCommentLength(0);
-      let res = null;
-      try {
-        res = await fetch(
-          `${API_BASE}/comments/?location=${encodeURIComponent(location?.id ?? "")}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${getToken()}`,
-            },
-          }
-        );
-      } catch {
-        showMessage(
-          "Failed to fetch comment data from database.",
-          MessageTypes.ERROR
-        );
-        setIsLoading(false);
-        return;
-      }
-
-      if (!res.ok) {
-        // Get error message
-        let uiMessage = "Unknown error. Please try again later.";
-        try {
-          const data = await res.json();
-          if (data?.error) {
-            uiMessage = data.error;
-          }
-        } catch {
-          // Do nothing
-        }
-
-        showMessage(uiMessage, MessageTypes.ERROR);
-        setIsLoading(false);
-        return;
-      }
-
-      resetMessage();
-      const comments = await res.json();
-      setComments(comments);
-      setCommentLength(comments?.length ?? 0);
-      setIsLoading(false);
-    })();
-  }, [location, resetMessage, setCommentLength, showMessage]);
+    fetchComments();
+  }, [fetchComments]);
 
   /* Submit comment */
   const submitComment = async (content) => {
     resetMessage();
-    let res = null;
     const user = getUser();
-    try {
-      res = await fetch(`${API_BASE}/comments/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`,
-        },
-        body: JSON.stringify({
-          content,
-          user: user.id,
-          location: location.id,
-        }),
-      });
-    } catch {
-      showMessage("Failed to submit comment to database.", MessageTypes.ERROR);
-      setIsLoading(false);
+
+    if (isLoading) {
+      showMessage("Processing. Please wait and try again later.", MessageTypes.ERROR);
       return;
     }
 
-    if (!res.ok) {
-      // Get error message
-      let uiMessage = "Unknown error. Please try again later.";
-      try {
-        const data = await res.json();
-        if (data?.error) {
-          uiMessage = data.error;
-        }
-      } catch {
-        // Do nothing
-      }
+    startForegroundLoading();
+    const result = await requestToBackend("POST", "comments/", {
+      content,
+      user: user.id,
+      location: location.id,
+    });
+    stopForegroundLoading();
 
-      showMessage(uiMessage, MessageTypes.ERROR);
-      setIsLoading(false);
+    if (!result?.ok || !result?.data) {
+      showMessage(
+        "Error when submitting comments: " +
+          (result?.error || "Something went wrong."),
+        MessageTypes.ERROR
+      );
       return;
     }
 
-    resetMessage();
-    const newComment = await res.json();
-    setComments((comments) => [newComment, ...comments]);
+    setComments((comments) => [result?.data, ...comments]);
     setCommentLength((s) => s + 1);
-    setIsLoading(false);
   };
 
   return (
@@ -167,8 +144,10 @@ export function CommentsList({ className, location, setCommentLength }) {
           Leave a comment
         </Button>
       )}
-      {isLoading ? (
-        <LoadingScreen />
+      {isForegroundLoading ? (
+        <div>
+          <p className="text-sm">Connecting to server...</p>
+        </div>
       ) : (
         <>
           {(!comments || comments.length === 0) && (
