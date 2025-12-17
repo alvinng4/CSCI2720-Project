@@ -6,7 +6,7 @@ import { LocationList } from "@/location/LocationList";
 import { EventList } from "@/event/EventList";
 import { Map } from "@/location/Map";
 import { FavouriteList } from "@/location/FavouriteList";
-import { Suggestions } from "@/Suggestions";
+import { Leaderboard } from "@/Leaderboard";
 import { TopNav } from "@/TopNav";
 import { LocationDetail } from "@/location/LocationDetail";
 
@@ -45,7 +45,7 @@ function App() {
           <Route path="/eventList" element={<EventList />} />
           <Route path="/map" element={<Map />} />
           <Route path="/favouriteList" element={<FavouriteList />} />
-          <Route path="/suggestions" element={<Suggestions />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
 
           <Route path="/location/:id" element={<LocationDetail />} />
 

@@ -33,7 +33,7 @@ export function Home() {
           </p>
           <h1 className="mt-2 text-4xl font-bold leading-tight">
             <span className="bg-gradient-to-r from-indigo-600 to-pink-600 dark:from-indigo-300 dark:to-pink-200 bg-clip-text text-transparent">
-              Find your favourite events!
+              Explore cultural events in Hong Kong!
             </span>
           </h1>
           <p className="mt-3 max-w-2xl text-muted-foreground">
@@ -104,24 +104,21 @@ export function Home() {
                 <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-pink-100 text-pink-700">
                   ⭐
                 </span>
-                Favourites + Suggestions
+                Leaderboard
               </CardTitle>
               <CardDescription>
-                Save venues you like, or explore extra features.
+                See the most popular events
               </CardDescription>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
               <ul className="list-disc space-y-1 pl-5">
-                <li>Add / remove favourites</li>
-                <li>Dedicated favourites page</li>
-                <li>Try recommendations flow</li>
+                <li>Discover trending cultural programmes</li>
+                <li>View top events ranked by popularity</li>
+                <li>See which events have the most likes</li>
               </ul>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Button variant="outline" asChild>
-                  <Link to="/favouriteList">My favourites</Link>
-                </Button>
-                <Button variant="outline" asChild>
-                  <Link to="/suggestions">Open suggestions</Link>
+                  <Link to="/leaderboard">Open leaderboard</Link>
                 </Button>
               </div>
             </CardContent>
@@ -163,7 +160,7 @@ export function Home() {
           >
             <div className="text-sm font-medium">Favourites</div>
             <div className="text-xs text-muted-foreground">
-              Quickly access saved venues.
+              Quickly access favourite venues.
             </div>
           </Link>
         </div>
