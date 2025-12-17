@@ -40,8 +40,14 @@ export default function EditEventSheet({
   refresh,
 }) {
   const { message, isShowMessage, messageType, showMessage } = useMessage();
-  const { isLoading, showInitialLoading, startLoading, stopLoading } =
-    useAsync();
+  const {
+    isLoading,
+    isForegroundLoading,
+    startForegroundLoading,
+    stopForegroundLoading,
+    startBackgroundLoading,
+    stopBackgroundLoading,
+  } = useAsync({ initialForegroundLoading: true });
 
   const [event, setEvent] = useState(null);
   const [locations, setLocations] = useState([]);
@@ -66,35 +72,26 @@ export default function EditEventSheet({
 
   /* Fetch event */
   const fetchEvent = useCallback(async () => {
-    startLoading();
     const result = await getEvent(id);
     if (!result.ok || !result?.data?.event) {
       showMessage(
         result?.error || "Error: Something went wrong.",
         MessageTypes.ERROR
       );
-      stopLoading();
       return;
     }
     const tempEvent = result.data.event;
     updateFields(tempEvent);
-    stopLoading();
-  }, [id, showMessage, startLoading, stopLoading]);
-
-  useEffect(() => {
-    fetchEvent();
-  }, [fetchEvent]);
+  }, [id, showMessage]);
 
   /* Fetch locations */
   const fetchLocations = useCallback(async () => {
-    startLoading();
     const result = await getAllLocations();
     if (!result.ok || !result?.data) {
       showMessage(
         result?.error || "Error: Something went wrong.",
         MessageTypes.ERROR
       );
-      stopLoading();
       return;
     }
     const mappedData = result.data.map((loc) => ({
@@ -104,12 +101,19 @@ export default function EditEventSheet({
       isFavourite: loc?.isFavourite ?? false,
     }));
     setLocations(mappedData);
-    stopLoading();
-  }, [showMessage, startLoading, stopLoading]);
+  }, [showMessage]);
 
   useEffect(() => {
+    startForegroundLoading();
+    fetchEvent();
     fetchLocations();
-  }, [fetchLocations]);
+    stopForegroundLoading();
+  }, [
+    startForegroundLoading,
+    stopForegroundLoading,
+    fetchEvent,
+    fetchLocations,
+  ]);
 
   const selectedLocation = locations.find((loc) => loc.id === locationId);
 
@@ -117,7 +121,7 @@ export default function EditEventSheet({
     e.preventDefault();
     if (isLoading) {
       showMessage(
-        "Loading. Please wait before submitting!",
+        "Processing. Please wait before submitting!",
         MessageTypes.ERROR
       );
       return;
@@ -152,9 +156,10 @@ export default function EditEventSheet({
       return;
     }
 
-    startLoading();
+    startBackgroundLoading();
     showMessage("Connecting to database...");
     const result = await updateEvent(id, eventData);
+    stopBackgroundLoading();
 
     if (!result?.ok || !result?.data?.event) {
       showMessage(
@@ -165,7 +170,6 @@ export default function EditEventSheet({
     }
 
     updateFields(result.data.event);
-    stopLoading();
     showMessage("Success! Event is updated.", MessageTypes.SPECIAL);
     refresh();
   };
@@ -189,7 +193,7 @@ export default function EditEventSheet({
               {message}
             </p>
 
-            {showInitialLoading ? (
+            {isForegroundLoading ? (
               <LoadingScreen />
             ) : (
               event && (

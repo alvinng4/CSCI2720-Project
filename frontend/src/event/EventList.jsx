@@ -25,11 +25,13 @@ export function EventList() {
     useMessage();
   const {
     isLoading,
-    showInitialLoading,
+    isForegroundLoading,
     lastSyncTime,
-    startLoading,
-    stopLoading,
-  } = useAsync();
+    startForegroundLoading,
+    stopForegroundLoading,
+    startBackgroundLoading,
+    stopBackgroundLoading,
+  } = useAsync({ initialForegroundLoading: true });
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingEventId, setEditingEventId] = useState(null);
@@ -44,14 +46,14 @@ export function EventList() {
   }
 
   const fetchEvents = useCallback(async () => {
-    startLoading();
+    startForegroundLoading();
     const result = await getAllEvents();
+    stopForegroundLoading();
     if (!result.ok || !result?.data) {
       showMessage(
         result?.error || "Error: Something went wrong.",
         MessageTypes.ERROR
       );
-      stopLoading();
       return;
     }
     const mappedData = result.data.map((event) => ({
@@ -59,8 +61,7 @@ export function EventList() {
       id: event._id,
     }));
     setEvents(mappedData);
-    stopLoading();
-  }, [showMessage, startLoading, stopLoading]);
+  }, [showMessage, startForegroundLoading, stopForegroundLoading]);
 
   useEffect(() => {
     fetchEvents();
@@ -97,9 +98,11 @@ export function EventList() {
         return;
       }
 
-      startLoading();
+      startBackgroundLoading();
       showMessage("Connecting to database...");
       const result = await deleteEvent(eventId);
+      stopBackgroundLoading();
+
       if (!result.ok) {
         const errMsg =
           "Error occurred when deleting event: " +
@@ -107,14 +110,19 @@ export function EventList() {
         showMessage(errMsg, MessageTypes.ERROR);
         return;
       }
-      stopLoading();
       showMessage(
         `Success! Event with id ${eventId} is deleted.`,
         MessageTypes.SPECIAL
       );
       fetchEvents();
     },
-    [fetchEvents, isLoading, showMessage, startLoading, stopLoading]
+    [
+      fetchEvents,
+      isLoading,
+      showMessage,
+      startBackgroundLoading,
+      stopBackgroundLoading,
+    ]
   );
 
   const columns = getColumns(admin, startEditing, onDelete);
@@ -141,7 +149,7 @@ export function EventList() {
         <p hidden={!isShowMessage} className={MessageTypeToColor[messageType]}>
           {message}
         </p>
-        {showInitialLoading ? (
+        {isForegroundLoading ? (
           <LoadingScreen />
         ) : (
           /* Table */

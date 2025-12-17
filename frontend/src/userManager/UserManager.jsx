@@ -39,7 +39,15 @@ export function UserManager() {
   const [isCreating, setIsCreating] = useState(false);
   const { message, isShowMessage, messageType, showMessage, resetMessage } =
     useMessage();
-  const { showLoading, lastSyncTime, startLoading, stopLoading } = useAsync();
+  const {
+    isLoading,
+    isForegroundLoading,
+    lastSyncTime,
+    startForegroundLoading,
+    stopForegroundLoading,
+    startBackgroundLoading,
+    stopBackgroundLoading,
+  } = useAsync({ initialForegroundLoading: true });
 
   function startCreating() {
     setIsCreating(true);
@@ -50,14 +58,15 @@ export function UserManager() {
   }
 
   const fetchUsers = useCallback(async () => {
-    startLoading();
+    startForegroundLoading();
     let result = await requestToBackend("GET", "users");
+    stopForegroundLoading();
+
     if (!result.ok || !result?.data) {
       const errMsg =
         "Error occurred when fetching user data: " +
         (result?.error || "Unknown error");
       showMessage(errMsg, MessageTypes.ERROR);
-      stopLoading();
       return;
     }
     const mappedData = result.data.map((user) => ({
@@ -65,8 +74,7 @@ export function UserManager() {
       id: user._id,
     }));
     setUsers(mappedData);
-    stopLoading();
-  }, [startLoading, stopLoading, showMessage]);
+  }, [showMessage, startForegroundLoading, stopForegroundLoading]);
 
   useEffect(() => {
     fetchUsers();
@@ -151,7 +159,19 @@ export function UserManager() {
       return;
     }
 
+    if (isLoading) {
+      showMessage(
+        "Processing. Please wait before submitting!",
+        MessageTypes.ERROR
+      );
+      return;
+    }
+
+    startBackgroundLoading();
+    showMessage("Connecting to database...");
     let result = await requestToBackend("PUT", `users/${id}`, patch);
+    stopBackgroundLoading();
+
     if (!result.ok || !result?.data) {
       const errMsg =
         "Error occurred when updating user: " +
@@ -180,7 +200,19 @@ export function UserManager() {
       return;
     }
 
+    if (isLoading) {
+      showMessage(
+        "Processing. Please wait before submitting!",
+        MessageTypes.ERROR
+      );
+      return;
+    }
+
+    startBackgroundLoading();
+    showMessage("Connecting to database...");
     let result = await requestToBackend("DELETE", `users/${id}`);
+    stopBackgroundLoading();
+
     if (!result.ok || !result?.data) {
       const errMsg =
         "Error occurred when deleting user: " +
@@ -235,7 +267,7 @@ export function UserManager() {
           >
             {message}
           </p>
-          {showLoading ? (
+          {isForegroundLoading ? (
             <LoadingScreen />
           ) : (
             isAdmin && (

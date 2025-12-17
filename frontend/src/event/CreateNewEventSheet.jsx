@@ -38,8 +38,14 @@ export default function CreateNewEventSheet({
   refresh,
 }) {
   const { message, isShowMessage, messageType, showMessage } = useMessage();
-  const { isLoading, showInitialLoading, startLoading, stopLoading } =
-    useAsync();
+  const {
+    isLoading,
+    isForegroundLoading,
+    startForegroundLoading,
+    stopForegroundLoading,
+    startBackgroundLoading,
+    stopBackgroundLoading,
+  } = useAsync({ initialForegroundLoading: true });
 
   const [locations, setLocations] = useState([]);
   const [newEventTitle, setNewEventTitle] = useState("");
@@ -51,14 +57,13 @@ export default function CreateNewEventSheet({
   const [newEventPresenters, setNewEventPresenters] = useState("");
 
   const fetchLocations = useCallback(async () => {
-    startLoading();
+    startForegroundLoading();
     const result = await getAllLocations();
     if (!result?.ok || !result?.data) {
       showMessage(
         result?.error || "Error: Something went wrong.",
         MessageTypes.ERROR
       );
-      stopLoading();
       return;
     }
     const mappedData = result.data.map((loc) => ({
@@ -68,8 +73,8 @@ export default function CreateNewEventSheet({
       isFavourite: loc?.isFavourite ?? false,
     }));
     setLocations(mappedData);
-    stopLoading();
-  }, [showMessage, startLoading, stopLoading]);
+    stopForegroundLoading();
+  }, [showMessage, startForegroundLoading, stopForegroundLoading]);
 
   useEffect(() => {
     fetchLocations();
@@ -106,7 +111,7 @@ export default function CreateNewEventSheet({
       presenterOrgE: newEventPresenters,
     };
 
-    startLoading();
+    startBackgroundLoading();
     showMessage("Connecting to database...");
     const result = await createEvent(eventData);
 
@@ -125,7 +130,7 @@ export default function CreateNewEventSheet({
     setNewEventDuration("");
     setNewEventPrice("");
     setNewEventPresenters("");
-    stopLoading();
+    stopBackgroundLoading();
     showMessage("Success! Event is created.", MessageTypes.SPECIAL);
     refresh();
   };
@@ -146,7 +151,7 @@ export default function CreateNewEventSheet({
               {message}
             </p>
 
-            {showInitialLoading ? (
+            {isForegroundLoading ? (
               <LoadingScreen />
             ) : (
               // Main contents

@@ -17,6 +17,7 @@ import {
 import { useState } from "react";
 
 import { requestToBackend } from "@/lib/utils";
+import useAsync from "@/hooks/use-async";
 import {
   useMessage,
   MessageTypes,
@@ -33,6 +34,8 @@ export default function CreateUserSheet({ isCreating, stopCreating, refresh }) {
   const [role, setRole] = useState("user");
   const { message, isShowMessage, messageType, showMessage, resetMessage } =
     useMessage();
+  const { isLoading, startBackgroundLoading, stopBackgroundLoading } =
+    useAsync();
 
   async function createUser(userData) {
     resetMessage();
@@ -56,6 +59,15 @@ export default function CreateUserSheet({ isCreating, stopCreating, refresh }) {
       return;
     }
 
+    if (isLoading) {
+      showMessage(
+        "Processing. Please wait before submitting!",
+        MessageTypes.ERROR
+      );
+      return;
+    }
+
+    startBackgroundLoading();
     const chars =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let password = "";
@@ -64,7 +76,10 @@ export default function CreateUserSheet({ isCreating, stopCreating, refresh }) {
     }
     userData.password = password;
 
+    showMessage("Connecting to database...");
     let result = await requestToBackend("POST", "users", userData);
+    stopBackgroundLoading();
+
     if (!result.ok || !result?.data) {
       const errMsg =
         "Error occurred when creating user: " +

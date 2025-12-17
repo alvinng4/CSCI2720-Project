@@ -4,44 +4,74 @@
 
 import { useCallback, useRef, useState } from "react";
 
-export default function useAsync() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [showInitialLoading, setShowInitialLoading] = useState(true);
-  const [showLoading, setShowLoading] = useState(true);
-  const timeoutRef = useRef(null);
+export default function useAsync({
+  initialForegroundLoading = false,
+  initialBackgroundLoading = false,
+  foregroundDelayMs = 300,
+  backgroundDelayMs = 0,
+} = {}) {
+  const [isForegroundLoading, setIsForegroundLoading] = useState(
+    initialForegroundLoading
+  );
+  const [isBackgroundLoading, setIsBackgroundLoading] = useState(
+    initialBackgroundLoading
+  );
+  const foregroundTimeoutRef = useRef(null);
+  const backgroundTimeoutRef = useRef(null);
   const [lastSyncTime, setLastSyncTime] = useState(null);
 
-  const startLoading = useCallback(() => {
-    setIsLoading(true);
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+  const startForegroundLoading = useCallback(() => {
+    if (foregroundTimeoutRef.current) {
+      clearTimeout(foregroundTimeoutRef.current);
     }
 
-    // Set timeout to show loading after 750ms
-    timeoutRef.current = setTimeout(() => {
-      setShowLoading(true);
-    }, 300);
+    foregroundTimeoutRef.current = setTimeout(() => {
+      setIsForegroundLoading(true);
+    }, foregroundDelayMs);
+  }, [foregroundDelayMs]);
+
+  const stopForegroundLoading = useCallback((setSyncTime) => {
+    if (foregroundTimeoutRef.current) {
+      clearTimeout(foregroundTimeoutRef.current);
+      foregroundTimeoutRef.current = null;
+    }
+
+    if (setSyncTime) {
+      setLastSyncTime(new Date());
+    }
+    setIsForegroundLoading(false);
   }, []);
 
-  const stopLoading = useCallback(() => {
-    // Clear timeout if loading was stopped before 750ms
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
+  const startBackgroundLoading = useCallback(() => {
+    if (backgroundTimeoutRef.current) {
+      clearTimeout(backgroundTimeoutRef.current);
     }
 
-    setLastSyncTime(new Date());
-    setIsLoading(false);
-    setShowLoading(false);
-    setShowInitialLoading(false);
+    backgroundTimeoutRef.current = setTimeout(() => {
+      setIsBackgroundLoading(true);
+    }, backgroundDelayMs);
+  }, [backgroundDelayMs]);
+
+  const stopBackgroundLoading = useCallback((setSyncTime) => {
+    if (backgroundTimeoutRef.current) {
+      clearTimeout(backgroundTimeoutRef.current);
+      backgroundTimeoutRef.current = null;
+    }
+
+    if (setSyncTime) {
+      setLastSyncTime(new Date());
+    }
+    setIsBackgroundLoading(false);
   }, []);
 
   return {
-    isLoading,
-    showLoading,
-    showInitialLoading,
+    isLoading: isForegroundLoading || isBackgroundLoading,
+    isForegroundLoading,
+    isBackgroundLoading,
     lastSyncTime,
-    startLoading,
-    stopLoading,
+    startForegroundLoading,
+    stopForegroundLoading,
+    startBackgroundLoading,
+    stopBackgroundLoading,
   };
 }
