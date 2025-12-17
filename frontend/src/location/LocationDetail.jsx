@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import CommentsList from "./comments-list";
 import { getLocation } from "./location.api";
+import { getUserLocation, haversineDistance } from "@/lib/utils";
 import LoadingScreen from "@/components/ui/loading-screen";
 import MapComponent from "./map-component";
 import {
@@ -52,7 +53,7 @@ export function LocationDetail() {
       return;
     }
     const loc = result.data.location;
-    setLocation({
+    const mappedData = {
       ...loc,
       id: loc?._id,
       name: loc?.nameE,
@@ -60,7 +61,30 @@ export function LocationDetail() {
       latitude: Number(loc?.latitude ?? 0),
       longitude: Number(loc?.longitude ?? 0),
       isFavourite: loc?.isFavourite ?? false,
-    });
+    };
+
+    /* Compute distance */
+    let userCoords = null;
+    try {
+      userCoords = await getUserLocation();
+    } catch {
+      showMessage(
+        "Failed to get user location. Showing data without distance.",
+        MessageTypes.ERROR
+      );
+      setLocations(mappedData);
+      return;
+    }
+
+    setLocation({
+      ...mappedData,
+      distance: haversineDistance(
+        userCoords.latitude,
+        userCoords.longitude,
+        mappedData.latitude,
+        mappedData.longitude
+      ),
+    })
   }, [
     id,
     startForegroundLoading,
