@@ -162,17 +162,19 @@ function LoginForm({ data, onChange, onSwitch, setIsAuthenticated }) {
 
             {/* Recaptcha */}
             <Field>
-              <ReCAPTCHA
-                ref={recaptchaRef}
-                sitekey="6LfqNiosAAAAAB7JO71byBvTGdPOgk4g5l-hWyYB" // Public key
-                onChange={setRecaptchaToken}
-                onErrored={() =>
-                  showMessage(
-                    "(Recaptcha) Network error. Please try again later.",
-                    MessageTypes.ERROR
-                  )
-                }
-              />
+              <div className="flex justify-center">
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey="6LfqNiosAAAAAB7JO71byBvTGdPOgk4g5l-hWyYB" // Public key
+                  onChange={setRecaptchaToken}
+                  onErrored={() =>
+                    showMessage(
+                      "(Recaptcha) Network error. Please try again later.",
+                      MessageTypes.ERROR
+                    )
+                  }
+                />
+              </div>
             </Field>
 
             {/* Feedback message */}
@@ -344,17 +346,19 @@ function SignUpForm({ data, onChange, onSwitch, setLoginData }) {
 
             {/* Recaptcha */}
             <Field>
-              <ReCAPTCHA
-                ref={recaptchaRef}
-                sitekey="6LfqNiosAAAAAB7JO71byBvTGdPOgk4g5l-hWyYB" // Public key
-                onChange={setRecaptchaToken}
-                onErrored={() =>
-                  showMessage(
-                    "(Recaptcha) Network error. Please try again later.",
-                    MessageTypes.ERROR
-                  )
-                }
-              />
+              <div className="flex justify-center">
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey="6LfqNiosAAAAAB7JO71byBvTGdPOgk4g5l-hWyYB" // Public key
+                  onChange={setRecaptchaToken}
+                  onErrored={() =>
+                    showMessage(
+                      "(Recaptcha) Network error. Please try again later.",
+                      MessageTypes.ERROR
+                    )
+                  }
+                />
+              </div>
             </Field>
 
             {/* Submit button */}
