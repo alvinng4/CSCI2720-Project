@@ -51,7 +51,7 @@ with the \verb|-s| flag to simulate slow internet.
 
 \subsubsection{UX: dynamic filtering}
 In basic requirements, some pages are required to provide dynamic filtering.
-We did one step further to provide it to all pages with tables (e.g. Map, UserManager).
+We did one step further to provide it to more pages (e.g. Map, UserManager).
 
 \begin{figure}[h]
     \centering
@@ -105,7 +105,7 @@ tracker in frontend to block further request if we currently have a queueing req
 
 \subsubsection{Security: reCAPTCHA}
 \label{subsubsec:security_reCAPTCHA}
-To prevent bots abusing our service or ddos attack, we require user
+To prevent bots abusing our service or doing brute-force attack, we require user
 to pass Google reCAPTCHA before login / sign up.
 As shown in figure \ref{fig:non_user_req}, user are not able to sign in without completing the reCAPTCHA.
 
