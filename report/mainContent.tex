@@ -77,13 +77,3 @@
 
 % \subsection{Minimal Backend Touchpoints for These Features}
 % To support the above flows, the Events and Locations routes accept create/update/delete with the field names and payload shapes described. Events update requires both \texttt{venueId} and denormalized \texttt{venue}; presenters are handled when the backend emits either \texttt{presenter} or \texttt{presenters}. Responses return the normalized fields consumed by the table and edit sheets.
-
-% \subsection{Extra Features}
-
-% \subsection{Algorithms/Functions}
-% \begin{itemize}
-%     \item \textbf{Haversine distance}: computes user-to-venue distance for sorting and range filtering.
-%     \item \textbf{Debounced filters}: search inputs debounce updates to avoid excessive re-rendering.
-%     \item \textbf{Fetch wrappers}: centralized REST helpers attach \texttt{Authorization} headers and handle JSON/HTTP errors.
-%     \item \textbf{Optimistic UI}: favourites toggle updates the view immediately; state reconciles on storage events.
-% \end{itemize}

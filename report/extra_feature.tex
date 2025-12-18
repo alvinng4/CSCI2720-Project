@@ -1,15 +1,18 @@
 \subsection{Extra features}
 \subsubsection{Home page}
+\label{subsubsec:home_page}
 A good website should have a home page, so we also added one ourselves
 (see figure \ref{fig:ux_dark_mode}). It provides a quick overview for the
 whole website and also provide quick navigation.
 
 \subsubsection{Event like buttons}
+\label{subsubsec:event_like_buttons}
 Social elements promotes user's interaction with the website. We added a like button
 (similar to the favourite button) but with a like count, allowing user to see the most
 liked events. (See figure \ref{fig:admin_crud_events})
 
 \subsubsection{UX: dark mode}
+\label{subsubsec:ux_dark_mode}
 We provide three themes to promote user experience: system theme, light mode and dark mode.
 On top of that, we added a transition animation (with the help of shadcn.io components)
 to improve the transition (see figure \ref{fig:ux_dark_mode}).
@@ -38,6 +41,7 @@ to improve the transition (see figure \ref{fig:ux_dark_mode}).
 \end{figure}
 
 \subsubsection{UX: loading screen}
+\label{subsubsec:ux_loading_screen}
 It is important to provide visual feedback for loading to improve UX and also avoid
 confusion, especially for users with slow internet connection. For initial loading, and 
 subsequent backend request for more than 300ms,
@@ -57,6 +61,7 @@ We did one step further to provide it to all pages with tables (e.g. Map, UserMa
 \end{figure}
 
 \subsubsection{UX: feedback messages}
+\label{subsubsec:ux_feedback_messages}
 Feedback messages are important for user to know what is happening behind the scene.
 While it is possible to use \verb|alert|, it doesn't match the UI and it annoys user
 by forcing them to click a button just for a message. To avoid this, we simply show
@@ -87,16 +92,19 @@ a message with different colors for different types of messages (see figure \ref
 \end{figure}
 
 \subsubsection{UX: refresh button}
+\label{subsubsec:ux_refresh_button}
 All our tables come with a refresh button so that user could re-sync their data with
 database.
 
 \subsubsection{Security: Prevent rapid request}
+\label{subsubsec:security_prevent_rapid_request}
 For impatient users with slow internet access or users with malicious intent, they
 may want to spam our server with HTTP requests. To prevent this, we added a loading
 tracker in frontend to block further request if we currently have a queueing request.
 (See figure \ref{subfig:feedback_3} as we show an alert message)
 
 \subsubsection{Security: reCAPTCHA}
+\label{subsubsec:security_reCAPTCHA}
 To prevent bots abusing our service or ddos attack, we require user
 to pass Google reCAPTCHA before login / sign up.
 As shown in figure \ref{fig:non_user_req}, user are not able to sign in without completing the reCAPTCHA.
@@ -104,6 +112,7 @@ As shown in figure \ref{fig:non_user_req}, user are not able to sign in without 
 Note: User cannot bypass this even if they hack the frontend, as the reCAPTCHA token will be
 verified in the backend.
 \subsubsection{Security: password hashing}
+\label{subsubsec:password_hashing}
 To prevent password leak and to protect user privacy, we hash the password when
 user sign up. As shown in figure \ref{fig:pw_hashing}, the password \verb|csci2720| became a long
 encrypted string, which can only be verified with our secret key.
@@ -115,6 +124,7 @@ encrypted string, which can only be verified with our secret key.
 \end{figure}
 
 \subsubsection{Security: token and admin authorization}
+\label{subsubsec:token_and_admin_authorization}
 While we use browser local storage to store user login status, we know it is not safe
 as frontend data can be easily modified. To prevent malicious attempt, we store a 
 token in user's local storage when they login. All attempts to assess the server must
@@ -125,7 +135,7 @@ Don't refresh the page as that will send you to back to authentication.
 On top of that, admin-only routes has to pass through an addition
 \verb|require-admin| middleware with their userID. It will be compared with the database
 to check if they are really admin.  (See figure \ref{subfig:security_admin})
-You can try this by changing your role from "admin" to "user" on MongoDB Compass after
+You can try this by changing your role from "admin" to "user" on the database after
 logging in as an admin.
 
 \begin{figure}[h]
@@ -142,6 +152,6 @@ logging in as an admin.
         \caption{User access to admin-only page rejected due to invalid admin user ID}
         \label{subfig:security_admin}
     \end{subfigure}
-    \caption{}
+    \caption{Security: token and admin authorization}
     \label{fig:security_token_and_admin}
 \end{figure}

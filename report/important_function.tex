@@ -1,1 +1,28 @@
 \subsection{Important functions}
+\subsubsection{Distance calculation: Haversine distance}
+This is the formula to compute user-to-venue distance from latitude and longitude.
+\subsubsection{UI: Tailwind CSS, ShadCN}
+To improve the UI and speed up development, we adopted Tailwind CSS and the
+ShadCN UI components. They are used throughout the frontend. We also modified
+these components in order to match our desired functionalities, including the data tables, which
+we used in many of our pages. On top of this, we used tweakCN's Clean Slate theme and
+shadcn.io's component for dark mode transition animation
+\subsubsection{Useful React hooks}
+Here are some React hooks we designed that were very useful:
+\begin{itemize}%[leftmargin=*]
+    \item \verb|use-async|: This is used to determine whether the foreground and background should be loading.
+    Foreground loading is to show the loading animation (once \(> 300\) ms), background loading
+    is to prevent user spamming HTTP requests. See section \ref{subsubsec:ux_loading_screen} and 
+    \ref{subsubsec:security_prevent_rapid_request} for more information. This also
+    gives us a systematic way to determine the last sync time.
+    \item \verb|use-message|: This is a useful hook for showing a message and determining its color.
+    See section \ref{subsubsec:ux_feedback_messages} for more information.
+\end{itemize}
+\subsubsection{Centralized API Gateway}
+Our frontend was very messy when it comes to backend API requests. As we have \verb|fetch()| everywhere
+and each with a slightly different implementation, we see a lot of small bugs and crashes due to improper error handling.
+To solve this, we finally wrote a centralized function for all backend requests:
+\begin{verbatim}
+    export async function requestToBackend(method, endPoint, jsonData = null)
+\end{verbatim}
+
