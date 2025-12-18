@@ -1,5 +1,5 @@
 "use client";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, SunMoon } from "lucide-react";
 import { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -170,15 +170,21 @@ export const ThemeToggleButton = ({
         showLabel && "gap-2",
         className
       )}
-      aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
+      aria-label={`Switch to ${
+        theme === "light" ? "dark" : theme === "dark" ? "system" : "light"
+      } theme`}
     >
       {theme === "light" ? (
         <Sun className="h-[1.2rem] w-[1.2rem]" />
-      ) : (
+      ) : theme === "dark" ? (
         <Moon className="h-[1.2rem] w-[1.2rem]" />
+      ) : (
+        <SunMoon className="h-[1.2rem] w-[1.2rem]" />
       )}
       {showLabel && (
-        <span className="text-sm">{theme === "light" ? "Light" : "Dark"}</span>
+        <span className="text-sm">
+          {theme === "light" ? "Light" : theme === "dark" ? "Dark" : "System"}
+        </span>
       )}
     </Button>
   );

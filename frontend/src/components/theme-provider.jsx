@@ -23,47 +23,40 @@ export function ThemeProvider({
   );
   const [theme, setTheme] = useState("light");
 
-  /* Non-system mode */
   useEffect(() => {
-    if (mode === "system") {
-      return;
-    }
     const root = window.document.documentElement;
-    root.classList.remove("light", "dark");
-    root.classList.add(mode);
-    setTheme(mode);
-  }, [mode]);
 
-  /* System mode */
-  useEffect(() => {
-    if (mode !== "system") {
-      return;
-    }
-
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-
-    const applySystemTheme = () => {
+    if (mode === "system") {
+      const media = window.matchMedia("(prefers-color-scheme: dark)");
       const systemTheme = media.matches ? "dark" : "light";
-      const root = window.document.documentElement;
       root.classList.remove("light", "dark");
       root.classList.add(systemTheme);
       setTheme(systemTheme);
-    };
 
-    applySystemTheme();
-    media.addEventListener("change", applySystemTheme);
+      const applySystemTheme = () => {
+        const newSystemTheme = media.matches ? "dark" : "light";
+        root.classList.remove("light", "dark");
+        root.classList.add(newSystemTheme);
+        setTheme(newSystemTheme);
+      };
 
-    return () => {
-      media.removeEventListener("change", applySystemTheme);
-    };
-  }, [mode, theme]);
+      media.addEventListener("change", applySystemTheme);
+      return () => {
+        media.removeEventListener("change", applySystemTheme);
+      };
+    } else {
+      root.classList.remove("light", "dark");
+      root.classList.add(mode);
+      setTheme(mode);
+    }
+  }, [mode]);
 
   const value = {
     mode,
     theme,
-    setMode: (theme) => {
-      localStorage.setItem(storageKey, theme);
-      setMode(theme);
+    setMode: (newMode) => {
+      localStorage.setItem(storageKey, newMode);
+      setMode(newMode);
     },
   };
 

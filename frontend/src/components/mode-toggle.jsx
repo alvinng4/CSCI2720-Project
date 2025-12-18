@@ -10,19 +10,18 @@ import {
 import { useCallback } from "react";
 
 export function ModeToggle() {
-  const { theme, setMode } = useTheme();
+  const { mode, setMode } = useTheme();
   const { startTransition } = useThemeTransition();
 
   const handleThemeToggle = useCallback(() => {
-    const newMode = theme === "dark" ? "light" : "dark";
-    startTransition(() => setMode(newMode));
-  }, [theme, setMode, startTransition]);
-
-  const currentTheme = theme === "system" ? "light" : theme;
+    const nextMode =
+      mode === "light" ? "dark" : mode === "dark" ? "system" : "light";
+    startTransition(() => setMode(nextMode));
+  }, [mode, setMode, startTransition]);
 
   return (
     <ThemeToggleButton
-      theme={currentTheme}
+      theme={mode}
       onClick={handleThemeToggle}
       variant="circle-blur"
       start="top-right"
