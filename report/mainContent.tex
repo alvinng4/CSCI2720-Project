@@ -105,10 +105,3 @@
 %     \item \textbf{Fetch wrappers}: centralized REST helpers attach \texttt{Authorization} headers and handle JSON/HTTP errors.
 %     \item \textbf{Optimistic UI}: favourites toggle updates the view immediately; state reconciles on storage events.
 % \end{itemize}
-
-% \subsection{Data Schemas and Models}
-% \textbf{Event} (consumed fields): \texttt{\_id}, \texttt{title}, \texttt{description}, \texttt{date}, \texttt{time}, \texttt{price}, \texttt{presenter/presenters}, \texttt{venueId}, \texttt{venue}.
-% \newline
-% \textbf{Location} (consumed fields): \texttt{\_id} (\(\rightarrow\) \texttt{id}), \texttt{nameE} (\(\rightarrow\) \texttt{name}), \texttt{district}, \texttt{latitude}, \texttt{longitude}, \texttt{num\_events}.
-% \newline
-% Client-side validation ensures Event submissions include \texttt{title}, \texttt{date}, \texttt{time}, \texttt{venueId}, and \texttt{venue}; and Location submissions include \texttt{nameE}, \texttt{district}, \texttt{latitude}, and \texttt{longitude}.
