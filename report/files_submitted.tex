@@ -22,7 +22,7 @@ frontend/
     |-- Auth.jsx                       // Authentication page
     |-- Leaderboard.jsx                // Leaderboard page
     |-- event/                         // Event-related files
-    |-- location/                      // Location-related files
+    |-- location/                      // Location-related files (inc. Map)
     |-- UserManager/                   // User Manager related files
     |-- constants/                     // Reuseable constants
     |-- hooks/                         // Reuseable hooks
@@ -52,6 +52,7 @@ backend/
       |-- middleware/
       |   |-- error.js                   // For error handling
       |   |-- logging.js                 // For logging all backend requests
+      |   |-- require-admin.js           // Check admin identity
       |   |-- require-auth.js            // Check user auth token
       |   |-- require-recaptcha.js       // Check ReCAPTCHA tokens
       |   `-- timeout.js                 // To simulate slow internet connection
