@@ -39,6 +39,7 @@ npm run format
 ```
 
 ## Directory structure
+This could be outdated. Check the report (pdf) in the latest release for the updated structure.
 ```
 CSCI2720-Project/
 ├─ .gitignore
