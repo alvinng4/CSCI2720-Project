@@ -4,18 +4,6 @@
 A good website should have a home page, so we also added one ourselves
 (see figure \ref{fig:ux_dark_mode}). It provides a quick overview for the
 whole website and also provide quick navigation.
-
-\subsubsection{Event like buttons}
-\label{subsubsec:event_like_buttons}
-Social elements promotes user's interaction with the website. We added a like button
-(similar to the favourite button) but with a like count, allowing user to see the most
-liked events. (See figure \ref{fig:admin_crud_events})
-
-\subsubsection{UX: dark mode}
-\label{subsubsec:ux_dark_mode}
-We provide three themes to promote user experience: system theme, light mode and dark mode.
-On top of that, we added a transition animation (with the help of shadcn.io components \cite{shadcn_io})
-to improve the transition (see figure \ref{fig:ux_dark_mode}).
 \begin{figure}[h]
     \centering
     \begin{subfigure}{0.3\textwidth}
@@ -39,6 +27,29 @@ to improve the transition (see figure \ref{fig:ux_dark_mode}).
     \caption{UX: dark mode}
     \label{fig:ux_dark_mode}
 \end{figure}
+
+\subsubsection{Event like buttons}
+\label{subsubsec:event_like_buttons}
+Social elements promotes user's interaction with the website. We added a like button
+(similar to the favourite button) but with a like count, allowing user to see the most
+liked events. (See figure \ref{subfig:admin_crud_events})
+
+\subsubsection{Event leaderboard}
+\label{subsubsec:event_leaderboard}
+On top of the like buttons, we added a leaderboard to show the most popular events
+in the last 7 days, with a graph showing the cumulative growth of likes.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.3\textwidth]{figures/leaderboard.png}
+    \caption{Leaderboard}
+    \label{fig:leaderboard}
+\end{figure}
+
+\subsubsection{UX: dark mode}
+\label{subsubsec:ux_dark_mode}
+We provide three themes to promote user experience: system theme, light mode and dark mode.
+On top of that, we added a transition animation (with the help of shadcn.io components \cite{shadcn_io})
+to improve the transition (see figure \ref{fig:ux_dark_mode}).
 
 \subsubsection{UX: loading screen}
 \label{subsubsec:ux_loading_screen}
