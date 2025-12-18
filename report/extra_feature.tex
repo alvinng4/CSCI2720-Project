@@ -35,6 +35,10 @@ we show a loading screen animation (See figure \ref{fig:loading_screen}). Animat
 than 300ms to prevent rapid flashing. You can try this by running our database
 with the \verb|-s| flag to simulate slow internet.
 
+\subsubsection{UX: dynamic filtering}
+In basic requirements, some pages are required to provide dynamic filtering.
+We did one step further to provide it to all pages with tables (e.g. Map, UserManager).
+
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/Loading_screen.png}
@@ -79,7 +83,7 @@ database.
 \subsubsection{Security: Prevent rapid request}
 For impatient users with slow internet access or users with malicious intent, they
 may want to spam our server with HTTP requests. To prevent this, we added a loading
-tracker to frontend to block further request if we currently have a queueing request.
+tracker in frontend to block further request if we currently have a queueing request.
 (See figure \ref{subfig:feedback_3} as we show an alert message)
 
 \subsubsection{Security: reCAPTCHA}
