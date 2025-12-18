@@ -66,6 +66,9 @@
 }
 \date{\today}
 
+% bullet points inside tabular
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+
 \begin{document}
 
 \maketitle
@@ -91,5 +94,9 @@
 \input{schema}
 \input{contact_person}
 
+\appendix
+\addcontentsline{toc}{section}{Appendix}
+\section*{Appendix}
+\input{appendix_work_distribution}
 
 \end{document}
