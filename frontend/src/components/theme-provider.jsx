@@ -1,3 +1,9 @@
+// Group 33:
+// Chan Darren Jun Rong (1155256148)
+// Li Clement (1155214128)
+// Ng Ching Yin (1155175606)
+// Zhao Yiming (1155211152)
+
 /**
  * Original, unmodified source code available from: https://ui.shadcn.com/docs/dark-mode/vite
  */

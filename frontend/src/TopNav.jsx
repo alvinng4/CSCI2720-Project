@@ -1,3 +1,9 @@
+// Group 33:
+// Chan Darren Jun Rong (1155256148)
+// Li Clement (1155214128)
+// Ng Ching Yin (1155175606)
+// Zhao Yiming (1155211152)
+
 import { LogOutIcon, TriangleAlert, UserPenIcon } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
