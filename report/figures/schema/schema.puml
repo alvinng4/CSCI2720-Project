@@ -1,0 +1,75 @@
+@startuml
+
+' Classes Definition
+
+class User {
+  + _id: ObjectId
+  + username: String
+  + email: String
+  + password: String
+  + role: String
+  + createdAt: Date
+  + updatedAt: Date
+}
+
+class Location {
+  + _id: ObjectId
+  + nameE: String
+  + latitude: Number
+  + longitude: Number
+  + district: String
+  + createdAt: Date
+  + updatedAt: Date
+}
+
+class Event {
+  + _id: ObjectId
+  + titleE: String
+  + location: ObjectId <<FK>>
+  + preDateE: String
+  + progTimeE: String
+  + priceE: String
+  + descE: String
+  + presenterOrgE: String
+  + createdAt: Date
+  + updatedAt: Date
+}
+
+class Comment {
+  + _id: ObjectId
+  + user: ObjectId <<FK>>
+  + location: ObjectId <<FK>>
+  + content: String
+  + createdAt: Date
+  + updatedAt: Date
+}
+
+class Favourite {
+  + _id: ObjectId
+  + user: ObjectId <<FK>>
+  + location: ObjectId <<FK>>
+  + createdAt: Date
+  + updatedAt: Date
+}
+
+class Like {
+  + _id: ObjectId
+  + user: ObjectId <<FK>>
+  + event: ObjectId <<FK>>
+  + createdAt: Date
+  + updatedAt: Date
+}
+
+' Relationships
+
+User "1" <-- "0..*" Comment : writes
+User "1" <-- "0..*" Favourite : has
+User "1" <-- "0..*" Like : gives
+
+Location "1" <-- "0..*" Event : hosts
+Location "1" <-- "0..*" Comment : receives
+Location "1" <-- "0..*" Favourite : is marked as
+
+Event "1" <-- "0..*" Like : receives
+
+@enduml
