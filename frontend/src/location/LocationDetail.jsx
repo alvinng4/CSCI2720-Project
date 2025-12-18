@@ -72,7 +72,7 @@ export function LocationDetail() {
         "Failed to get user location. Showing data without distance.",
         MessageTypes.ERROR
       );
-      setLocations(mappedData);
+      setLocation(mappedData);
       return;
     }
 
@@ -84,7 +84,7 @@ export function LocationDetail() {
         mappedData.latitude,
         mappedData.longitude
       ),
-    })
+    });
   }, [
     id,
     startForegroundLoading,
