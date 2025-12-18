@@ -27,6 +27,61 @@ to improve the transition.
     \label{fig:ux_dark_mode}
 \end{figure}
 
+\subsubsection{UX: loading screen}
+It is important to provide visual feedback for loading to improve UX and also avoid
+confusion, especially for users with slow internet connection. For initial loading, and 
+subsequent backend request for more than 300ms,
+we show a loading screen animation (See figure \ref{fig:loading_screen}). Animation would not be shown for request shorter 
+than 300ms to prevent rapid flashing. You can try this by running our database
+with the \verb|-s| flag to simulate slow internet.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Loading_screen.png}
+    \caption{Loading screen}
+    \label{fig:loading_screen}
+\end{figure}
+
+\subsubsection{UX: feedback messages}
+Feedback messages are important for user to know what is happening behind the scene.
+While it is possible to use \verb|alert|, it doesn't match the UI and it annoys user
+by forcing them to click a button just for a message. To avoid this, we simply show
+a message with different colors for different types of messages (see figure \ref{fig:feedback_message}).
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/feedback_1.png}
+        \caption{User waiting database response}
+        \label{subfig:feedback_1}
+    \end{subfigure}
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/feedback_2.png}
+        \caption{User receiving success response}
+        \label{subfig:feedback_2}
+    \end{subfigure}
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/feedback_3.png}
+        \caption{Alert message to prevent rapid request}
+        \label{subfig:feedback_3}
+    \end{subfigure}
+    \caption{Feedback messages}
+    \label{fig:feedback_message}
+\end{figure}
+
+\subsubsection{UX: refresh button}
+All our tables come with a refresh button so that user could re-sync their data with
+database.
+
+\subsubsection{Security: Prevent rapid request}
+For impatient users with slow internet access or users with malicious intent, they
+may want to spam our server with HTTP requests. To prevent this, we added a loading
+tracker to frontend to block further request if we currently have a queueing request.
+(See figure \ref{subfig:feedback_3} as we show an alert message)
+
 \subsubsection{Security: reCAPTCHA}
 To prevent bots abusing our service or ddos attack, we require user
 to pass Google reCAPTCHA before login / sign up.
