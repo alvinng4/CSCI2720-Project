@@ -6,7 +6,7 @@ import { LocationList } from "@/location/LocationList";
 import { EventList } from "@/event/EventList";
 import { Map } from "@/location/Map";
 import { FavouriteList } from "@/location/FavouriteList";
-import { Leaderboard } from "@/Leaderboard";
+import { Leaderboard } from "@/event/Leaderboard";
 import { TopNav } from "@/TopNav";
 import { LocationDetail } from "@/location/LocationDetail";
 

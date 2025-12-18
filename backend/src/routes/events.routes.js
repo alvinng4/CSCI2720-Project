@@ -117,7 +117,6 @@ router.get("/", requireAuth, async (req, res, next) => {
       {
         $project: {
           userLike: 0,
-          allLikes: 0,
         },
       },
       { $sort: { createdAt: -1 } },

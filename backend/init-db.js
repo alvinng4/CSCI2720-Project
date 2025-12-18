@@ -286,9 +286,17 @@ async function insertLikes() {
     const selectedUsers = shuffledUsers.slice(0, numberOfLikes);
 
     for (const user of selectedUsers) {
+      const noise = Math.pow(Math.random(), 2);
+      const daysAgo = Math.floor(noise * 7);
+      const createdAt = new Date(
+        Date.now() -
+          daysAgo * 24 * 60 * 60 * 1000 -
+          Math.floor(Math.random() * 24 * 60 * 60 * 1000)
+      );
       likesToInsert.push({
         user: user._id,
         event: event._id,
+        createdAt,
       });
     }
   }

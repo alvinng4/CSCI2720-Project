@@ -30,7 +30,7 @@ export function TopNav({ setIsAuthenticated }) {
     { to: "/eventList", label: "Event List" },
     { to: "/map", label: "Map" },
     { to: "/favouriteList", label: "Favourite List" },
-    { to: "/suggestions", label: "Leaderboard" },
+    { to: "/leaderboard", label: "Leaderboard" },
   ];
 
   function NavigationItem({ to, label }) {
