@@ -14,23 +14,23 @@ liked events. (See figure \ref{fig:admin_crud_events})
 \subsubsection{UX: dark mode}
 \label{subsubsec:ux_dark_mode}
 We provide three themes to promote user experience: system theme, light mode and dark mode.
-On top of that, we added a transition animation (with the help of shadcn.io components)
+On top of that, we added a transition animation (with the help of shadcn.io components \cite{shadcn_io})
 to improve the transition (see figure \ref{fig:ux_dark_mode}).
 \begin{figure}[h]
     \centering
-    \begin{subfigure}{0.45\textwidth}
+    \begin{subfigure}{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/lightmode.png}
         \caption{Light mode}
         \label{subfig:light_mode}
     \end{subfigure}
-    \begin{subfigure}{0.45\textwidth}
+    \begin{subfigure}{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/darkmode.png}
         \caption{Dark mode}
         \label{subfig:dark_mode}
     \end{subfigure}
-    \begin{subfigure}{0.45\textwidth}
+    \begin{subfigure}{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/darkmode_transition.png}
         \caption{Dark mode transition animation}
@@ -55,7 +55,7 @@ We did one step further to provide it to more pages (e.g. Map, UserManager).
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/Loading_screen.png}
+    \includegraphics[width=0.3\textwidth]{figures/Loading_screen.png}
     \caption{Loading screen}
     \label{fig:loading_screen}
 \end{figure}
@@ -69,22 +69,22 @@ a message with different colors for different types of messages (see figure \ref
 
 \begin{figure}[h]
     \centering
-    \begin{subfigure}{0.45\textwidth}
+    \begin{subfigure}{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/feedback_1.png}
         \caption{User waiting database response}
         \label{subfig:feedback_1}
     \end{subfigure}
-    \begin{subfigure}{0.45\textwidth}
+    \begin{subfigure}{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/feedback_2.png}
         \caption{User receiving success response}
         \label{subfig:feedback_2}
     \end{subfigure}
-    \begin{subfigure}{0.45\textwidth}
+    \begin{subfigure}{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/feedback_3.png}
-        \caption{Alert message to prevent rapid request}
+        \caption{Alert message to block request}
         \label{subfig:feedback_3}
     \end{subfigure}
     \caption{Feedback messages}
@@ -118,7 +118,7 @@ user sign up. As shown in figure \ref{fig:pw_hashing}, the password \verb|csci27
 encrypted string, which can only be verified with our secret key.
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/pw_hashing.png}
+    \includegraphics[width=0.3\textwidth]{figures/pw_hashing.png}
     \caption{Password hashing}
     \label{fig:pw_hashing}
 \end{figure}
@@ -140,13 +140,13 @@ logging in as an admin.
 
 \begin{figure}[h]
     \centering
-    \begin{subfigure}{0.8\textwidth}
+    \begin{subfigure}{0.4\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/security_token.png}
         \caption{User access to server rejected without valid token}
         \label{subfig:security_token}
     \end{subfigure}
-    \begin{subfigure}{0.8\textwidth}
+    \begin{subfigure}{0.4\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/security_admin.png}
         \caption{User access to admin-only page rejected due to invalid admin user ID}

@@ -10,7 +10,7 @@
 \hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue}
 %\usepackage{pgfplots} % For drawing graphs
 \usepackage{parskip} % To remove indentation and set paragraph spacing
-\usepackage[margin=1in]{geometry}
+\usepackage[margin=0.5in, tmargin=1in, bmargin=1in]{geometry}
 %\usepackage{cancel} % To cancel out terms
 \usepackage{listings} % To write code
 \usepackage{xcolor} % To write color text/math by \textcolor{color}{text}
@@ -76,27 +76,13 @@
 \input{abstract}
 
 % Table of contents
-{
-    \hypersetup{linkcolor=black}
-    \tableofcontents
-}
+% {
+%     \hypersetup{linkcolor=black}
+%     \tableofcontents
+% }
 
-\newpage
 \input{introduction}
-\section{Methodology}
-\input{files_submitted}
-\input{data_preprocessing}
-\input{user_action_requirements}
-\input{admin_action_requirements}
-\input{non_user_action_requirements}
-\input{extra_feature}
-\input{important_function}
-\input{schema}
-\input{contact_person}
-
-\appendix
-\addcontentsline{toc}{section}{Appendix}
-\section*{Appendix}
-\input{appendix_work_distribution}
+\input{methodology}
+\input{appendix}
 
 \end{document}
