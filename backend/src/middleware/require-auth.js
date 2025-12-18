@@ -4,7 +4,7 @@ export default (req, res, next) => {
   const auth = req.headers.authorization || "";
   const token = auth.startsWith("Bearer ") ? auth.slice(7) : null;
   if (!token) {
-    return res.status(401).json({ error: "Unauthorized" });
+    return res.status(401).json({ error: "Unauthorized: missing token" });
   }
 
   try {
@@ -12,6 +12,6 @@ export default (req, res, next) => {
     req.user = payload;
     next();
   } catch {
-    return res.status(401).json({ error: "Invalid token" });
+    return res.status(401).json({ error: "Unauthorized: Invalid token" });
   }
 };

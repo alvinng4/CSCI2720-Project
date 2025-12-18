@@ -1,11 +1,12 @@
 import bcrypt from "bcrypt";
 import express from "express";
 import User from "../models/User.js";
+import requireAdmin from "../middleware/require-admin.js";
 import requireAuth from "../middleware/require-auth.js";
 const router = express.Router();
 
 /* Create users */
-router.post("/", requireAuth, async (req, res, next) => {
+router.post("/", requireAuth, requireAdmin, async (req, res, next) => {
   try {
     const { username, email, password, role } = req.body;
     if (!username || !email || !password || !role) {
@@ -33,7 +34,7 @@ router.post("/", requireAuth, async (req, res, next) => {
 });
 
 /* Read users */
-router.get("/", requireAuth, async (_req, res, next) => {
+router.get("/", requireAuth, requireAdmin, async (_req, res, next) => {
   try {
     const list = await User.find().select("-password");
     res.json(list);
@@ -43,7 +44,7 @@ router.get("/", requireAuth, async (_req, res, next) => {
 });
 
 /* Update users */
-router.put("/:id", requireAuth, async (req, res, next) => {
+router.put("/:id", requireAuth, requireAdmin, async (req, res, next) => {
   try {
     const { username, email, password, role } = req.body;
     const update = {};
@@ -67,7 +68,7 @@ router.put("/:id", requireAuth, async (req, res, next) => {
 });
 
 /* Delete users */
-router.delete("/:id", requireAuth, async (req, res, next) => {
+router.delete("/:id", requireAuth, requireAdmin, async (req, res, next) => {
   try {
     const deleted = await User.findByIdAndDelete(req.params.id);
     if (!deleted) {

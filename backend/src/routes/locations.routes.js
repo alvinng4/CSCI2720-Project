@@ -3,11 +3,12 @@ import Event from "../models/Event.js";
 import Favourite from "../models/Favourite.js";
 import Location from "../models/Location.js";
 import mongoose from "mongoose";
+import requireAdmin from "../middleware/require-admin.js";
 import requireAuth from "../middleware/require-auth.js";
 const router = express.Router();
 
 /* Create location */
-router.post("/", requireAuth, async (req, res, next) => {
+router.post("/", requireAuth, requireAdmin, async (req, res, next) => {
   try {
     // Check input
     const { location } = req.body;
@@ -117,7 +118,7 @@ router.get("/", requireAuth, async (req, res, next) => {
 });
 
 /* Update location */
-router.put("/:id", requireAuth, async (req, res, next) => {
+router.put("/:id", requireAuth, requireAdmin, async (req, res, next) => {
   try {
     const { location } = req.body;
     const updatedLocation = await Location.findByIdAndUpdate(
@@ -139,7 +140,7 @@ router.put("/:id", requireAuth, async (req, res, next) => {
 });
 
 /* Delete Location */
-router.delete("/:id", requireAuth, async (req, res, next) => {
+router.delete("/:id", requireAuth, requireAdmin, async (req, res, next) => {
   try {
     await Location.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Location successfully deleted" });

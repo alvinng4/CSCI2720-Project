@@ -2,11 +2,12 @@ import express from "express";
 import Event from "../models/Event.js";
 import mongoose from "mongoose";
 import Location from "../models/Location.js";
+import requireAdmin from "../middleware/require-admin.js";
 import requireAuth from "../middleware/require-auth.js";
 const router = express.Router();
 
 /* Create Event */
-router.post("/", requireAuth, async (req, res, next) => {
+router.post("/", requireAuth, requireAdmin, async (req, res, next) => {
   try {
     // Check input
     const { event } = req.body;
@@ -128,7 +129,7 @@ router.get("/", requireAuth, async (req, res, next) => {
 });
 
 /* Update event */
-router.put("/:id", requireAuth, async (req, res, next) => {
+router.put("/:id", requireAuth, requireAdmin, async (req, res, next) => {
   try {
     const id = req.params.id;
     if (!id) {
@@ -181,7 +182,7 @@ router.put("/:id", requireAuth, async (req, res, next) => {
 });
 
 /* Delete event */
-router.delete("/:id", requireAuth, async (req, res, next) => {
+router.delete("/:id", requireAuth, requireAdmin, async (req, res, next) => {
   try {
     const deleted = await Event.findByIdAndDelete(req.params.id);
     if (!deleted) {
