@@ -1,4 +1,32 @@
 \subsection{Extra features}
+\subsubsection{UX: dark mode}
+We provide three themes to promote user experience: system theme, light mode and dark mode.
+On top of that, we added a transition animation (with the help of shadcn.io components)
+to improve the transition.
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/lightmode.png}
+        \caption{Light mode}
+        \label{subfig:light_mode}
+    \end{subfigure}
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/darkmode.png}
+        \caption{Dark mode}
+        \label{subfig:dark_mode}
+    \end{subfigure}
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/darkmode_transition.png}
+        \caption{Dark mode transition animation}
+        \label{subfig:dark_mode_transitiono}
+    \end{subfigure}
+    \caption{UX: dark mode}
+    \label{fig:ux_dark_mode}
+\end{figure}
+
 \subsubsection{Security: reCAPTCHA}
 To prevent bots abusing our service or ddos attack, we require user
 to pass Google reCAPTCHA before login / sign up.
@@ -8,7 +36,7 @@ Note: User cannot bypass this even if they hack the frontend, as the reCAPTCHA t
 verified in the backend.
 \subsubsection{Security: password hashing}
 To prevent password leak and to protect user privacy, we hash the password when
-user sign up. As shown in figure \ref{fig:pw_hashing}, the password \verb|csci_2720| became a long
+user sign up. As shown in figure \ref{fig:pw_hashing}, the password \verb|csci2720| became a long
 encrypted string, which can only be verified with our secret key.
 \begin{figure}[h]
     \centering
