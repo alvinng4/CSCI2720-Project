@@ -1,0 +1,38 @@
+\section{Introduction}
+
+\subsection{Quick start}
+To run the project, please follow the instructions below:
+
+\subsubsection{Backend}
+We first run the backend. Start a terminal window and run
+\begin{verbatim}
+    cd backend
+    npm install         // Install packages
+    npm run init-db     // Initialize database. This will drop existing 
+                        // database with the name "culturalApp"
+    npm run dev -- [-s|-slow-internet]
+\end{verbatim}
+A \verb|-s| flag is provided to simulate slow internet access in real world.
+
+Warning: If you re-initialized the database after login, please logout your account on browser to prevent keeping the incorrect token ID.
+
+\subsubsection{Frontend}
+Next, we run the frontend. Start another terminal window and run
+\begin{verbatim}
+    cd frontend
+    npm install
+    npm run dev
+\end{verbatim}
+Then, you may register a new account, or use the provided accounts:
+\begin{itemize}%[leftmargin=*]
+    \item Admin:
+    \begin{itemize}%[leftmargin=*]
+        \item email: admin@example.com
+        \item password: csci2720
+    \end{itemize}
+    \item User:
+    \begin{itemize}%[leftmargin=*]
+        \item email: a@example.com
+        \item password: a
+    \end{itemize}
+\end{itemize}
